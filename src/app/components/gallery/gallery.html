@@ -1,13 +1,18 @@
 <section id="gallery" class="section gallery">
   <div class="container">
-    <h2 class="section-title">Galería</h2>
+    <h2 class="section-title">{{ translate('gallery.title') }}</h2>
     <p class="section-subtitle">
-      Conoce nuestro ambiente y la pasión que ponemos en cada taza
+      {{ translate('gallery.subtitle') }}
     </p>
     <div class="gallery-grid">
       @for (image of galleryImages; track image.id) {
         <div class="gallery-item" (click)="openImage(image)">
-          <img [src]="image.url" [alt]="image.alt" loading="lazy" />
+          <img 
+            [src]="image.url" 
+            [alt]="image.alt" 
+            loading="lazy"
+            (error)="handleImageError($event, image)"
+            [attr.data-fallback]="getFallbackImage(image.id)" />
           <div class="gallery-overlay">
             <span class="gallery-title">{{ image.title || image.alt }}</span>
           </div>

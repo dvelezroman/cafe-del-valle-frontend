@@ -1,0 +1,64 @@
+<section id="blog" class="section blog">
+  <div class="container">
+    <h2 class="section-title">{{ translate('blog.title') }}</h2>
+    <p class="section-subtitle">
+      {{ translate('blog.subtitle') }}
+    </p>
+
+    <!-- Posts Destacados -->
+    <div class="featured-posts" *ngIf="featuredPosts$ | async as featuredPosts">
+      <h3 class="subsection-title">{{ translate('blog.recent') }}</h3>
+      <div class="featured-grid">
+        <article 
+          *ngFor="let post of featuredPosts.slice(0, 2)" 
+          class="featured-post"
+          (click)="scrollToSection('blog')">
+          <div class="post-image" *ngIf="post.image">
+            <img [src]="post.image" [alt]="post.title" loading="lazy" />
+          </div>
+          <div class="post-content">
+            <span class="post-category" *ngIf="post.category">{{ post.category }}</span>
+            <h3 class="post-title">{{ post.title }}</h3>
+            <p class="post-excerpt">{{ post.excerpt }}</p>
+            <div class="post-meta">
+              <span class="post-author">{{ post.author }}</span>
+              <span class="post-date">{{ formatDate(post.publishedAt) }}</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <!-- Lista de Posts -->
+    <div class="blog-grid" *ngIf="blogPosts$ | async as posts">
+      <article 
+        *ngFor="let post of posts" 
+        class="blog-card"
+        (click)="scrollToSection('blog')">
+        <div class="card-image" *ngIf="post.image">
+          <img [src]="post.image" [alt]="post.title" loading="lazy" />
+          <span class="card-badge" *ngIf="post.featured">{{ translate('menu.featured') }}</span>
+        </div>
+        <div class="card-content">
+          <div class="card-header">
+            <span class="card-category" *ngIf="post.category">{{ post.category }}</span>
+            <span class="card-date">{{ formatDate(post.publishedAt) }}</span>
+          </div>
+          <h3 class="card-title">{{ post.title }}</h3>
+          <p class="card-excerpt">{{ post.excerpt }}</p>
+          <div class="card-footer">
+            <span class="card-author">{{ post.author }}</span>
+            <div class="card-tags" *ngIf="post.tags && post.tags.length > 0">
+              <span class="tag" *ngFor="let tag of post.tags.slice(0, 3)">{{ tag }}</span>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Mensaje si no hay posts -->
+    <div class="no-posts" *ngIf="(blogPosts$ | async)?.length === 0">
+      <p>{{ translate('blog.no.posts') }}</p>
+    </div>
+  </div>
+</section>

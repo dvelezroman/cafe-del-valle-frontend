@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { DataService } from '../../services/data';
 import { Review } from '../../services/data';
+import { TranslationService } from '../../services/translation.service';
 
 @Component({
   selector: 'app-reviews',
@@ -9,10 +10,17 @@ import { Review } from '../../services/data';
   styleUrl: './reviews.scss'
 })
 export class Reviews {
-  constructor(public dataService: DataService) {}
+  constructor(
+    public dataService: DataService,
+    public translationService: TranslationService
+  ) {}
   
   get reviews(): Review[] {
     return this.dataService.getReviews();
+  }
+
+  translate(key: string, params?: { [key: string]: string }): string {
+    return this.translationService.translate(key, params);
   }
   
   getStars(rating: number): boolean[] {
@@ -21,7 +29,13 @@ export class Reviews {
   
   formatDate(dateString: string): string {
     const date = new Date(dateString);
-    return date.toLocaleDateString('es-EC', { 
+    const lang = this.translationService.getCurrentLanguageValue();
+    const localeMap: { [key: string]: string } = {
+      'es': 'es-EC',
+      'en': 'en-US',
+      'fr': 'fr-FR'
+    };
+    return date.toLocaleDateString(localeMap[lang] || 'es-EC', { 
       year: 'numeric', 
       month: 'long', 
       day: 'numeric' 

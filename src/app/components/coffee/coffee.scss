@@ -34,16 +34,30 @@
 
 .coffee-image {
   width: 100%;
-  height: 200px;
+  height: 250px;
   background: linear-gradient(135deg, var(--coffee-medium), var(--coffee-dark));
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+  position: relative;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  // Placeholder solo si no hay imagen
+  .coffee-placeholder {
+    color: var(--coffee-latte);
+    opacity: 0.5;
+  }
 }
 
-.coffee-placeholder {
-  color: var(--coffee-latte);
-  opacity: 0.5;
+.coffee-card:hover .coffee-image img {
+  transform: scale(1.1);
 }
 
 .coffee-content {

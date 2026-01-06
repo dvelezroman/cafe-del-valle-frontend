@@ -1,34 +1,39 @@
 <section id="about" class="section about">
   <div class="container">
-    <h2 class="section-title">Sobre Nosotros</h2>
+    <div class="about-header">
+      <img 
+        src="/images/Logo1.jpeg" 
+        alt="Café del Valle" 
+        class="about-logo"
+        width="120"
+        height="120"
+        loading="lazy" />
+      <h2 class="section-title">{{ translate('about.title') }}</h2>
+    </div>
     <div class="about-content">
       <div class="about-text">
-        <p class="lead">{{ cafeInfo.description }}</p>
+        <p class="lead">{{ translate('about.cafe.description') }}</p>
         <p>
-          En Café del Valle, nos enorgullecemos de ofrecer café de la más alta calidad, 
-          directamente desde las mejores regiones cafetaleras de Ecuador. Cada taza que 
-          servimos cuenta una historia de tradición, dedicación y pasión por el café.
+          {{ translate('about.description') }}
         </p>
         <p>
-          Trabajamos directamente con productores locales para asegurar que cada grano 
-          sea seleccionado con cuidado y tostado a la perfección, preservando los sabores 
-          únicos que hacen del café ecuatoriano algo especial.
+          {{ translate('about.description2') }}
         </p>
         <div class="about-features">
           <div class="feature">
             <div class="feature-icon">☕</div>
-            <h3>Café de Origen</h3>
-            <p>Granos seleccionados de diversas regiones de Ecuador</p>
+            <h3>{{ translate('about.feature.origin.title') }}</h3>
+            <p>{{ translate('about.feature.origin.desc') }}</p>
           </div>
           <div class="feature">
             <div class="feature-icon">🌱</div>
-            <h3>Sostenible</h3>
-            <p>Comprometidos con prácticas agrícolas sostenibles</p>
+            <h3>{{ translate('about.feature.sustainable.title') }}</h3>
+            <p>{{ translate('about.feature.sustainable.desc') }}</p>
           </div>
           <div class="feature">
             <div class="feature-icon">👨‍🍳</div>
-            <h3>Artesanal</h3>
-            <p>Tostado y preparado con dedicación y experiencia</p>
+            <h3>{{ translate('about.feature.artisan.title') }}</h3>
+            <p>{{ translate('about.feature.artisan.desc') }}</p>
           </div>
         </div>
       </div>

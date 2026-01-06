@@ -2,6 +2,32 @@
   background: var(--white);
 }
 
+.contact-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+  
+  .contact-logo {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    margin-bottom: var(--spacing-md);
+    opacity: 0.85;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    
+    &:hover {
+      transform: scale(1.05);
+      opacity: 1;
+    }
+    
+    @media (max-width: 768px) {
+      width: 80px;
+      height: 80px;
+    }
+  }
+}
+
 .contact-content {
   display: grid;
   grid-template-columns: 1fr 1fr;

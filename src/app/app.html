@@ -1,20 +1,45 @@
 <header class="header">
   <nav class="nav container">
     <div class="nav-brand">
-      <a (click)="scrollToSection('hero'); closeMenu()" class="brand-link">Café del Valle</a>
+      <a (click)="scrollToSection('hero'); closeMenu()" class="brand-link">
+        <img 
+          src="/images/IMG_20250919_144616_546.png" 
+          alt="Café del Valle" 
+          class="brand-logo"
+          width="50"
+          height="50"
+          loading="eager"
+          fetchpriority="high" />
+      </a>
     </div>
     <ul class="nav-menu" [class.active]="menuOpen">
-      <li><a (click)="scrollToSection('about'); closeMenu()">Nosotros</a></li>
-      <li><a (click)="scrollToSection('coffee'); closeMenu()">Cafés</a></li>
-      <li><a (click)="scrollToSection('gallery'); closeMenu()">Galería</a></li>
-      <li><a (click)="scrollToSection('reviews'); closeMenu()">Reseñas</a></li>
-      <li><a (click)="scrollToSection('contact'); closeMenu()">Contacto</a></li>
+      <li><a (click)="scrollToSection('about'); closeMenu()">{{ translate('nav.about') }}</a></li>
+      <li><a (click)="scrollToSection('coffee'); closeMenu()">{{ translate('nav.coffee') }}</a></li>
+      <li><a (click)="scrollToSection('menu'); closeMenu()">{{ translate('nav.menu') }}</a></li>
+      <li><a (click)="scrollToSection('gallery'); closeMenu()">{{ translate('nav.gallery') }}</a></li>
+      <li><a (click)="scrollToSection('reviews'); closeMenu()">{{ translate('nav.reviews') }}</a></li>
+      <li><a (click)="scrollToSection('blog'); closeMenu()">{{ translate('nav.blog') }}</a></li>
+      <li><a (click)="scrollToSection('contact'); closeMenu()">{{ translate('nav.contact') }}</a></li>
     </ul>
-    <button class="nav-toggle" (click)="toggleMenu()" aria-label="Toggle menu" [attr.aria-expanded]="menuOpen">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
+    <div class="nav-actions">
+      <div class="language-toggle">
+        @for (lang of languages; track lang.code) {
+          <button 
+            class="lang-btn"
+            [class.active]="currentLanguage === lang.code"
+            (click)="setLanguage(lang.code)"
+            [attr.aria-label]="'Switch to ' + lang.label">
+            <span class="lang-flag">{{ lang.flag }}</span>
+            <span class="lang-label">{{ lang.label }}</span>
+          </button>
+        }
+      </div>
+      <button class="nav-toggle" (click)="toggleMenu()" aria-label="Toggle menu" [attr.aria-expanded]="menuOpen">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
   </nav>
 </header>
 
@@ -22,8 +47,10 @@
   <app-hero></app-hero>
   <app-about></app-about>
   <app-coffee></app-coffee>
+  <app-menu></app-menu>
   <app-gallery></app-gallery>
   <app-reviews></app-reviews>
+  <app-blog></app-blog>
   <app-contact></app-contact>
 </main>
 
@@ -31,26 +58,32 @@
   <div class="container">
     <div class="footer-content">
       <div class="footer-section">
-        <h3>Café del Valle</h3>
-        <p>El sabor auténtico del café ecuatoriano</p>
+        <img 
+          src="/images/IMG_20250919_144618_468.png" 
+          alt="Café del Valle" 
+          class="footer-logo"
+          width="60"
+          height="60"
+          loading="lazy" />
+        <p>{{ translate('footer.tagline') }}</p>
       </div>
       <div class="footer-section">
-        <h4>Enlaces</h4>
+        <h4>{{ translate('footer.links') }}</h4>
         <ul>
-          <li><a (click)="scrollToSection('about')">Sobre Nosotros</a></li>
-          <li><a (click)="scrollToSection('coffee')">Nuestros Cafés</a></li>
-          <li><a (click)="scrollToSection('contact')">Contacto</a></li>
+          <li><a (click)="scrollToSection('about')">{{ translate('footer.about') }}</a></li>
+          <li><a (click)="scrollToSection('coffee')">{{ translate('footer.coffee') }}</a></li>
+          <li><a (click)="scrollToSection('contact')">{{ translate('footer.contact') }}</a></li>
         </ul>
       </div>
       <div class="footer-section">
-        <h4>Contacto</h4>
+        <h4>{{ translate('footer.contact.title') }}</h4>
         <p>Atanacio Santos y Calle Augusto Moreira<br>
-        Ciudadela San Cristóbal, Portoviejo</p>
+        Portoviejo, Ecuador</p>
         <p>Tel: +593 99 718 6022</p>
       </div>
     </div>
     <div class="footer-bottom">
-      <p>&copy; {{ getCurrentYear() }} Café del Valle. Todos los derechos reservados.</p>
+      <p>&copy; {{ getCurrentYear() }} Café del Valle. {{ translate('footer.rights') }}</p>
     </div>
   </div>
 </footer>

@@ -1,0 +1,57 @@
+<section id="menu" class="section menu">
+  <div class="container">
+    <h2 class="section-title">{{ translate('menu.title') }}</h2>
+    <p class="section-subtitle">
+      {{ translate('menu.subtitle') }}
+    </p>
+
+    <!-- Filtros de categoría -->
+    <div class="menu-filters">
+      @for (category of categories; track category.value) {
+        <button 
+          class="filter-btn"
+          [class.active]="selectedCategory === category.value"
+          (click)="filterByCategory(category.value)">
+          {{ getCategoryLabel(category) }}
+        </button>
+      }
+    </div>
+
+    <!-- Grid de items del menú -->
+    <div class="menu-grid">
+      @for (item of filteredItems; track item.id) {
+        <article class="menu-item" [class.featured]="item.featured">
+          @if (item.featured) {
+            <span class="featured-badge">{{ translate('menu.featured') }}</span>
+          }
+          <div class="item-image" *ngIf="item.image">
+            <img 
+              [src]="getImageUrl(item)" 
+              [alt]="item.name" 
+              loading="lazy"
+              (error)="handleImageError($event, item)" />
+            @if (!item.available) {
+              <div class="unavailable-overlay">
+                <span>{{ translate('menu.unavailable') }}</span>
+              </div>
+            }
+          </div>
+          <div class="item-content">
+            <div class="item-header">
+              <h3 class="item-name">{{ item.name }}</h3>
+              <span class="item-price">{{ formatPrice(item.price) }}</span>
+            </div>
+            <p class="item-description">{{ getMenuItemDescription(item) }}</p>
+            <span class="item-category">{{ item.category }}</span>
+          </div>
+        </article>
+      }
+    </div>
+
+    @if (filteredItems.length === 0) {
+      <div class="no-items">
+        <p>{{ translate('menu.no.items') }}</p>
+      </div>
+    }
+  </div>
+</section>

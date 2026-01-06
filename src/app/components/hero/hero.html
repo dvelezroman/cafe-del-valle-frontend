@@ -4,14 +4,26 @@
   </div>
   <div class="hero-content">
     <div class="container">
-      <h1 class="hero-title">{{ cafeInfo.name }}</h1>
-      <p class="hero-tagline">{{ cafeInfo.tagline }}</p>
-      <p class="hero-description">
-        Descubre el auténtico sabor del café ecuatoriano, seleccionado de las mejores regiones del país.
-      </p>
-      <div class="hero-buttons">
-        <a (click)="scrollToSection('coffee')" class="btn btn-primary">Nuestros Cafés</a>
-        <a (click)="scrollToSection('contact')" class="btn btn-outline">Visítanos</a>
+      <div class="hero-logo-wrapper">
+        <div class="hero-logo">
+          <img 
+            src="/images/IMG_20250919_144616_546.png" 
+            alt="Café del Valle"
+            width="200"
+            height="200"
+            loading="eager"
+            fetchpriority="high" />
+        </div>
+      </div>
+      <div class="hero-text-content">
+        <p class="hero-tagline">{{ translate('hero.tagline') }}</p>
+        <p class="hero-description">
+          {{ translate('hero.description') }}
+        </p>
+        <div class="hero-buttons">
+          <a (click)="scrollToSection('coffee')" class="btn btn-primary">{{ translate('hero.button.coffee') }}</a>
+          <a (click)="scrollToSection('contact')" class="btn btn-outline">{{ translate('hero.button.visit') }}</a>
+        </div>
       </div>
     </div>
   </div>
