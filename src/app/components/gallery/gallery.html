@@ -1,0 +1,28 @@
+<section id="gallery" class="section gallery">
+  <div class="container">
+    <h2 class="section-title">Galería</h2>
+    <p class="section-subtitle">
+      Conoce nuestro ambiente y la pasión que ponemos en cada taza
+    </p>
+    <div class="gallery-grid">
+      @for (image of galleryImages; track image.id) {
+        <div class="gallery-item" (click)="openImage(image)">
+          <img [src]="image.url" [alt]="image.alt" loading="lazy" />
+          <div class="gallery-overlay">
+            <span class="gallery-title">{{ image.title || image.alt }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+  
+  @if (selectedImage) {
+    <div class="lightbox" (click)="closeImage()">
+      <div class="lightbox-content" (click)="$event.stopPropagation()">
+        <button class="lightbox-close" (click)="closeImage()">&times;</button>
+        <img [src]="selectedImage.url" [alt]="selectedImage.alt" />
+        <p class="lightbox-title">{{ selectedImage.title || selectedImage.alt }}</p>
+      </div>
+    </div>
+  }
+</section>

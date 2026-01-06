@@ -1,0 +1,208 @@
+/* Global Styles for Café del Valle */
+
+/* Color Palette - Coffee Theme */
+:root {
+  /* Primary Coffee Colors */
+  --coffee-dark: #3d2817;
+  --coffee-medium: #6b4423;
+  --coffee-light: #8b6f47;
+  --coffee-cream: #d4a574;
+  --coffee-latte: #f4e4c1;
+  
+  /* Accent Colors */
+  --accent-gold: #d4af37;
+  --accent-green: #2d5016;
+  --accent-earth: #8b4513;
+  
+  /* Neutral Colors */
+  --white: #ffffff;
+  --off-white: #faf8f3;
+  --gray-light: #e8e5df;
+  --gray-medium: #9b9689;
+  --gray-dark: #4a4843;
+  --black: #1a1a1a;
+  
+  /* Typography */
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Playfair Display', 'Georgia', serif;
+  
+  /* Spacing */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 2rem;
+  --spacing-lg: 3rem;
+  --spacing-xl: 4rem;
+  --spacing-2xl: 6rem;
+  
+  /* Border Radius */
+  --radius-sm: 0.5rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.5rem;
+  
+  /* Shadows */
+  --shadow-sm: 0 2px 4px rgba(61, 40, 23, 0.1);
+  --shadow-md: 0 4px 8px rgba(61, 40, 23, 0.15);
+  --shadow-lg: 0 8px 16px rgba(61, 40, 23, 0.2);
+}
+
+/* Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-primary);
+  color: var(--gray-dark);
+  background-color: var(--off-white);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  color: var(--coffee-dark);
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+h1 {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+}
+
+h2 {
+  font-size: clamp(2rem, 4vw, 3rem);
+}
+
+h3 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+}
+
+p {
+  margin-bottom: 1rem;
+  color: var(--gray-dark);
+}
+
+a {
+  color: var(--coffee-medium);
+  text-decoration: none;
+  transition: color 0.3s ease;
+  
+  &:hover {
+    color: var(--coffee-dark);
+  }
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Container */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+  
+  @media (max-width: 768px) {
+    padding: 0 var(--spacing-sm);
+  }
+}
+
+/* Section Styles */
+.section {
+  padding: var(--spacing-2xl) 0;
+  
+  @media (max-width: 768px) {
+    padding: var(--spacing-lg) 0;
+  }
+}
+
+.section-title {
+  text-align: center;
+  margin-bottom: var(--spacing-lg);
+  position: relative;
+  
+  &::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--coffee-medium), var(--accent-gold));
+    margin: var(--spacing-sm) auto 0;
+    border-radius: 2px;
+  }
+}
+
+/* Button Styles */
+.btn {
+  display: inline-block;
+  padding: 0.875rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  
+  &.btn-primary {
+    background: linear-gradient(135deg, var(--coffee-medium), var(--coffee-dark));
+    color: var(--white);
+    
+    &:hover {
+      background: linear-gradient(135deg, var(--coffee-dark), var(--coffee-medium));
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+  }
+  
+  &.btn-secondary {
+    background: transparent;
+    color: var(--coffee-medium);
+    border: 2px solid var(--coffee-medium);
+    
+    &:hover {
+      background: var(--coffee-medium);
+      color: var(--white);
+    }
+  }
+  
+  &.btn-outline {
+    background: transparent;
+    color: var(--white);
+    border: 2px solid var(--white);
+    
+    &:hover {
+      background: var(--white);
+      color: var(--coffee-dark);
+    }
+  }
+}
+
+/* Utility Classes */
+.text-center {
+  text-align: center;
+}
+
+.mt-1 { margin-top: var(--spacing-sm); }
+.mt-2 { margin-top: var(--spacing-md); }
+.mt-3 { margin-top: var(--spacing-lg); }
+
+.mb-1 { margin-bottom: var(--spacing-sm); }
+.mb-2 { margin-bottom: var(--spacing-md); }
+.mb-3 { margin-bottom: var(--spacing-lg); }
+
+/* Smooth Scroll */
+html {
+  scroll-padding-top: 80px;
+}

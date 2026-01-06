@@ -1,0 +1,55 @@
+<section id="contact" class="section contact">
+  <div class="container">
+    <h2 class="section-title">Visítanos</h2>
+    <p class="section-subtitle">
+      Estamos ubicados en el corazón de Portoviejo. ¡Te esperamos!
+    </p>
+    <div class="contact-content">
+      <div class="contact-info">
+        <div class="info-card">
+          <div class="info-icon">📍</div>
+          <h3>Dirección</h3>
+          <p>{{ cafeInfo.address }}</p>
+          <a [href]="getGoogleMapsUrl()" target="_blank" rel="noopener" class="btn btn-primary">
+            Ver en Google Maps
+          </a>
+        </div>
+        
+        <div class="info-card">
+          <div class="info-icon">📞</div>
+          <h3>Teléfono</h3>
+          <p>
+            <a [href]="getPhoneUrl()" class="phone-link">{{ cafeInfo.phone }}</a>
+          </p>
+        </div>
+        
+        @if (cafeInfo.hours) {
+          <div class="info-card">
+            <div class="info-icon">🕐</div>
+            <h3>Horarios</h3>
+            <div class="hours-list">
+              @for (hours of getHoursArray(); track hours.key) {
+                <div class="hours-item">
+                  <span class="hours-day">{{ hours.key }}</span>
+                  <span class="hours-time">{{ hours.value }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+      
+      <div class="contact-map">
+        <iframe
+          [src]="getMapEmbedUrl()"
+          width="100%"
+          height="100%"
+          style="border:0; border-radius: var(--radius-md);"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+      </div>
+    </div>
+  </div>
+</section>

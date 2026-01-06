@@ -1,0 +1,115 @@
+.coffee {
+  background: var(--off-white);
+}
+
+.section-subtitle {
+  text-align: center;
+  font-size: 1.125rem;
+  color: var(--gray-medium);
+  margin-bottom: var(--spacing-lg);
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.coffee-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-lg);
+}
+
+.coffee-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+.coffee-image {
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(135deg, var(--coffee-medium), var(--coffee-dark));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.coffee-placeholder {
+  color: var(--coffee-latte);
+  opacity: 0.5;
+}
+
+.coffee-content {
+  padding: var(--spacing-md);
+}
+
+.coffee-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: var(--spacing-sm);
+  
+  h3 {
+    font-size: 1.5rem;
+    color: var(--coffee-dark);
+    margin: 0;
+  }
+}
+
+.coffee-region {
+  font-size: 0.875rem;
+  color: var(--coffee-medium);
+  background: var(--coffee-latte);
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+}
+
+.coffee-description {
+  color: var(--gray-dark);
+  line-height: 1.7;
+  margin-bottom: var(--spacing-md);
+}
+
+.coffee-notes {
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid var(--gray-light);
+}
+
+.notes-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--coffee-medium);
+  margin-bottom: var(--spacing-xs);
+}
+
+.notes-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.note-tag {
+  display: inline-block;
+  padding: 0.375rem 0.75rem;
+  background: var(--coffee-latte);
+  color: var(--coffee-dark);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .coffee-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

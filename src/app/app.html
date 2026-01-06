@@ -1,0 +1,58 @@
+<header class="header">
+  <nav class="nav container">
+    <div class="nav-brand">
+      <a (click)="scrollToSection('hero'); closeMenu()" class="brand-link">Café del Valle</a>
+    </div>
+    <ul class="nav-menu" [class.active]="menuOpen">
+      <li><a (click)="scrollToSection('about'); closeMenu()">Nosotros</a></li>
+      <li><a (click)="scrollToSection('coffee'); closeMenu()">Cafés</a></li>
+      <li><a (click)="scrollToSection('gallery'); closeMenu()">Galería</a></li>
+      <li><a (click)="scrollToSection('reviews'); closeMenu()">Reseñas</a></li>
+      <li><a (click)="scrollToSection('contact'); closeMenu()">Contacto</a></li>
+    </ul>
+    <button class="nav-toggle" (click)="toggleMenu()" aria-label="Toggle menu" [attr.aria-expanded]="menuOpen">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+</header>
+
+<main>
+  <app-hero></app-hero>
+  <app-about></app-about>
+  <app-coffee></app-coffee>
+  <app-gallery></app-gallery>
+  <app-reviews></app-reviews>
+  <app-contact></app-contact>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>Café del Valle</h3>
+        <p>El sabor auténtico del café ecuatoriano</p>
+      </div>
+      <div class="footer-section">
+        <h4>Enlaces</h4>
+        <ul>
+          <li><a (click)="scrollToSection('about')">Sobre Nosotros</a></li>
+          <li><a (click)="scrollToSection('coffee')">Nuestros Cafés</a></li>
+          <li><a (click)="scrollToSection('contact')">Contacto</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>Contacto</h4>
+        <p>Atanacio Santos y Calle Augusto Moreira<br>
+        Ciudadela San Cristóbal, Portoviejo</p>
+        <p>Tel: +593 99 718 6022</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; {{ getCurrentYear() }} Café del Valle. Todos los derechos reservados.</p>
+    </div>
+  </div>
+</footer>
+
+<router-outlet />
