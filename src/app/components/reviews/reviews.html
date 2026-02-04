@@ -7,7 +7,7 @@
     </header>
 
     <div class="reviews-grid" role="list">
-      @for (review of reviews; track review.id) {
+      @for (review of reviews(); track review.id) {
       <article class="review-card glass-card" role="listitem">
         <div class="review-quote-icon">“</div>
 

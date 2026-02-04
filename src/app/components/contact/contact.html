@@ -12,7 +12,7 @@
           <div class="block-icon">📍</div>
           <div class="block-details">
             <h3>{{ translate('contact.address') }}</h3>
-            <p>{{ cafeInfo.address }}</p>
+            <p>{{ cafeInfo()?.address }}</p>
             <a [href]="getGoogleMapsUrl()" target="_blank" rel="noopener" class="text-link">
               {{ translate('contact.view.maps') }}
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -27,11 +27,11 @@
           <div class="block-icon">📞</div>
           <div class="block-details">
             <h3>{{ translate('contact.phone') }}</h3>
-            <p><a [href]="getPhoneUrl()" class="phone-link">{{ cafeInfo.phone }}</a></p>
+            <p><a [href]="getPhoneUrl()" class="phone-link">{{ cafeInfo()?.phone }}</a></p>
           </div>
         </div>
 
-        @if (cafeInfo.hours) {
+        @if (cafeInfo()?.hours) {
         <div class="info-block glass-card">
           <div class="block-icon">🕐</div>
           <div class="block-details">
@@ -51,7 +51,7 @@
 
       <div class="contact-visual">
         <div class="map-container shadow-lg">
-          <iframe [src]="mapEmbedUrl" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
+          <iframe [src]="mapEmbedUrl()" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
             title="Localización de Café del Valle" referrerpolicy="no-referrer-when-downgrade">
           </iframe>
         </div>

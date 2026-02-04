@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, computed } from '@angular/core';
 import { DataService } from '../../services/data';
 import { TranslationService } from '../../services/translation.service';
 
@@ -12,11 +12,9 @@ export class About {
   constructor(
     public dataService: DataService,
     public translationService: TranslationService
-  ) {}
-  
-  get cafeInfo() {
-    return this.dataService.getCafeInfo();
-  }
+  ) { }
+
+  cafeInfo = computed(() => this.dataService.cafeInfo());
 
   translate(key: string, params?: { [key: string]: string }): string {
     return this.translationService.translate(key, params);

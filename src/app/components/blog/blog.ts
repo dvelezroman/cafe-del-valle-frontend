@@ -1,8 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DataService, BlogPost } from '../../services/data';
 import { TranslationService } from '../../services/translation.service';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-blog',
@@ -10,19 +9,24 @@ import { Observable } from 'rxjs';
   templateUrl: './blog.html',
   styleUrl: './blog.scss'
 })
-export class Blog implements OnInit {
-  blogPosts$: Observable<BlogPost[]> = new Observable();
-  featuredPosts$: Observable<BlogPost[]> = new Observable();
-  
-  constructor(
-    private dataService: DataService,
-    public translationService: TranslationService
-  ) {}
+export class Blog {
+  // Computed signals for reactive data
+  blogPosts = computed(() => {
+    const posts = this.dataService.blogPosts();
+    // Sort by date (newest first) and take latest 6
+    return [...posts]
+      .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+      .slice(0, 6);
+  });
 
-  ngOnInit() {
-    this.blogPosts$ = this.dataService.getLatestPosts(6);
-    this.featuredPosts$ = this.dataService.getFeaturedPosts();
-  }
+  featuredPosts = computed(() => {
+    return this.dataService.blogPosts().filter(p => p.featured);
+  });
+
+  constructor(
+    public dataService: DataService,
+    public translationService: TranslationService
+  ) { }
 
   translate(key: string, params?: { [key: string]: string }): string {
     return this.translationService.translate(key, params);

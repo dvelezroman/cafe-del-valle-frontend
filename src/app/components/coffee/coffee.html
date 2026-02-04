@@ -7,7 +7,7 @@
     </header>
 
     <div class="coffee-grid" role="list">
-      @for (variety of coffeeVarieties; track variety.id) {
+      @for (variety of coffeeVarieties(); track variety.id) {
       <article class="coffee-card glass-card" role="listitem">
         <div class="coffee-image-wrapper image-container">
           @if (variety.image) {

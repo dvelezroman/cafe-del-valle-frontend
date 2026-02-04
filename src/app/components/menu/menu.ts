@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, computed, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DataService, MenuItem } from '../../services/data';
 import { TranslationService } from '../../services/translation.service';
@@ -11,11 +11,23 @@ type MenuCategory = 'bebidas' | 'comidas' | 'postres' | 'especiales' | 'todos';
   templateUrl: './menu.html',
   styleUrl: './menu.scss'
 })
-export class Menu implements OnInit {
-  menuItems: MenuItem[] = [];
-  filteredItems: MenuItem[] = [];
-  selectedCategory: MenuCategory = 'todos';
-  
+export class Menu {
+  private dataService = inject(DataService);
+  public translationService = inject(TranslationService);
+
+  selectedCategory = signal<MenuCategory>('todos');
+
+  menuItems = this.dataService.menuItems;
+
+  filteredItems = computed(() => {
+    const category = this.selectedCategory();
+    const items = this.menuItems();
+    if (category === 'todos') {
+      return items;
+    }
+    return items.filter(item => item.category === category);
+  });
+
   categories: { value: MenuCategory; labelKey: string }[] = [
     { value: 'todos', labelKey: 'menu.filter.all' },
     { value: 'bebidas', labelKey: 'menu.filter.drinks' },
@@ -24,23 +36,10 @@ export class Menu implements OnInit {
     { value: 'especiales', labelKey: 'menu.filter.special' }
   ];
 
-  constructor(
-    private dataService: DataService,
-    public translationService: TranslationService
-  ) {}
-
-  ngOnInit() {
-    this.menuItems = this.dataService.getMenuItems();
-    this.filteredItems = this.menuItems;
-  }
+  constructor() { }
 
   filterByCategory(category: MenuCategory) {
-    this.selectedCategory = category;
-    if (category === 'todos') {
-      this.filteredItems = this.menuItems;
-    } else {
-      this.filteredItems = this.dataService.getMenuItemsByCategory(category);
-    }
+    this.selectedCategory.set(category);
   }
 
   formatPrice(price: number): string {

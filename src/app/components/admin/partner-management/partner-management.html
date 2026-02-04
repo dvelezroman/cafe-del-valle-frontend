@@ -1,0 +1,64 @@
+<div class="admin-section">
+    <div class="section-header">
+        <h2>Solicitudes de Socios</h2>
+        <div class="stats">
+            <span class="badge">{{ pendingPartners.length }} Pendientes</span>
+        </div>
+    </div>
+
+    <div class="admin-card glass-card">
+        @if (loading) {
+        <div class="loading-state">
+            <span class="spinner"></span>
+        </div>
+        } @else if (pendingPartners.length === 0) {
+        <div class="empty-state">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <p>No hay solicitudes pendientes en este momento.</p>
+        </div>
+        } @else {
+        <div class="table-wrapper">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Cédula / ID</th>
+                        <th>Teléfono</th>
+                        <th>Referido por</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (partner of pendingPartners; track partner.id) {
+                    <tr>
+                        <td><strong>{{ partner.user.name }}</strong></td>
+                        <td>{{ partner.user.email }}</td>
+                        <td>{{ partner.idNumber }}</td>
+                        <td>{{ partner.phone }}</td>
+                        <td>
+                            @if (partner.referredBy) {
+                            <span class="status-pill info">{{ partner.referredBy.user.name }}</span>
+                            } @else {
+                            <span class="text-muted">-</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="btn btn-sm btn-success"
+                                    (click)="validate(partner.id, 'APPROVED')">Aprobar</button>
+                                <button class="btn btn-sm btn-danger"
+                                    (click)="validate(partner.id, 'REJECTED')">Rechazar</button>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        }
+    </div>
+</div>

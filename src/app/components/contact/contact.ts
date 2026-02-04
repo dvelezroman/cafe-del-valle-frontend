@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { DataService } from '../../services/data';
@@ -11,35 +11,38 @@ import { TranslationService } from '../../services/translation.service';
   styleUrl: './contact.scss'
 })
 export class Contact {
-  mapEmbedUrl: SafeResourceUrl;
-  
+  cafeInfo = computed(() => this.dataService.cafeInfo());
+
+  mapEmbedUrl = computed(() => {
+    const info = this.cafeInfo();
+    if (!info) return this.sanitizer.bypassSecurityTrustResourceUrl('');
+    const { lat, lng } = info.coordinates;
+    const unsafeUrl = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.5!2d${lng}!3d${lat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x902bed59bb5eff65%3A0xaa6b6e74c4c70ce7!2sAtanacio%20Santos%20%26%20Calle%20Augusto%20Moreira%2C%20Portoviejo!5e0!3m2!1ses!2sec!4v1234567890123!5m2!1ses!2sec`;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(unsafeUrl);
+  });
+
   constructor(
     public dataService: DataService,
     private sanitizer: DomSanitizer,
     public translationService: TranslationService
-  ) {
-    const { lat, lng } = this.cafeInfo.coordinates;
-    // URL del mapa embed con las coordenadas reales del local
-    const unsafeUrl = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.5!2d${lng}!3d${lat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x902bed59bb5eff65%3A0xaa6b6e74c4c70ce7!2sAtanacio%20Santos%20%26%20Calle%20Augusto%20Moreira%2C%20Portoviejo!5e0!3m2!1ses!2sec!4v1234567890123!5m2!1ses!2sec`;
-    this.mapEmbedUrl = this.sanitizer.bypassSecurityTrustResourceUrl(unsafeUrl);
-  }
-  
-  get cafeInfo() {
-    return this.dataService.getCafeInfo();
-  }
-  
+  ) { }
+
   getGoogleMapsUrl(): string {
-    const { lat, lng } = this.cafeInfo.coordinates;
+    const info = this.cafeInfo();
+    if (!info) return '';
+    const { lat, lng } = info.coordinates;
     return `https://www.google.com/maps?q=${lat},${lng}`;
   }
-  
+
   getPhoneUrl(): string {
-    return `tel:${this.cafeInfo.phone.replace(/\s/g, '')}`;
+    const info = this.cafeInfo();
+    return info ? `tel:${info.phone.replace(/\s/g, '')}` : '';
   }
-  
-  getHoursArray(): Array<{key: string, value: string}> {
-    if (!this.cafeInfo.hours) return [];
-    return Object.entries(this.cafeInfo.hours).map(([key, value]) => ({ key, value }));
+
+  getHoursArray(): Array<{ key: string, value: string }> {
+    const info = this.cafeInfo();
+    if (!info || !info.hours) return [];
+    return Object.entries(info.hours).map(([key, value]) => ({ key, value: String(value) }));
   }
 
   translateDayName(dayKey: string): string {
@@ -55,12 +58,12 @@ export class Contact {
       'Sábado': 'days.saturday',
       'Domingo': 'days.sunday'
     };
-    
+
     const translationKey = dayMap[dayKey];
     if (translationKey) {
       return this.translate(translationKey);
     }
-    
+
     // If no translation found, try to translate individual words
     if (dayKey.includes(' - ')) {
       const parts = dayKey.split(' - ');
@@ -70,7 +73,7 @@ export class Contact {
       });
       return translatedParts.join(' - ');
     }
-    
+
     return dayKey;
   }
 

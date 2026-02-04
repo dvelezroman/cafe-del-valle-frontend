@@ -9,9 +9,9 @@
     <nav class="menu-nav" aria-label="Categorías del menú">
       <div class="menu-filters">
         @for (category of categories; track category.value) {
-        <button class="filter-pill" [class.active]="selectedCategory === category.value"
+        <button class="filter-pill" [class.active]="selectedCategory() === category.value"
           (click)="filterByCategory(category.value)"
-          [aria-current]="selectedCategory === category.value ? 'true' : 'false'">
+          [attr.aria-current]="selectedCategory() === category.value ? 'true' : 'false'">
           {{ getCategoryLabel(category) }}
         </button>
         }
@@ -19,7 +19,7 @@
     </nav>
 
     <div class="menu-grid" role="list">
-      @for (item of filteredItems; track item.id) {
+      @for (item of filteredItems(); track item.id) {
       <article class="menu-card glass-card" [class.featured]="item.featured" role="listitem">
         @if (item.featured) {
         <div class="featured-ribbon">
@@ -51,7 +51,7 @@
       }
     </div>
 
-    @if (filteredItems.length === 0) {
+    @if (filteredItems().length === 0) {
     <div class="empty-state">
       <div class="empty-icon">🍽️</div>
       <p>{{ translate('menu.no.items') }}</p>

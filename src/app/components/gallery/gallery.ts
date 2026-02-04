@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, computed } from '@angular/core';
 import { DataService } from '../../services/data';
 import { GalleryImage } from '../../services/data';
 import { TranslationService } from '../../services/translation.service';
@@ -13,26 +13,24 @@ export class Gallery {
   constructor(
     public dataService: DataService,
     public translationService: TranslationService
-  ) {}
+  ) { }
 
   translate(key: string, params?: { [key: string]: string }): string {
     return this.translationService.translate(key, params);
   }
-  
-  get galleryImages(): GalleryImage[] {
-    return this.dataService.getGalleryImages();
-  }
-  
+
+  galleryImages = computed(() => this.dataService.galleryImages());
+
   selectedImage: GalleryImage | null = null;
-  
+
   openImage(image: GalleryImage) {
     this.selectedImage = image;
   }
-  
+
   closeImage() {
     this.selectedImage = null;
   }
-  
+
   handleImageError(event: Event, image: GalleryImage) {
     const img = event.target as HTMLImageElement;
     const fallback = this.getFallbackImage(image.id);
@@ -40,7 +38,7 @@ export class Gallery {
       img.src = fallback;
     }
   }
-  
+
   getFallbackImage(id: string): string {
     // Fallback a imágenes de Unsplash si las imágenes locales no existen
     const fallbacks: { [key: string]: string } = {

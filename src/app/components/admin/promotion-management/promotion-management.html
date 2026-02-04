@@ -1,0 +1,48 @@
+<div class="admin-section">
+    <div class="section-header">
+        <h2>Gestión del Club</h2>
+        <button class="btn btn-primary" (click)="showNewModal = true">+ Nueva Promoción</button>
+    </div>
+
+    <!-- Global Config Section -->
+    <div class="admin-card glass-card config-card">
+        <div class="config-header">
+            <h3>Configuración del Sistema</h3>
+        </div>
+        <div class="config-grid">
+            <div class="form-group">
+                <label>Puntos por Referido</label>
+                <div class="input-with-action">
+                    <input type="number" [(ngModel)]="referralPoints" name="referralPoints" />
+                    <button class="btn btn-sm" (click)="saveReferralPoints()">Actualizar</button>
+                </div>
+                <small class="hint">Cantidad de puntos que gana un socio cuando su invitado es aprobado.</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Promotions List -->
+    <div class="admin-card glass-card">
+        <h3>Promociones Activas</h3>
+        <div class="promotions-grid">
+            @for (promo of promotions; track promo.id) {
+            <div class="promo-item">
+                <div class="promo-img">
+                    <img [src]="promo.image || '/images/Logo2.jpeg'" [alt]="promo.name.es" />
+                </div>
+                <div class="promo-info">
+                    <h4>{{ promo.name.es }}</h4>
+                    <p class="cost">{{ promo.pointsCost }} Puntos</p>
+                    <p class="desc">{{ promo.description.es }}</p>
+                    <div class="promo-actions">
+                        <button class="btn-icon">✏️</button>
+                        <button class="btn-icon delete">🗑️</button>
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+
+    <!-- Note: Modal for new promotion would go here, for now keeping it simple -->
+</div>

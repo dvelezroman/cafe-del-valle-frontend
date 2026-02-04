@@ -1,0 +1,51 @@
+<div class="history-view">
+    <div class="header">
+        <h2>Mi Actividad</h2>
+        <p>Revisa tu historial de puntos y consumos realizados en Café del Valle.</p>
+    </div>
+
+    <div class="history-card glass-card">
+        @if (loading) {
+        <div class="loading-state"><span class="spinner"></span></div>
+        } @else if (records.length === 0) {
+        <div class="empty-state">
+            <p>No tienes actividad registrada aún.</p>
+        </div>
+        } @else {
+        <div class="table-wrapper">
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Descripción</th>
+                        <th>Categoría</th>
+                        <th>Puntos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (record of records; track record.id) {
+                    <tr>
+                        <td>{{ record.createdAt | date:'longDate' }}</td>
+                        <td>
+                            <strong>{{ record.promotion?.name?.es || record.productName }}</strong>
+                        </td>
+                        <td>
+                            @if (record.promotion) {
+                            <span class="badge promo">Canje</span>
+                            } @else if (record.pointsEarned > 0) {
+                            <span class="badge earn">Acumulación</span>
+                            } @else {
+                            <span class="badge other">Otro</span>
+                            }
+                        </td>
+                        <td [class.points-lost]="record.pointsUsed > 0" [class.points-won]="record.pointsEarned > 0">
+                            {{ record.pointsEarned > 0 ? '+' : '-' }}{{ record.pointsEarned || record.pointsUsed }}
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,79 @@
+<div class="partner-dashboard">
+    <!-- Header / Summary Card -->
+    <div class="dashboard-header card box-shadow">
+        <div class="welcome">
+            <h1>Hola, {{ profile?.user?.name }}</h1>
+            <p>Bienvenido de nuevo a tu club de café.</p>
+        </div>
+        <div class="points-badge">
+            <span class="label">Tus Puntos</span>
+            <span class="value">{{ profile?.points || 0 }}</span>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <!-- Referral Card -->
+        <div class="card glass-card referral-card">
+            <h3>Invita a tus amigos</h3>
+            <p>Comparte tu código y gana {{ referralPoints }} puntos por cada amigo que se una al club.</p>
+            <div class="code-box">
+                <span class="code">{{ profile?.referralCode }}</span>
+                <button class="btn btn-sm" (click)="copyCode()">Copiar</button>
+            </div>
+            <small class="hint">Tus amigos deben ingresar este código al suscribirse.</small>
+        </div>
+
+        <!-- Stats Card -->
+        <div class="card glass-card stats-card">
+            <h3>Resumen de Membresía</h3>
+            <div class="stat-item">
+                <span class="label">Estado</span>
+                <span class="value status-pill approved">{{ profile?.status }}</span>
+            </div>
+            <div class="stat-item">
+                <span class="label">Consumos realizados</span>
+                <span class="value">{{ profile?.consumptionRecords?.length || 0 }}</span>
+            </div>
+            <div class="stat-item">
+                <span class="label">Socio desde</span>
+                <span class="value">{{ profile?.createdAt | date:'mediumDate' }}</span>
+            </div>
+        </div>
+
+        <!-- Recent History (Minor preview) -->
+        <div class="card glass-card history-preview-card span-2">
+            <div class="card-header">
+                <h3>Actividad Reciente</h3>
+                <a routerLink="../history" class="view-all">Ver todo</a>
+            </div>
+
+            @if (profile?.consumptionRecords?.length === 0) {
+            <p class="empty-msg">Aún no has canjeado puntos ni registrado consumos.</p>
+            } @else {
+            <div class="mini-table-wrapper">
+                <table class="mini-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Producto / Beneficio</th>
+                            <th>Puntos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (record of profile?.consumptionRecords; track record.id) {
+                        <tr>
+                            <td>{{ record.createdAt | date:'shortDate' }}</td>
+                            <td>{{ record.promotion?.name?.es || record.productName || 'Canje de puntos' }}</td>
+                            <td [class.points-lost]="record.pointsUsed > 0"
+                                [class.points-won]="record.pointsEarned > 0">
+                                {{ record.pointsEarned > 0 ? '+' : '-' }}{{ record.pointsEarned || record.pointsUsed }}
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            }
+        </div>
+    </div>
+</div>

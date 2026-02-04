@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, computed } from '@angular/core';
 import { DataService } from '../../services/data';
 import { CoffeeVariety } from '../../services/data';
 import { TranslationService } from '../../services/translation.service';
@@ -13,11 +13,9 @@ export class Coffee {
   constructor(
     public dataService: DataService,
     public translationService: TranslationService
-  ) {}
-  
-  get coffeeVarieties(): CoffeeVariety[] {
-    return this.dataService.getCoffeeVarieties();
-  }
+  ) { }
+
+  coffeeVarieties = computed(() => this.dataService.coffeeVarieties());
 
   translate(key: string, params?: { [key: string]: string }): string {
     return this.translationService.translate(key, params);
@@ -52,7 +50,7 @@ export class Coffee {
     const translationKey = noteKeyMap[note];
     return translationKey ? this.translate(translationKey) : note;
   }
-  
+
   handleImageError(event: Event, variety: CoffeeVariety) {
     const img = event.target as HTMLImageElement;
     // Fallback a imágenes de Unsplash específicas de cada varietal

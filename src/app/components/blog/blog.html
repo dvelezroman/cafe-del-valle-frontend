@@ -7,9 +7,10 @@
     </header>
 
     <!-- Posts Destacados - Magazine Style -->
-    <div class="featured-section" *ngIf="featuredPosts$ | async as featuredPosts">
+    @if (featuredPosts().length > 0) {
+    <div class="featured-section">
       <div class="featured-grid">
-        @for (post of featuredPosts.slice(0, 1); track post.id) {
+        @for (post of featuredPosts().slice(0, 1); track post.id) {
         <article class="featured-hero glass-card" (click)="scrollToSection('blog')">
           <div class="featured-visual image-container">
             <img [src]="post.image" [alt]="post.title" loading="lazy" />
@@ -27,10 +28,12 @@
         }
       </div>
     </div>
+    }
 
     <!-- Lista de Posts - Clean Grid -->
-    <div class="blog-grid" *ngIf="blogPosts$ | async as posts">
-      @for (post of posts; track post.id) {
+    @if (blogPosts().length > 0) {
+    <div class="blog-grid">
+      @for (post of blogPosts(); track post.id) {
       <article class="blog-card glass-card" (click)="scrollToSection('blog')">
         <div class="card-visual image-container">
           <img [src]="post.image" [alt]="post.title" loading="lazy" />
@@ -64,8 +67,9 @@
       </article>
       }
     </div>
+    }
 
-    @if ((blogPosts$ | async)?.length === 0) {
+    @if (blogPosts().length === 0) {
     <div class="empty-blog">
       <p>{{ translate('blog.no.posts') }}</p>
     </div>

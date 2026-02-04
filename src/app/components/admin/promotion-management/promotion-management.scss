@@ -1,0 +1,81 @@
+.config-card {
+    margin-bottom: 2rem;
+
+    h3 {
+        font-size: 1rem;
+        color: var(--coffee-rich);
+        margin-bottom: 1.5rem;
+    }
+}
+
+.input-with-action {
+    display: flex;
+    gap: 1rem;
+
+    input {
+        flex-grow: 1;
+    }
+}
+
+.promotions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.promo-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--bg-secondary);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    transition: var(--transition-smooth);
+
+    &:hover {
+        transform: translateY(-4px);
+        border-color: var(--accent-gold);
+    }
+}
+
+.promo-img {
+    height: 160px;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.promo-info {
+    padding: 1.5rem;
+
+    h4 {
+        margin-bottom: 0.5rem;
+        font-size: 1.125rem;
+        color: var(--coffee-deep);
+    }
+
+    .cost {
+        font-weight: 700;
+        color: var(--accent-gold);
+        margin-bottom: 0.75rem;
+        font-size: 0.875rem;
+    }
+
+    .desc {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        line-height: 1.4;
+        margin-bottom: 1.5rem;
+        height: 3em;
+        overflow: hidden;
+    }
+}
+
+.promo-actions {
+    display: flex;
+    gap: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--bg-secondary);
+}

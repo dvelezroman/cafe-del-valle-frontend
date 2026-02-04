@@ -7,7 +7,7 @@
     </header>
 
     <div class="gallery-grid" role="list">
-      @for (image of galleryImages; track image.id; let i = $index) {
+      @for (image of galleryImages(); track image.id; let i = $index) {
       <figure class="gallery-item image-reveal" (click)="openImage(image)" [style.--delay]="i * 0.1 + 's'"
         role="listitem">
         <div class="image-container">
