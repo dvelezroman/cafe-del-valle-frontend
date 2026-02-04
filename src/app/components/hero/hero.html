@@ -1,35 +1,39 @@
-<section class="hero">
-  <div class="hero-background">
+<section class="hero" id="home">
+  <div class="hero-bg-container">
+    <div class="hero-image"></div>
     <div class="hero-overlay"></div>
   </div>
-  <div class="hero-content">
-    <div class="container">
-      <div class="hero-logo-wrapper">
-        <div class="hero-logo">
-          <img 
-            src="/images/IMG_20250919_144616_546.png" 
-            alt="Café del Valle"
-            width="200"
-            height="200"
-            loading="eager"
-            fetchpriority="high" />
-        </div>
-      </div>
-      <div class="hero-text-content">
-        <p class="hero-tagline">{{ translate('hero.tagline') }}</p>
+
+  <div class="container hero-container">
+    <div class="hero-content glass-card">
+      <header class="hero-header">
+        <span class="hero-subtitle animate-fade-in">{{ translate('hero.tagline') }}</span>
+        <h1 class="hero-title animate-title">
+          {{ translate('hero.title') || 'Café del Valle' }}
+        </h1>
+      </header>
+      
+      <div class="hero-body animate-fade-in--delayed">
         <p class="hero-description">
           {{ translate('hero.description') }}
         </p>
-        <div class="hero-buttons">
-          <a (click)="scrollToSection('coffee')" class="btn btn-primary">{{ translate('hero.button.coffee') }}</a>
-          <a (click)="scrollToSection('contact')" class="btn btn-outline">{{ translate('hero.button.visit') }}</a>
+        
+        <div class="hero-actions">
+          <button (click)="scrollToSection('coffee')" class="btn btn-primary" aria-label="Ver variedades de café">
+            {{ translate('hero.button.coffee') }}
+          </button>
+          <button (click)="scrollToSection('menu')" class="btn btn-outline" aria-label="Ver el menú">
+            {{ translate('hero.button.menu') || 'Ver Menú' }}
+          </button>
         </div>
       </div>
     </div>
   </div>
-  <div class="hero-scroll">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M7 13L12 18L17 13M7 6L12 11L17 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-  </div>
+
+  <button class="scroll-indicator" (click)="scrollToSection('about')" aria-label="Desplazarse hacia abajo">
+    <span class="scroll-text">{{ translate('hero.scroll') || 'Descubre más' }}</span>
+    <div class="scroll-icon">
+      <div class="dot"></div>
+    </div>
+  </button>
 </section>

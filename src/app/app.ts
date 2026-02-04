@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { Hero } from './components/hero/hero';
@@ -37,8 +37,14 @@ export class App implements OnInit {
     { code: 'en', label: 'EN', flag: '🇬🇧' },
     { code: 'fr', label: 'FR', flag: '🇫🇷' }
   ];
+  isScrolled = false;
 
-  constructor(public translationService: TranslationService) {}
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    this.isScrolled = window.scrollY > 50;
+  }
+
+  constructor(public translationService: TranslationService) { }
 
   ngOnInit() {
     this.translationService.getCurrentLanguage().subscribe(lang => {
@@ -53,18 +59,18 @@ export class App implements OnInit {
   translate(key: string, params?: { [key: string]: string }): string {
     return this.translationService.translate(key, params);
   }
-  
+
   getCurrentYear(): number {
     return new Date().getFullYear();
   }
-  
+
   scrollToSection(sectionId: string) {
     const element = document.getElementById(sectionId);
     if (element) {
       const headerOffset = 70;
       const elementPosition = element.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-      
+
       window.scrollTo({
         top: offsetPosition,
         behavior: 'smooth'
@@ -76,11 +82,11 @@ export class App implements OnInit {
       });
     }
   }
-  
+
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
   }
-  
+
   closeMenu() {
     this.menuOpen = false;
   }

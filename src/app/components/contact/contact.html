@@ -1,63 +1,60 @@
 <section id="contact" class="section contact">
-  <div class="container">
-    <div class="contact-header">
-      <img 
-        src="/images/Logo2.jpeg" 
-        alt="Café del Valle" 
-        class="contact-logo"
-        width="100"
-        height="100"
-        loading="lazy" />
-    <h2 class="section-title">{{ translate('contact.title') }}</h2>
-    <p class="section-subtitle">
-      {{ translate('contact.subtitle') }}
-    </p>
-    </div>
-    <div class="contact-content">
-      <div class="contact-info">
-        <div class="info-card">
-          <div class="info-icon">📍</div>
-          <h3>{{ translate('contact.address') }}</h3>
-          <p>{{ cafeInfo.address }}</p>
-          <a [href]="getGoogleMapsUrl()" target="_blank" rel="noopener" class="btn btn-primary">
-            {{ translate('contact.view.maps') }}
-          </a>
+  <div class="container overflow-hidden">
+    <header class="section-header">
+      <span class="subtitle">{{ translate('contact.subtitle_small') || 'Encuéntranos' }}</span>
+      <h2 class="title">{{ translate('contact.title') }}</h2>
+      <p class="description">{{ translate('contact.subtitle') }}</p>
+    </header>
+
+    <div class="contact-grid">
+      <div class="contact-sidebar">
+        <div class="info-block glass-card">
+          <div class="block-icon">📍</div>
+          <div class="block-details">
+            <h3>{{ translate('contact.address') }}</h3>
+            <p>{{ cafeInfo.address }}</p>
+            <a [href]="getGoogleMapsUrl()" target="_blank" rel="noopener" class="text-link">
+              {{ translate('contact.view.maps') }}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"
+                  stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </a>
+          </div>
         </div>
-        
-        <div class="info-card">
-          <div class="info-icon">📞</div>
-          <h3>{{ translate('contact.phone') }}</h3>
-          <p>
-            <a [href]="getPhoneUrl()" class="phone-link">{{ cafeInfo.phone }}</a>
-          </p>
+
+        <div class="info-block glass-card">
+          <div class="block-icon">📞</div>
+          <div class="block-details">
+            <h3>{{ translate('contact.phone') }}</h3>
+            <p><a [href]="getPhoneUrl()" class="phone-link">{{ cafeInfo.phone }}</a></p>
+          </div>
         </div>
-        
+
         @if (cafeInfo.hours) {
-          <div class="info-card">
-            <div class="info-icon">🕐</div>
+        <div class="info-block glass-card">
+          <div class="block-icon">🕐</div>
+          <div class="block-details">
             <h3>{{ translate('contact.hours') }}</h3>
-            <div class="hours-list">
+            <div class="schedule-table">
               @for (hours of getHoursArray(); track hours.key) {
-                <div class="hours-item">
-                  <span class="hours-day">{{ translateDayName(hours.key) }}</span>
-                  <span class="hours-time">{{ hours.value }}</span>
-                </div>
+              <div class="schedule-row">
+                <span class="day">{{ translateDayName(hours.key) }}</span>
+                <span class="time">{{ hours.value }}</span>
+              </div>
               }
             </div>
           </div>
+        </div>
         }
       </div>
-      
-      <div class="contact-map">
-        <iframe
-          [src]="mapEmbedUrl"
-          width="100%"
-          height="100%"
-          style="border:0; border-radius: var(--radius-md);"
-          allowfullscreen=""
-          loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade">
-        </iframe>
+
+      <div class="contact-visual">
+        <div class="map-container shadow-lg">
+          <iframe [src]="mapEmbedUrl" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
+            title="Localización de Café del Valle" referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
       </div>
     </div>
   </div>

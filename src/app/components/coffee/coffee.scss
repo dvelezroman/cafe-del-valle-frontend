@@ -1,129 +1,124 @@
 .coffee {
-  background: var(--off-white);
-}
-
-.section-subtitle {
-  text-align: center;
-  font-size: 1.125rem;
-  color: var(--gray-medium);
-  margin-bottom: var(--spacing-lg);
-  max-width: 700px;
-  margin-left: auto;
-  margin-right: auto;
+  background-color: var(--bg-primary);
 }
 
 .coffee-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: var(--spacing-lg);
-  margin-top: var(--spacing-lg);
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: var(--space-lg);
+  margin-top: var(--space-lg);
 }
 
 .coffee-card {
-  background: var(--white);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  
-  &:hover {
-    transform: translateY(-8px);
-    box-shadow: var(--shadow-lg);
-  }
-}
-
-.coffee-image {
-  width: 100%;
-  height: 250px;
-  background: linear-gradient(135deg, var(--coffee-medium), var(--coffee-dark));
+  padding: 0;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  position: relative;
-  
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-  }
-  
-  // Placeholder solo si no hay imagen
-  .coffee-placeholder {
-    color: var(--coffee-latte);
-    opacity: 0.5;
+  flex-direction: column;
+  border: 1px solid var(--bg-secondary);
+  background: var(--white);
+
+  &:hover {
+    border-color: var(--accent-gold-light);
+
+    .coffee-image-wrapper img {
+      transform: scale(1.1);
+    }
   }
 }
 
-.coffee-card:hover .coffee-image img {
-  transform: scale(1.1);
+.coffee-image-wrapper {
+  position: relative;
+  aspect-ratio: 16/10;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+
+  .coffee-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: var(--coffee-deep);
+    color: var(--text-light);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .coffee-placeholder {
+    height: 100%;
+    background: var(--bg-secondary);
+    font-size: 3rem;
+  }
 }
 
 .coffee-content {
-  padding: var(--spacing-md);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
 .coffee-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: var(--spacing-sm);
-  
+  margin-bottom: 1rem;
+
   h3 {
     font-size: 1.5rem;
-    color: var(--coffee-dark);
+    color: var(--coffee-deep);
     margin: 0;
   }
 }
 
-.coffee-region {
-  font-size: 0.875rem;
-  color: var(--coffee-medium);
-  background: var(--coffee-latte);
-  padding: 0.25rem 0.75rem;
-  border-radius: var(--radius-sm);
-  font-weight: 600;
-}
-
 .coffee-description {
-  color: var(--gray-dark);
-  line-height: 1.7;
-  margin-bottom: var(--spacing-md);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
 }
 
-.coffee-notes {
-  padding-top: var(--spacing-sm);
-  border-top: 1px solid var(--gray-light);
+.coffee-footer {
+  margin-top: auto;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--bg-secondary);
 }
 
-.notes-label {
-  display: block;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--coffee-medium);
-  margin-bottom: var(--spacing-xs);
+.coffee-notes-container {
+  .notes-title {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent-gold);
+    margin-bottom: 0.75rem;
+  }
 }
 
-.notes-tags {
+.notes-list {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
 }
 
-.note-tag {
-  display: inline-block;
-  padding: 0.375rem 0.75rem;
-  background: var(--coffee-latte);
-  color: var(--coffee-dark);
-  border-radius: var(--radius-sm);
-  font-size: 0.875rem;
+.note-pill {
+  font-size: 0.8125rem;
   font-weight: 500;
+  background: var(--bg-secondary);
+  color: var(--coffee-rich);
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-sm);
+  transition: var(--transition-fast);
+
+  &:hover {
+    background: var(--accent-gold-light);
+    color: var(--coffee-deep);
+  }
 }
 
-@media (max-width: 768px) {
+/* Responsive */
+@media (max-width: 480px) {
   .coffee-grid {
     grid-template-columns: 1fr;
   }
 }
-

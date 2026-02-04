@@ -1,119 +1,141 @@
 .reviews {
-  background: var(--off-white);
+  background-color: var(--bg-primary);
 }
 
 .reviews-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: var(--spacing-md);
-  margin-top: var(--spacing-lg);
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: var(--space-lg);
+  margin-top: var(--space-lg);
 }
 
 .review-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 2.5rem;
   background: var(--white);
-  padding: 0;
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  overflow: hidden;
-  
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-md);
-  }
+  border: 1px solid var(--bg-secondary);
+  position: relative;
 }
 
-.review-photo {
-  width: 100%;
-  height: 200px;
-  overflow: hidden;
-  
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-  }
+.review-quote-icon {
+  font-family: var(--font-heading);
+  font-size: 5rem;
+  line-height: 1;
+  color: var(--accent-gold-light);
+  position: absolute;
+  top: 1rem;
+  left: 2rem;
+  opacity: 0.5;
+  pointer-events: none;
 }
 
-.review-card:hover .review-photo img {
-  transform: scale(1.05);
+.review-body {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 2rem;
+  flex-grow: 1;
 }
 
-.review-card-content {
-  padding: var(--spacing-md);
+.review-comment {
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-style: italic;
+  margin: 0;
 }
 
-.review-header {
+.review-footer {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: var(--spacing-sm);
-  flex-wrap: wrap;
-  gap: var(--spacing-sm);
+  align-items: flex-end;
+  margin-top: auto;
 }
 
 .review-author {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
-  flex: 1;
+  gap: 1rem;
 }
 
-.author-avatar {
-  width: 50px;
-  height: 50px;
+.author-avatar-wrapper {
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--coffee-medium), var(--coffee-dark));
-  color: var(--white);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  font-size: 1.25rem;
-}
+  overflow: hidden;
+  background: var(--bg-secondary);
+  flex-shrink: 0;
 
-.author-info {
-  h4 {
-    margin: 0 0 0.25rem 0;
-    font-size: 1rem;
-    color: var(--coffee-dark);
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 }
 
-.review-date {
-  font-size: 0.875rem;
-  color: var(--gray-medium);
+.author-avatar-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--coffee-rich);
+  color: var(--text-light);
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.author-name {
+  font-size: 1rem;
+  margin: 0 0 0.25rem;
+  color: var(--coffee-deep);
 }
 
 .review-rating {
   display: flex;
   gap: 2px;
-}
 
-.star {
-  color: var(--gray-light);
-  font-size: 1.25rem;
-  
-  &.filled {
-    color: var(--accent-gold);
+  .star {
+    font-size: 0.75rem;
+    color: var(--bg-secondary);
+
+    &.filled {
+      color: var(--accent-gold);
+    }
   }
 }
 
-.review-comment {
-  color: var(--gray-dark);
-  line-height: 1.7;
-  margin: 0;
-  font-style: italic;
+.review-date {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-@media (max-width: 768px) {
-  .reviews-grid {
-    grid-template-columns: 1fr;
+.review-visual {
+  margin-top: 2rem;
+  aspect-ratio: 16/9;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .review-card {
+    padding: 1.5rem;
   }
-  
-  .review-header {
+
+  .review-footer {
     flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .review-date-info {
+    align-self: flex-end;
   }
 }
-

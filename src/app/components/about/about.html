@@ -1,40 +1,60 @@
 <section id="about" class="section about">
-  <div class="container">
-    <div class="about-header">
-      <img 
-        src="/images/Logo1.jpeg" 
-        alt="Café del Valle" 
-        class="about-logo"
-        width="120"
-        height="120"
-        loading="lazy" />
-      <h2 class="section-title">{{ translate('about.title') }}</h2>
-    </div>
-    <div class="about-content">
-      <div class="about-text">
-        <p class="lead">{{ translate('about.cafe.description') }}</p>
-        <p>
-          {{ translate('about.description') }}
-        </p>
-        <p>
-          {{ translate('about.description2') }}
-        </p>
-        <div class="about-features">
-          <div class="feature">
-            <div class="feature-icon">☕</div>
-            <h3>{{ translate('about.feature.origin.title') }}</h3>
-            <p>{{ translate('about.feature.origin.desc') }}</p>
+  <div class="container about-container">
+    <div class="about-grid">
+      <div class="about-image-side">
+        <div class="image-reveal-wrapper">
+          <div class="image-container main-image">
+            <img src="/images/Logo1.jpeg" alt="Café del Valle Interior" loading="lazy" />
           </div>
-          <div class="feature">
-            <div class="feature-icon">🌱</div>
-            <h3>{{ translate('about.feature.sustainable.title') }}</h3>
-            <p>{{ translate('about.feature.sustainable.desc') }}</p>
+          <div class="image-caption glass-card">
+            <span class="caption-count">01</span>
+            <span class="caption-text">{{ translate('about.est_date') || 'Desde 2024' }}</span>
           </div>
-          <div class="feature">
-            <div class="feature-icon">👨‍🍳</div>
-            <h3>{{ translate('about.feature.artisan.title') }}</h3>
-            <p>{{ translate('about.feature.artisan.desc') }}</p>
-          </div>
+        </div>
+      </div>
+
+      <div class="about-text-side">
+        <header class="section-header align-left">
+          <span class="subtitle">{{ translate('about.subtitle') || 'Nuestra Historia' }}</span>
+          <h2 class="title">{{ translate('about.title') }}</h2>
+        </header>
+
+        <div class="about-description">
+          <p class="lead">{{ translate('about.cafe.description') }}</p>
+          <p>{{ translate('about.description') }}</p>
+          <p>{{ translate('about.description2') }}</p>
+        </div>
+
+        <div class="about-features-grid">
+          <article class="feature-item">
+            <div class="feature-icon-wrapper">
+              <span class="feature-icon">☕</span>
+            </div>
+            <div class="feature-content">
+              <h3>{{ translate('about.feature.origin.title') }}</h3>
+              <p>{{ translate('about.feature.origin.desc') }}</p>
+            </div>
+          </article>
+
+          <article class="feature-item">
+            <div class="feature-icon-wrapper">
+              <span class="feature-icon">🌱</span>
+            </div>
+            <div class="feature-content">
+              <h3>{{ translate('about.feature.sustainable.title') }}</h3>
+              <p>{{ translate('about.feature.sustainable.desc') }}</p>
+            </div>
+          </article>
+
+          <article class="feature-item">
+            <div class="feature-icon-wrapper">
+              <span class="feature-icon">👨‍🍳</span>
+            </div>
+            <div class="feature-content">
+              <h3>{{ translate('about.feature.artisan.title') }}</h3>
+              <p>{{ translate('about.feature.artisan.desc') }}</p>
+            </div>
+          </article>
         </div>
       </div>
     </div>

@@ -35,14 +35,14 @@ export class TranslationService {
   translate(key: string, params?: { [key: string]: string }): string {
     const lang = this.currentLanguage$.value;
     let translation = this.translations[key]?.[lang] || this.translations[key]?.['es'] || key;
-    
+
     // Replace parameters
     if (params) {
       Object.keys(params).forEach(paramKey => {
         translation = translation.replace(`{{${paramKey}}}`, params[paramKey]);
       });
     }
-    
+
     return translation;
   }
 
@@ -90,23 +90,48 @@ export class TranslationService {
       en: 'The authentic taste of Ecuadorian coffee',
       fr: 'Le goût authentique du café équatorien'
     };
+    this.translations['hero.title'] = {
+      es: 'Café del Valle',
+      en: 'Café del Valle',
+      fr: 'Café del Valle'
+    };
     this.translations['hero.description'] = {
-      es: 'Descubre el auténtico sabor del café ecuatoriano, seleccionado de las mejores regiones del país.',
-      en: 'Discover the authentic taste of Ecuadorian coffee, selected from the best regions of the country.',
-      fr: 'Découvrez le goût authentique du café équatorien, sélectionné dans les meilleures régions du pays.'
+      es: 'Descubre el auténtico sabor del café ecuatoriano, de la mano con procesos artesanales y granos de alta calidad.',
+      en: 'Discover the authentic taste of Ecuadorian coffee, through artisanal processes and high-quality beans.',
+      fr: 'Découvrez le goût authentique du café équatorien, grâce à des processus artisanaux et des grains de haute qualité.'
     };
     this.translations['hero.button.coffee'] = {
       es: 'Nuestros Cafés',
       en: 'Our Coffee',
       fr: 'Nos Cafés'
     };
+    this.translations['hero.button.menu'] = {
+      es: 'Ver Menú',
+      en: 'View Menu',
+      fr: 'Voir le Menu'
+    };
     this.translations['hero.button.visit'] = {
       es: 'Visítanos',
       en: 'Visit Us',
       fr: 'Visitez-nous'
     };
+    this.translations['hero.scroll'] = {
+      es: 'Descubre más',
+      en: 'Discover more',
+      fr: 'Découvrir plus'
+    };
 
     // About Section
+    this.translations['about.subtitle'] = {
+      es: 'Nuestra Historia',
+      en: 'Our History',
+      fr: 'Notre Histoire'
+    };
+    this.translations['about.est_date'] = {
+      es: 'Desde 2024',
+      en: 'Since 2024',
+      fr: 'Depuis 2024'
+    };
     this.translations['about.title'] = {
       es: 'Sobre Nosotros',
       en: 'About Us',
@@ -159,10 +184,15 @@ export class TranslationService {
     };
 
     // Coffee Section
+    this.translations['coffee.subtitle_small'] = {
+      es: 'Nuestras Variedades',
+      en: 'Our Varieties',
+      fr: 'Nos Variétés'
+    };
     this.translations['coffee.title'] = {
-      es: 'Nuestros Cafés',
-      en: 'Our Coffee',
-      fr: 'Nos Cafés'
+      es: 'Cafés de Especialidad',
+      en: 'Specialty Coffees',
+      fr: 'Cafés de Spécialité'
     };
     this.translations['coffee.subtitle'] = {
       es: 'Descubre nuestra selección de cafés ecuatorianos, cada uno con su personalidad única',
@@ -260,10 +290,15 @@ export class TranslationService {
     };
 
     // Menu Section
-    this.translations['menu.title'] = {
-      es: 'Nuestro Menú',
+    this.translations['menu.subtitle_small'] = {
+      es: 'Nuestra Carta',
       en: 'Our Menu',
-      fr: 'Notre Menu'
+      fr: 'Notre Carte'
+    };
+    this.translations['menu.title'] = {
+      es: 'Sabor en cada bocado',
+      en: 'Flavor in every bite',
+      fr: 'Saveur à chaque bouchée'
     };
     this.translations['menu.subtitle'] = {
       es: 'Descubre nuestra selección de bebidas, comidas y postres preparados con ingredientes frescos y de calidad',
@@ -393,18 +428,33 @@ export class TranslationService {
     };
 
     // Gallery Section
+    this.translations['gallery.subtitle_small'] = {
+      es: 'Nuestros Momentos',
+      en: 'Our Moments',
+      fr: 'Nos Moments'
+    };
     this.translations['gallery.title'] = {
-      es: 'Galería',
-      en: 'Gallery',
-      fr: 'Galerie'
+      es: 'Galería de Experiencias',
+      en: 'Experience Gallery',
+      fr: 'Galerie d\'Expériences'
     };
     this.translations['gallery.subtitle'] = {
       es: 'Momentos especiales en Café del Valle',
       en: 'Special moments at Café del Valle',
       fr: 'Moments spéciaux au Café del Valle'
     };
+    this.translations['gallery.tag'] = {
+      es: 'Ambiente',
+      en: 'Atmosphere',
+      fr: 'Ambiance'
+    };
 
     // Reviews Section
+    this.translations['reviews.subtitle_small'] = {
+      es: 'Testimonios',
+      en: 'Testimonials',
+      fr: 'Témoignages'
+    };
     this.translations['reviews.title'] = {
       es: 'Lo Que Dicen Nuestros Clientes',
       en: 'What Our Customers Say',
@@ -417,10 +467,15 @@ export class TranslationService {
     };
 
     // Blog Section
+    this.translations['blog.subtitle_small'] = {
+      es: 'Nuestras Crónicas',
+      en: 'Our Chronicles',
+      fr: 'Nos Chroniques'
+    };
     this.translations['blog.title'] = {
-      es: 'Nuestro Blog',
-      en: 'Our Blog',
-      fr: 'Notre Blog'
+      es: 'Cultura y Pasión',
+      en: 'Culture and Passion',
+      fr: 'Culture et Passion'
     };
     this.translations['blog.subtitle'] = {
       es: 'Noticias, historias y consejos sobre el mundo del café',
@@ -449,10 +504,15 @@ export class TranslationService {
     };
 
     // Contact Section
+    this.translations['contact.subtitle_small'] = {
+      es: 'Encuéntranos',
+      en: 'Find Us',
+      fr: 'Trouvez-nous'
+    };
     this.translations['contact.title'] = {
-      es: 'Visítanos',
-      en: 'Visit Us',
-      fr: 'Visitez-nous'
+      es: 'Ven a Visitarnos',
+      en: 'Come Visit Us',
+      fr: 'Venez nous voir'
     };
     this.translations['contact.subtitle'] = {
       es: 'Estamos ubicados en el corazón de Portoviejo. ¡Te esperamos!',
@@ -534,29 +594,44 @@ export class TranslationService {
       fr: 'Le goût authentique du café équatorien'
     };
     this.translations['footer.links'] = {
-      es: 'Enlaces',
-      en: 'Links',
-      fr: 'Liens'
+      es: 'Enlaces Rápidos',
+      en: 'Quick Links',
+      fr: 'Liens Rapides'
     };
     this.translations['footer.about'] = {
-      es: 'Sobre Nosotros',
+      es: 'Nosotros',
       en: 'About Us',
-      fr: 'À propos de nous'
+      fr: 'À propos'
     };
     this.translations['footer.coffee'] = {
-      es: 'Nuestros Cafés',
+      es: 'Cafés',
       en: 'Our Coffee',
       fr: 'Nos Cafés'
     };
-    this.translations['footer.contact'] = {
-      es: 'Contacto',
-      en: 'Contact',
-      fr: 'Contact'
+    this.translations['footer.menu'] = {
+      es: 'Nuestra Carta',
+      en: 'Our Menu',
+      fr: 'Notre Carte'
+    };
+    this.translations['footer.blog'] = {
+      es: 'Crónicas',
+      en: 'Chronicles',
+      fr: 'Chroniques'
     };
     this.translations['footer.contact.title'] = {
       es: 'Contacto',
       en: 'Contact',
       fr: 'Contact'
+    };
+    this.translations['footer.newsletter.desc'] = {
+      es: 'Recibe nuestras novedades y promociones directamente en tu correo.',
+      en: 'Receive our news and promotions directly in your email.',
+      fr: 'Recevez nos nouvelles et promotions directement dans votre e-mail.'
+    };
+    this.translations['footer.email.placeholder'] = {
+      es: 'Tu correo electrónico',
+      en: 'Your email address',
+      fr: 'Votre adresse e-mail'
     };
     this.translations['footer.rights'] = {
       es: 'Todos los derechos reservados.',

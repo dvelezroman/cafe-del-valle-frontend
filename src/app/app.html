@@ -1,43 +1,39 @@
-<header class="header">
+<header class="header" [class.scrolled]="isScrolled">
   <nav class="nav container">
     <div class="nav-brand">
       <a (click)="scrollToSection('hero'); closeMenu()" class="brand-link">
-        <img 
-          src="/images/IMG_20250919_144616_546.png" 
-          alt="Café del Valle" 
-          class="brand-logo"
-          width="50"
-          height="50"
-          loading="eager"
-          fetchpriority="high" />
+        <div class="logo-container">
+          <img src="/images/IMG_20250919_144616_546.png" alt="Café del Valle" class="brand-logo" width="40" height="40"
+            loading="eager" />
+        </div>
+        <span class="brand-text">Café del Valle</span>
       </a>
     </div>
-    <ul class="nav-menu" [class.active]="menuOpen">
+
+    <ul class="nav-links" [class.active]="menuOpen">
       <li><a (click)="scrollToSection('about'); closeMenu()">{{ translate('nav.about') }}</a></li>
       <li><a (click)="scrollToSection('coffee'); closeMenu()">{{ translate('nav.coffee') }}</a></li>
       <li><a (click)="scrollToSection('menu'); closeMenu()">{{ translate('nav.menu') }}</a></li>
-      <li><a (click)="scrollToSection('gallery'); closeMenu()">{{ translate('nav.gallery') }}</a></li>
-      <li><a (click)="scrollToSection('reviews'); closeMenu()">{{ translate('nav.reviews') }}</a></li>
       <li><a (click)="scrollToSection('blog'); closeMenu()">{{ translate('nav.blog') }}</a></li>
       <li><a (click)="scrollToSection('contact'); closeMenu()">{{ translate('nav.contact') }}</a></li>
     </ul>
+
     <div class="nav-actions">
-      <div class="language-toggle">
+      <div class="language-dropdown">
         @for (lang of languages; track lang.code) {
-          <button 
-            class="lang-btn"
-            [class.active]="currentLanguage === lang.code"
-            (click)="setLanguage(lang.code)"
-            [attr.aria-label]="'Switch to ' + lang.label">
-            <span class="lang-flag">{{ lang.flag }}</span>
-            <span class="lang-label">{{ lang.label }}</span>
-          </button>
+        <button class="lang-pill" [class.active]="currentLanguage === lang.code" (click)="setLanguage(lang.code)"
+          [attr.aria-label]="'Switch to ' + lang.label">
+          <span class="lang-flag">{{ lang.flag }}</span>
+          <span class="lang-label">{{ lang.label }}</span>
+        </button>
         }
       </div>
+
       <button class="nav-toggle" (click)="toggleMenu()" aria-label="Toggle menu" [attr.aria-expanded]="menuOpen">
-        <span></span>
-        <span></span>
-        <span></span>
+        <div class="hamburger" [class.open]="menuOpen">
+          <span></span>
+          <span></span>
+        </div>
       </button>
     </div>
   </nav>
@@ -55,35 +51,54 @@
 </main>
 
 <footer class="footer">
-  <div class="container">
-    <div class="footer-content">
-      <div class="footer-section">
-        <img 
-          src="/images/IMG_20250919_144618_468.png" 
-          alt="Café del Valle" 
-          class="footer-logo"
-          width="60"
-          height="60"
-          loading="lazy" />
-        <p>{{ translate('footer.tagline') }}</p>
+  <div class="container footer-grid">
+    <div class="footer-brand-section">
+      <div class="footer-logo-wrapper">
+        <img src="/images/IMG_20250919_144618_468.png" alt="Café del Valle Logo" class="footer-logo" loading="lazy" />
       </div>
-      <div class="footer-section">
-        <h4>{{ translate('footer.links') }}</h4>
-        <ul>
-          <li><a (click)="scrollToSection('about')">{{ translate('footer.about') }}</a></li>
-          <li><a (click)="scrollToSection('coffee')">{{ translate('footer.coffee') }}</a></li>
-          <li><a (click)="scrollToSection('contact')">{{ translate('footer.contact') }}</a></li>
-        </ul>
-      </div>
-      <div class="footer-section">
-        <h4>{{ translate('footer.contact.title') }}</h4>
-        <p>Atanacio Santos y Calle Augusto Moreira<br>
-        Portoviejo, Ecuador</p>
-        <p>Tel: +593 99 718 6022</p>
+      <p class="footer-tagline">{{ translate('footer.tagline') }}</p>
+      <div class="social-links">
+        <a href="#" aria-label="Instagram">IG</a>
+        <a href="#" aria-label="Facebook">FB</a>
+        <a href="#" aria-label="WhatsApp">WA</a>
       </div>
     </div>
-    <div class="footer-bottom">
-      <p>&copy; {{ getCurrentYear() }} Café del Valle. {{ translate('footer.rights') }}</p>
+
+    <nav class="footer-nav" aria-label="Enlaces rápidos">
+      <h4>{{ translate('footer.links') }}</h4>
+      <ul>
+        <li><a (click)="scrollToSection('about')">{{ translate('footer.about') }}</a></li>
+        <li><a (click)="scrollToSection('coffee')">{{ translate('footer.coffee') }}</a></li>
+        <li><a (click)="scrollToSection('menu')">{{ translate('footer.menu') || 'Nuestra Carta' }}</a></li>
+        <li><a (click)="scrollToSection('blog')">{{ translate('footer.blog') || 'Blog' }}</a></li>
+      </ul>
+    </nav>
+
+    <div class="footer-contact">
+      <h4>{{ translate('footer.contact.title') }}</h4>
+      <address>
+        <p>Atanacio Santos y Calle Augusto Moreira<br>
+          Portoviejo, Ecuador</p>
+        <p class="contact-highlight">Tel: <a href="tel:+593997186022">+593 99 718 6022</a></p>
+      </address>
+    </div>
+
+    <div class="footer-newsletter">
+      <h4>Newsletter</h4>
+      <p>{{ translate('footer.newsletter.desc') || 'Recibe nuestras novedades.' }}</p>
+      <form class="newsletter-form">
+        <input type="email" [placeholder]="translate('footer.email.placeholder') || 'Tu email'"
+          aria-label="Email para newsletter" />
+        <button type="submit" class="btn btn-primary btn-sm">→</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="footer-bottom container">
+    <p>&copy; {{ getCurrentYear() }} Café del Valle. {{ translate('footer.rights') }}</p>
+    <div class="footer-legal">
+      <a href="#">Privacidad</a>
+      <a href="#">Términos</a>
     </div>
   </div>
 </footer>

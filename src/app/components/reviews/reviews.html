@@ -1,40 +1,52 @@
 <section id="reviews" class="section reviews">
   <div class="container">
-    <h2 class="section-title">{{ translate('reviews.title') }}</h2>
-    <p class="section-subtitle">
-      {{ translate('reviews.subtitle') }}
-    </p>
-    <div class="reviews-grid">
+    <header class="section-header">
+      <span class="subtitle">{{ translate('reviews.subtitle_small') || 'Testimonios' }}</span>
+      <h2 class="title">{{ translate('reviews.title') }}</h2>
+      <p class="description">{{ translate('reviews.subtitle') }}</p>
+    </header>
+
+    <div class="reviews-grid" role="list">
       @for (review of reviews; track review.id) {
-        <div class="review-card">
-          @if (review.photoUrl) {
-            <div class="review-photo">
-              <img [src]="review.photoUrl" [alt]="'Foto de ' + review.author" loading="lazy" />
+      <article class="review-card glass-card" role="listitem">
+        <div class="review-quote-icon">“</div>
+
+        <div class="review-body">
+          <p class="review-comment">{{ review.comment }}</p>
+        </div>
+
+        <footer class="review-footer">
+          <div class="review-author">
+            <div class="author-avatar-wrapper">
+              @if (review.authorImage) {
+              <img [src]="review.authorImage" [alt]="review.author" />
+              } @else {
+              <div class="author-avatar-fallback">{{ review.author.charAt(0) }}</div>
+              }
             </div>
-          }
-          <div class="review-card-content">
-            <div class="review-header">
-              <div class="review-author">
-                <div class="author-avatar">
-                  {{ review.author.charAt(0) }}
-                </div>
-                <div class="author-info">
-                  <h4>{{ review.author }}</h4>
-                  <span class="review-date">{{ formatDate(review.date) }}</span>
-                </div>
-              </div>
-              <div class="review-rating">
+            <div class="author-meta">
+              <h4 class="author-name">{{ review.author }}</h4>
+              <div class="review-rating" [attr.aria-label]="review.rating + ' estrellas'">
                 @for (star of getStars(review.rating); track $index) {
-                  <span class="star filled">★</span>
+                <span class="star filled" aria-hidden="true">★</span>
                 }
                 @for (star of getStars(5 - review.rating); track $index) {
-                  <span class="star">★</span>
+                <span class="star" aria-hidden="true">★</span>
                 }
               </div>
             </div>
-            <p class="review-comment">{{ review.comment }}</p>
           </div>
+          <div class="review-date-info">
+            <time [attr.datetime]="review.date" class="review-date">{{ formatDate(review.date) }}</time>
+          </div>
+        </footer>
+
+        @if (review.photoUrl) {
+        <div class="review-visual image-container">
+          <img [src]="review.photoUrl" [alt]="'Foto compartida por ' + review.author" loading="lazy" />
         </div>
+        }
+      </article>
       }
     </div>
   </div>

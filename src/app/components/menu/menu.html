@@ -1,57 +1,61 @@
 <section id="menu" class="section menu">
   <div class="container">
-    <h2 class="section-title">{{ translate('menu.title') }}</h2>
-    <p class="section-subtitle">
-      {{ translate('menu.subtitle') }}
-    </p>
+    <header class="section-header">
+      <span class="subtitle">{{ translate('menu.subtitle_small') || 'Nuestra Carta' }}</span>
+      <h2 class="title">{{ translate('menu.title') }}</h2>
+      <p class="description">{{ translate('menu.subtitle') }}</p>
+    </header>
 
-    <!-- Filtros de categoría -->
-    <div class="menu-filters">
-      @for (category of categories; track category.value) {
-        <button 
-          class="filter-btn"
-          [class.active]="selectedCategory === category.value"
-          (click)="filterByCategory(category.value)">
+    <nav class="menu-nav" aria-label="Categorías del menú">
+      <div class="menu-filters">
+        @for (category of categories; track category.value) {
+        <button class="filter-pill" [class.active]="selectedCategory === category.value"
+          (click)="filterByCategory(category.value)"
+          [aria-current]="selectedCategory === category.value ? 'true' : 'false'">
           {{ getCategoryLabel(category) }}
         </button>
-      }
-    </div>
+        }
+      </div>
+    </nav>
 
-    <!-- Grid de items del menú -->
-    <div class="menu-grid">
+    <div class="menu-grid" role="list">
       @for (item of filteredItems; track item.id) {
-        <article class="menu-item" [class.featured]="item.featured">
-          @if (item.featured) {
-            <span class="featured-badge">{{ translate('menu.featured') }}</span>
+      <article class="menu-card glass-card" [class.featured]="item.featured" role="listitem">
+        @if (item.featured) {
+        <div class="featured-ribbon">
+          <span>{{ translate('menu.featured') }}</span>
+        </div>
+        }
+
+        <div class="menu-item-visual image-container" *ngIf="item.image">
+          <img [src]="getImageUrl(item)" [alt]="item.name" loading="lazy" (error)="handleImageError($event, item)" />
+          @if (!item.available) {
+          <div class="sold-out-overlay">
+            <span class="sold-out-text">{{ translate('menu.unavailable') }}</span>
+          </div>
           }
-          <div class="item-image" *ngIf="item.image">
-            <img 
-              [src]="getImageUrl(item)" 
-              [alt]="item.name" 
-              loading="lazy"
-              (error)="handleImageError($event, item)" />
-            @if (!item.available) {
-              <div class="unavailable-overlay">
-                <span>{{ translate('menu.unavailable') }}</span>
-              </div>
-            }
+        </div>
+
+        <div class="menu-item-info">
+          <div class="item-meta">
+            <h3 class="item-name">{{ item.name }}</h3>
+            <div class="item-separator"></div>
+            <span class="item-price">{{ formatPrice(item.price) }}</span>
           </div>
-          <div class="item-content">
-            <div class="item-header">
-              <h3 class="item-name">{{ item.name }}</h3>
-              <span class="item-price">{{ formatPrice(item.price) }}</span>
-            </div>
-            <p class="item-description">{{ getMenuItemDescription(item) }}</p>
-            <span class="item-category">{{ item.category }}</span>
+          <p class="item-description">{{ getMenuItemDescription(item) }}</p>
+          <div class="item-footer">
+            <span class="item-tag">{{ item.category }}</span>
           </div>
-        </article>
+        </div>
+      </article>
       }
     </div>
 
     @if (filteredItems.length === 0) {
-      <div class="no-items">
-        <p>{{ translate('menu.no.items') }}</p>
-      </div>
+    <div class="empty-state">
+      <div class="empty-icon">🍽️</div>
+      <p>{{ translate('menu.no.items') }}</p>
+    </div>
     }
   </div>
 </section>

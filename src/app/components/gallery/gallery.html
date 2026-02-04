@@ -1,33 +1,47 @@
 <section id="gallery" class="section gallery">
   <div class="container">
-    <h2 class="section-title">{{ translate('gallery.title') }}</h2>
-    <p class="section-subtitle">
-      {{ translate('gallery.subtitle') }}
-    </p>
-    <div class="gallery-grid">
-      @for (image of galleryImages; track image.id) {
-        <div class="gallery-item" (click)="openImage(image)">
-          <img 
-            [src]="image.url" 
-            [alt]="image.alt" 
-            loading="lazy"
-            (error)="handleImageError($event, image)"
+    <header class="section-header">
+      <span class="subtitle">{{ translate('gallery.subtitle_small') || 'Nuestros Momentos' }}</span>
+      <h2 class="title">{{ translate('gallery.title') }}</h2>
+      <p class="description">{{ translate('gallery.subtitle') }}</p>
+    </header>
+
+    <div class="gallery-grid" role="list">
+      @for (image of galleryImages; track image.id; let i = $index) {
+      <figure class="gallery-item image-reveal" (click)="openImage(image)" [style.--delay]="i * 0.1 + 's'"
+        role="listitem">
+        <div class="image-container">
+          <img [src]="image.url" [alt]="image.alt" loading="lazy" (error)="handleImageError($event, image)"
             [attr.data-fallback]="getFallbackImage(image.id)" />
-          <div class="gallery-overlay">
-            <span class="gallery-title">{{ image.title || image.alt }}</span>
-          </div>
         </div>
+        <figcaption class="gallery-overlay">
+          <div class="overlay-content">
+            <span class="image-tag">{{ translate('gallery.tag') || 'Ambiente' }}</span>
+            <h3 class="image-title">{{ image.title || image.alt }}</h3>
+            <button class="view-btn" aria-label="Ver imagen completa">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+          </div>
+        </figcaption>
+      </figure>
       }
     </div>
   </div>
-  
+
   @if (selectedImage) {
-    <div class="lightbox" (click)="closeImage()">
-      <div class="lightbox-content" (click)="$event.stopPropagation()">
-        <button class="lightbox-close" (click)="closeImage()">&times;</button>
+  <div class="lightbox animate-fade-in" (click)="closeImage()" role="dialog" aria-modal="true">
+    <div class="lightbox-content animate-scale-up" (click)="$event.stopPropagation()">
+      <button class="lightbox-close" (click)="closeImage()" aria-label="Cerrar galería">&times;</button>
+      <div class="lightbox-img-wrapper">
         <img [src]="selectedImage.url" [alt]="selectedImage.alt" />
-        <p class="lightbox-title">{{ selectedImage.title || selectedImage.alt }}</p>
+      </div>
+      <div class="lightbox-footer">
+        <h3 class="lightbox-title">{{ selectedImage.title || selectedImage.alt }}</h3>
+        <p class="lightbox-alt">{{ selectedImage.alt }}</p>
       </div>
     </div>
+  </div>
   }
 </section>
