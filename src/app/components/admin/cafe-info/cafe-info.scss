@@ -1,0 +1,108 @@
+.admin-section {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+
+    h2 {
+        font-size: 1.5rem;
+        color: var(--coffee-deep);
+    }
+}
+
+.admin-card {
+    padding: 2.5rem;
+    background: var(--white);
+    border: 1px solid var(--bg-secondary);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+
+    .span-2 {
+        grid-column: span 2;
+    }
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        letter-spacing: 0.05em;
+    }
+
+    input,
+    textarea,
+    select {
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--bg-secondary);
+        border-radius: var(--radius-sm);
+        font-family: inherit;
+        font-size: 1rem;
+        transition: var(--transition-fast);
+
+        &:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.05);
+        }
+    }
+}
+
+.form-section {
+    border-top: 1px solid var(--bg-secondary);
+    padding-top: 2rem;
+
+    h3 {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+        color: var(--coffee-rich);
+    }
+}
+
+.tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--bg-secondary);
+
+    button {
+        padding: 0.75rem 1.5rem;
+        background: none;
+        border: none;
+        border-bottom: 2px solid transparent;
+        cursor: pointer;
+        font-weight: 600;
+        color: var(--text-muted);
+        transition: var(--transition-fast);
+
+        &:hover {
+            color: var(--coffee-rich);
+        }
+
+        &.active {
+            color: var(--accent-gold);
+            border-bottom-color: var(--accent-gold);
+        }
+    }
+}
+
+.loading-state {
+    display: flex;
+    justify-content: center;
+    padding: 5rem 0;
+}

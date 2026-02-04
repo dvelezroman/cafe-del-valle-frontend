@@ -1,0 +1,48 @@
+<div class="admin-section">
+    <div class="section-header">
+        <h2>Gestión del Menú</h2>
+        <button class="btn btn-primary">+ Nuevo Item</button>
+    </div>
+
+    <div class="admin-card glass-card">
+        <div class="items-table-wrapper">
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th>Imagen</th>
+                        <th>Nombre</th>
+                        <th>Categoría</th>
+                        <th>Precio</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (item of menuItems; track item.id) {
+                    <tr>
+                        <td>
+                            <div class="item-thumb">
+                                <img [src]="item.image || '/images/Logo2.jpeg'" [alt]="item.name" />
+                            </div>
+                        </td>
+                        <td>{{ item.name }}</td>
+                        <td><span class="badge">{{ item.category }}</span></td>
+                        <td>${{ item.price.toFixed(2) }}</td>
+                        <td>
+                            <span class="status-pill" [class.available]="item.available">
+                                {{ item.available ? 'Disponible' : 'Agotado' }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="btn-icon" aria-label="Editar">✏️</button>
+                                <button class="btn-icon delete" aria-label="Eliminar">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

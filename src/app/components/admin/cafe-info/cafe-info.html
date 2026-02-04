@@ -1,0 +1,59 @@
+<div class="admin-section">
+    <div class="section-header">
+        <h2>Información del Negocio</h2>
+        <button class="btn btn-primary" (click)="save()">Guardar Cambios</button>
+    </div>
+
+    @if (loading) {
+    <div class="loading-state">
+        <span class="spinner"></span>
+    </div>
+    } @else {
+    <div class="admin-card glass-card">
+        <form class="admin-form">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Nombre del Café</label>
+                    <input type="text" [(ngModel)]="info.name" name="name" />
+                </div>
+                <div class="form-group">
+                    <label>Teléfono</label>
+                    <input type="text" [(ngModel)]="info.phone" name="phone" />
+                </div>
+                <div class="form-group span-2">
+                    <label>Dirección</label>
+                    <input type="text" [(ngModel)]="info.address" name="address" />
+                </div>
+                <div class="form-group">
+                    <label>Latitud</label>
+                    <input type="number" [(ngModel)]="info.latitude" name="lat" />
+                </div>
+                <div class="form-group">
+                    <label>Longitud</label>
+                    <input type="number" [(ngModel)]="info.longitude" name="lng" />
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Traducciones</h3>
+                <div class="tabs">
+                    <button [class.active]="activeLang === 'es'" (click)="activeLang = 'es'">Español</button>
+                    <button [class.active]="activeLang === 'en'" (click)="activeLang = 'en'">Inglés</button>
+                    <button [class.active]="activeLang === 'fr'" (click)="activeLang = 'fr'">Francés</button>
+                </div>
+
+                <div class="tab-content">
+                    <div class="form-group">
+                        <label>Slogan (Tagline)</label>
+                        <input type="text" [(ngModel)]="info.tagline[activeLang]" name="tagline" />
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción</label>
+                        <textarea rows="4" [(ngModel)]="info.description[activeLang]" name="description"></textarea>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    }
+</div>

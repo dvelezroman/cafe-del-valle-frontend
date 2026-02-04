@@ -1,0 +1,25 @@
+<div class="admin-section">
+    <div class="section-header">
+        <h2>Gestión del Blog</h2>
+        <button class="btn btn-primary">+ Nueva Entrada</button>
+    </div>
+
+    <div class="blog-list">
+        @for (post of posts; track post.id) {
+        <div class="blog-item admin-card glass-card">
+            <div class="post-preview-img">
+                <img [src]="post.image || '/images/Logo2.jpeg'" [alt]="post.title" />
+            </div>
+            <div class="post-details">
+                <span class="post-date text-muted">{{ post.publishedAt }}</span>
+                <h3>{{ post.title }}</h3>
+                <p>{{ post.excerpt }}</p>
+                <div class="post-actions">
+                    <button class="btn btn-outline btn-sm">Editar</button>
+                    <button class="btn btn-outline btn-sm danger">Eliminar</button>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+</div>
