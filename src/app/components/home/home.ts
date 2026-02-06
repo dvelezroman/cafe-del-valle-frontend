@@ -9,6 +9,7 @@ import { Reviews } from '../reviews/reviews';
 import { Blog } from '../blog/blog';
 import { Contact } from '../contact/contact';
 import { TranslationService, Language } from '../../services/translation.service';
+import { SubscriptionPlansPublicComponent } from '../subscription-plans-public/subscription-plans-public';
 
 @Component({
   selector: 'app-home',
@@ -21,7 +22,8 @@ import { TranslationService, Language } from '../../services/translation.service
     Gallery,
     Reviews,
     Blog,
-    Contact
+    Contact,
+    SubscriptionPlansPublicComponent
   ],
   templateUrl: './home.html',
   styleUrl: './home.scss'

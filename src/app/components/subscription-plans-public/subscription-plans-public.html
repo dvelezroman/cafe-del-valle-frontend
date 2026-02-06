@@ -1,0 +1,137 @@
+<section class="py-20 bg-gray-50 from-stone-50 to-orange-50/10">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-16">
+            <span class="text-primary font-medium tracking-wider uppercase text-sm mb-3 block">Membership</span>
+            <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 font-display">Join the Club</h2>
+            <p class="text-gray-600 max-w-2xl mx-auto text-lg leading-relaxed">
+                Experience the finest coffee delivered to your door or enjoyed in our cafe. Choose the plan that suits
+                your lifestyle.
+            </p>
+        </div>
+
+        @if (plans().length > 0) {
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+            @for (plan of plans(); track plan.id) {
+            <div
+                class="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 flex flex-col relative group">
+
+                <!-- Featured Ribbon (optional logic could be added) -->
+                <!-- <div class="absolute top-4 right-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+              Popular
+            </div> -->
+
+                <div class="p-8 flex-grow">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2 font-display">{{ plan.title.es }}</h3>
+                    <p class="text-gray-500 mb-6 min-h-[3rem]">{{ plan.description.es }}</p>
+
+                    <div class="flex items-baseline mb-8">
+                        <span class="text-4xl font-bold text-primary">${{ plan.price }}</span>
+                        <span class="ml-2 text-gray-400">/ month</span>
+                    </div>
+
+                    <ul class="space-y-4 mb-8">
+                        @for (feature of plan.features.es; track $index) {
+                        <li class="flex items-start">
+                            <svg class="h-6 w-6 text-green-500 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span class="text-gray-600">{{ feature }}</span>
+                        </li>
+                        }
+                    </ul>
+                </div>
+
+                <div class="p-8 pt-0 mt-auto">
+                    <button (click)="openInterestModal(plan)"
+                        class="w-full bg-gray-900 hover:bg-primary text-white font-bold py-4 px-6 rounded-xl transition-colors duration-300 flex items-center justify-center group-hover:bg-primary">
+                        I'm Interested
+                        <svg class="w-5 h-5 ml-2 -mr-1 transition-transform group-hover:translate-x-1" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            }
+        </div>
+        } @else {
+        <div class="text-center py-12">
+            <p class="text-gray-500 text-lg">No subscription plans currently available. Check back soon!</p>
+        </div>
+        }
+    </div>
+
+    <!-- Interest Modal -->
+    @if (isModalOpen()) {
+    <div
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4 animate-fade-in">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full relative overflow-hidden">
+
+            <!-- Close Button -->
+            <button (click)="closeModal()"
+                class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100 transition-colors">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            @if (submitSuccess()) {
+            <div class="text-center py-8">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-2">Interest Registered!</h3>
+                <p class="text-gray-600">Thank you for your interest in the <strong>{{ selectedPlan()?.title?.es
+                        }}</strong>. We will contact you shortly.</p>
+            </div>
+            } @else {
+            <div class="mb-6">
+                <h3 class="text-2xl font-bold text-gray-900 mb-1">Join the List</h3>
+                <p class="text-gray-500 text-sm">Express interest for: <span class="font-semibold text-primary">{{
+                        selectedPlan()?.title?.es }}</span></p>
+            </div>
+
+            <form (ngSubmit)="submitInterest()" #interestForm="ngForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                    <input [(ngModel)]="formData().name" name="name" type="text" required
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                        placeholder="John Doe">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                    <input [(ngModel)]="formData().email" name="email" type="email" required
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                        placeholder="john@example.com">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                    <input [(ngModel)]="formData().phone" name="phone" type="tel" required
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                        placeholder="+1 (555) 000-0000">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Notes / Beverage Preferences</label>
+                    <textarea [(ngModel)]="formData().notes" name="notes" rows="3"
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                        placeholder="I love dark roast..."></textarea>
+                </div>
+
+                <button type="submit" [disabled]="!interestForm.form.valid || isSubmitting()"
+                    class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3 rounded-xl transition-all duration-300 shadow-lg shadow-primary/30 disabled:opacity-50 disabled:cursor-not-allowed mt-2">
+                    {{ isSubmitting() ? 'Sending...' : 'Complete Inquiry' }}
+                </button>
+            </form>
+            }
+        </div>
+    </div>
+    }
+</section>
