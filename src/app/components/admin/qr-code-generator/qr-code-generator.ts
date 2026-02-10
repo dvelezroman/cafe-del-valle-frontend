@@ -1,0 +1,96 @@
+import { Component, inject, signal, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { SubscriberManagementService } from '../../../services/subscriber-management.service';
+
+@Component({
+    selector: 'app-qr-code-generator',
+    standalone: true,
+    imports: [CommonModule, FormsModule],
+    templateUrl: './qr-code-generator.html',
+    styleUrl: './qr-code-generator.scss'
+})
+export class QrCodeGeneratorComponent implements OnInit {
+    private subscriberService = inject(SubscriberManagementService);
+
+    stats = this.subscriberService.codeStats;
+    codes = this.subscriberService.codes;
+    isGenerating = signal(false);
+    isDownloading = signal(false);
+    showPreview = signal(false);
+
+    formData = signal({
+        quantity: 10,
+        prefix: 'CDV-2026-'
+    });
+
+    ngOnInit() {
+        this.subscriberService.getCodeStats().subscribe();
+        this.subscriberService.getAllCodes('GENERATED').subscribe();
+    }
+
+    generateCodes() {
+        const data = this.formData();
+        if (data.quantity < 1 || data.quantity > 500) {
+            alert('Quantity must be between 1 and 500');
+            return;
+        }
+
+        this.isGenerating.set(true);
+        this.subscriberService.generateCodes(data.quantity, data.prefix).subscribe({
+            next: () => {
+                this.isGenerating.set(false);
+                this.showPreview.set(true);
+                this.subscriberService.getCodeStats().subscribe();
+                this.subscriberService.getAllCodes('GENERATED').subscribe();
+            },
+            error: () => {
+                this.isGenerating.set(false);
+                alert('Failed to generate codes');
+            }
+        });
+    }
+
+    downloadPDF() {
+        this.isDownloading.set(true);
+        this.subscriberService.downloadCodesPDF('GENERATED').subscribe({
+            next: (blob) => {
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `qr-codes-${Date.now()}.pdf`;
+                link.click();
+                window.URL.revokeObjectURL(url);
+                this.isDownloading.set(false);
+            },
+            error: () => {
+                this.isDownloading.set(false);
+                alert('Failed to download PDF');
+            }
+        });
+    }
+
+    downloadSelectedPDF(selectedIds: string[]) {
+        if (selectedIds.length === 0) {
+            alert('Please select at least one code');
+            return;
+        }
+
+        this.isDownloading.set(true);
+        this.subscriberService.downloadCodesPDF(undefined, selectedIds).subscribe({
+            next: (blob) => {
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `qr-codes-selected-${Date.now()}.pdf`;
+                link.click();
+                window.URL.revokeObjectURL(url);
+                this.isDownloading.set(false);
+            },
+            error: () => {
+                this.isDownloading.set(false);
+                alert('Failed to download PDF');
+            }
+        });
+    }
+}

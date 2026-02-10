@@ -1,0 +1,271 @@
+.subscriber-management-container {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+
+    h1 {
+        font-size: 2rem;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+        color: #7f8c8d;
+    }
+}
+
+.btn,
+.btn-sm {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+}
+
+.btn-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.875rem;
+}
+
+.btn-primary {
+    background: #3498db;
+    color: white;
+
+    &:hover:not(:disabled) {
+        background: #2980b9;
+    }
+}
+
+.btn-secondary {
+    background: #95a5a6;
+    color: white;
+
+    &:hover:not(:disabled) {
+        background: #7f8c8d;
+    }
+}
+
+.btn-warning {
+    background: #f39c12;
+    color: white;
+
+    &:hover:not(:disabled) {
+        background: #e67e22;
+    }
+}
+
+.btn-danger {
+    background: #e74c3c;
+    color: white;
+
+    &:hover:not(:disabled) {
+        background: #c0392b;
+    }
+}
+
+.btn-success {
+    background: #27ae60;
+    color: white;
+
+    &:hover:not(:disabled) {
+        background: #229954;
+    }
+}
+
+.table-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
+}
+
+.subscribers-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    thead {
+        background: #f8f9fa;
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #2c3e50;
+            border-bottom: 2px solid #e9ecef;
+        }
+    }
+
+    tbody {
+        tr {
+            border-bottom: 1px solid #e9ecef;
+
+            &:hover {
+                background: #f8f9fa;
+            }
+        }
+
+        td {
+            padding: 1rem;
+
+            &.code-value {
+                font-family: 'Courier New', monospace;
+                font-weight: 600;
+            }
+        }
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+
+        &.active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        &.paused {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        &.cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    }
+
+    small {
+        font-size: 0.85rem;
+        color: #7f8c8d;
+    }
+
+    .quota-info {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .text-muted {
+        color: #95a5a6;
+    }
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+
+    h2 {
+        margin: 0;
+        color: #2c3e50;
+    }
+
+    .close-btn {
+        background: none;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        color: #95a5a6;
+        line-height: 1;
+
+        &:hover {
+            color: #2c3e50;
+        }
+    }
+}
+
+.modal-form {
+    padding: 1.5rem;
+
+    .form-group {
+        margin-bottom: 1.5rem;
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+
+            &:focus {
+                outline: none;
+                border-color: #3498db;
+            }
+        }
+
+        small {
+            display: block;
+            color: #95a5a6;
+            margin-top: 0.5rem;
+        }
+    }
+
+    .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e9ecef;
+    }
+}

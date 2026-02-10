@@ -1,0 +1,78 @@
+<div class="qr-generator-container">
+    <!-- Header -->
+    <div class="page-header">
+        <h1>QR Code Generator</h1>
+        <p class="subtitle">Generate unique codes for subscriber cups</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value">{{ stats().total }}</div>
+            <div class="stat-label">Total Codes</div>
+        </div>
+        <div class="stat-card success">
+            <div class="stat-value">{{ stats().available }}</div>
+            <div class="stat-label">Available</div>
+        </div>
+        <div class="stat-card info">
+            <div class="stat-value">{{ stats().assigned }}</div>
+            <div class="stat-label">Assigned</div>
+        </div>
+        <div class="stat-card warning">
+            <div class="stat-value">{{ stats().revoked }}</div>
+            <div class="stat-label">Revoked</div>
+        </div>
+    </div>
+
+    <!-- Generation Form -->
+    <div class="form-card">
+        <h2>Generate New Codes</h2>
+        <form (ngSubmit)="generateCodes()" class="generation-form">
+            <div class="form-group">
+                <label for="quantity">Quantity</label>
+                <input type="number" id="quantity" [(ngModel)]="formData().quantity" name="quantity" min="1" max="500"
+                    required placeholder="Enter quantity (1-500)" />
+                <small>Number of codes to generate</small>
+            </div>
+
+            <div class="form-group">
+                <label for="prefix">Prefix (Optional)</label>
+                <input type="text" id="prefix" [(ngModel)]="formData().prefix" name="prefix" placeholder="CDV-2026-" />
+                <small>Custom prefix for codes (e.g., CDV-2026-)</small>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary" [disabled]="isGenerating()">
+                    <span *ngIf="!isGenerating()">Generate Codes</span>
+                    <span *ngIf="isGenerating()">Generating...</span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Generated Codes Preview -->
+    <div class="codes-preview" *ngIf="showPreview() && codes().length > 0">
+        <div class="preview-header">
+            <h2>Generated Codes ({{ codes().length}})</h2>
+            <button class="btn btn-success" (click)="downloadPDF()" [disabled]="isDownloading()">
+                <span *ngIf="!isDownloading()">📥 Download All as PDF</span>
+                <span *ngIf="isDownloading()">Downloading...</span>
+            </button>
+        </div>
+
+        <div class="codes-grid">
+            <div class="code-card" *ngFor="let code of codes().slice(0, 20)">
+                <div class="code-value">{{ code.code }}</div>
+                <div class="code-status" [class]="code.status.toLowerCase()">
+                    {{ code.status }}
+                </div>
+            </div>
+            <div class="code-card more" *ngIf="codes().length > 20">
+                <div class="more-text">
+                    +{{ codes().length - 20 }} more codes
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

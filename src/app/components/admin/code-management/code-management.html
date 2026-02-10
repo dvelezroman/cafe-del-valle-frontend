@@ -1,0 +1,79 @@
+<div class="code-management-container">
+    <div class="page-header">
+        <h1>Code Management</h1>
+        <p class="subtitle">Manage generated subscriber codes</p>
+    </div>
+
+    <!-- Filters and Actions -->
+    <div class="toolbar">
+        <div class="filters">
+            <button class="filter-btn" [class.active]="selectedFilter() === 'all'" (click)="filterCodes('all')">
+                All Codes
+            </button>
+            <button class="filter-btn" [class.active]="selectedFilter() === 'GENERATED'"
+                (click)="filterCodes('GENERATED')">
+                Available
+            </button>
+            <button class="filter-btn" [class.active]="selectedFilter() === 'ASSIGNED'"
+                (click)="filterCodes('ASSIGNED')">
+                Assigned
+            </button>
+            <button class="filter-btn" [class.active]="selectedFilter() === 'REVOKED'" (click)="filterCodes('REVOKED')">
+                Revoked
+            </button>
+        </div>
+
+        <button class="btn btn-primary" (click)="downloadSelected()" [disabled]="selectedCodes().size === 0">
+            📥 Download Selected ({{ selectedCodes().size }})
+        </button>
+    </div>
+
+    <!-- Codes Table -->
+    <div class="table-card">
+        <table class="codes-table">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" disabled /></th>
+                    <th>Code</th>
+                    <th>Status</th>
+                    <th>Assigned To</th>
+                    <th>Generated Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let code of codes()">
+                    <td>
+                        <input type="checkbox" [checked]="selectedCodes().has(code.id)"
+                            (change)="toggleCodeSelection(code.id)" [disabled]="code.status === 'ASSIGNED'" />
+                    </td>
+                    <td class="code-value">{{ code.code }}</td>
+                    <td>
+                        <span class="status-badge" [class]="code.status.toLowerCase()">
+                            {{ code.status }}
+                        </span>
+                    </td>
+                    <td>
+                        <span *ngIf="code.subscriber">
+                            {{ code.subscriber.name }}<br />
+                            <small>{{ code.subscriber.email }}</small>
+                        </span>
+                        <span *ngIf="!code.subscriber" class="text-muted">—</span>
+                    </td>
+                    <td>{{ code.generatedAt | date: 'short' }}</td>
+                    <td>
+                        <button class="btn-icon" (click)="revokeCode(code.id, code.code)"
+                            [disabled]="code.status === 'REVOKED'" title="Revoke Code">
+                            🚫
+                        </button>
+                    </td>
+                </tr>
+                <tr *ngIf="codes().length === 0">
+                    <td colspan="6" class="text-center text-muted">
+                        No codes found
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
