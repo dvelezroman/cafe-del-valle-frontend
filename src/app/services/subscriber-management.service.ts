@@ -1,9 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
-
-// Note: Update this URL when deploying
-const API_URL = 'http://localhost:3000/api';
+import { environment } from '../../environments/environment';
 
 export interface SubscriberCode {
     id: string;
@@ -83,7 +81,7 @@ export class SubscriberManagementService {
     }
 
     getCodeStats() {
-        return this.http.get<typeof this.codeStats>(` ${this.baseUrl}/codes/stats`)
+        return this.http.get<{ total: number; generated: number; assigned: number; revoked: number; available: number }>(`${this.baseUrl}/codes/stats`)
             .pipe(tap(stats => this.codeStats.set(stats)));
     }
 
