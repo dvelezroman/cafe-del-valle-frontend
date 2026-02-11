@@ -1,17 +1,35 @@
 <div class="admin-layout">
     <app-sidebar></app-sidebar>
-    <main class="admin-content">
-        <header class="dashboard-header">
+    <main class="admin-content" 
+          [class.sidebar-open]="sidebarOpen()"
+          id="main-content"
+          role="main"
+          aria-label="Contenido principal del panel de administración">
+        <header class="dashboard-header" role="banner">
             <div class="header-info">
+                <button class="menu-toggle" 
+                        (click)="toggleSidebar()" 
+                        [attr.aria-expanded]="sidebarOpen()"
+                        [attr.aria-controls]="'sidebar-navigation'"
+                        aria-label="Abrir menú de navegación"
+                        title="Abrir menú (Alt+M)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M3 12h18M3 6h18M3 18h18" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span class="sr-only">Menú (Atajo: Alt+M)</span>
+                </button>
                 <h1>Panel de Administración</h1>
             </div>
             <div class="user-meta">
-                <span class="user-name">{{ user()?.name }}</span>
-                <button class="btn-logout" (click)="logout()" aria-label="Cerrar sesión">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <span class="user-name" aria-label="Usuario actual">{{ user()?.name }}</span>
+                <button class="btn-logout" 
+                        (click)="logout()" 
+                        aria-label="Cerrar sesión de {{ user()?.name }}">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" stroke-linecap="round"
                             stroke-linejoin="round" />
                     </svg>
+                    <span class="sr-only">Cerrar sesión</span>
                 </button>
             </div>
         </header>

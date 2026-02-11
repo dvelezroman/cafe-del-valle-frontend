@@ -1,106 +1,177 @@
-<div class="p-6">
-    <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold text-gray-800">Subscription Plans</h2>
-        <button (click)="openModal()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark">
-            + New Plan
+<div class="admin-section">
+    <div class="section-header">
+        <h1>Planes de Suscripción</h1>
+        <button (click)="openModal()" 
+            class="btn-primary"
+            type="button"
+            aria-label="Crear nuevo plan">
+            + Nuevo Plan
         </button>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="plans-grid">
         @for (plan of plans(); track plan.id) {
-        <div class="bg-white rounded-lg shadow-md p-6 border border-gray-100">
-            <div class="flex justify-between items-start mb-4">
-                <h3 class="text-xl font-bold text-gray-800">{{ plan.title.es }}</h3>
-                <span [class]="plan.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
-                    class="px-2 py-1 rounded-full text-xs font-medium">
-                    {{ plan.active ? 'Active' : 'Inactive' }}
+        <div class="plan-card">
+            <div class="plan-header">
+                <h3>{{ plan.title.es }}</h3>
+                <span [class]="plan.active ? 'plan-status active' : 'plan-status inactive'"
+                    [attr.aria-label]="plan.active ? 'Plan activo' : 'Plan inactivo'">
+                    {{ plan.active ? 'Activo' : 'Inactivo' }}
                 </span>
             </div>
-            <p class="text-gray-600 mb-4">{{ plan.description.es }}</p>
-            <div class="text-2xl font-bold text-primary mb-4">${{ plan.price }}</div>
+            <p class="plan-description">{{ plan.description.es }}</p>
+            <div class="plan-price">${{ plan.price }}</div>
 
-            <div class="flex justify-end gap-2 mt-4 pt-4 border-t border-gray-100">
-                <button (click)="openModal(plan)" class="text-blue-600 hover:text-blue-800">Edit</button>
-                <button (click)="deletePlan(plan.id)" class="text-red-600 hover:text-red-800 ml-4">Delete</button>
+            <div class="plan-actions">
+                <button (click)="openModal(plan)" 
+                    class="btn-edit"
+                    type="button"
+                    [attr.aria-label]="'Editar plan ' + plan.title.es">
+                    Editar
+                </button>
+                <button (click)="deletePlan(plan.id)" 
+                    class="btn-delete"
+                    type="button"
+                    [attr.aria-label]="'Eliminar plan ' + plan.title.es">
+                    Eliminar
+                </button>
             </div>
+        </div>
+        } @empty {
+        <div class="empty-state">
+            <p>No hay planes disponibles.</p>
         </div>
         }
     </div>
 
     <!-- Modal -->
     @if (isModalOpen()) {
-    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-xl shadow-xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <h3 class="text-xl font-bold mb-6">{{ editingPlan() ? 'Edit Plan' : 'New Plan' }}</h3>
+    <div class="modal-overlay" 
+        (click)="closeModal()"
+        role="dialog"
+        aria-modal="true"
+        [attr.aria-labelledby]="editingPlan() ? 'edit-plan-title' : 'new-plan-title'">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <h3 [id]="editingPlan() ? 'edit-plan-title' : 'new-plan-title'">
+                {{ editingPlan() ? 'Editar Plan' : 'Nuevo Plan' }}
+            </h3>
 
-            <form (ngSubmit)="savePlan()" class="space-y-4">
+            <form (ngSubmit)="savePlan()" class="modal-form" novalidate>
                 <!-- Title -->
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Title (ES)</label>
-                        <input [(ngModel)]="formData().title.es" name="titleEs" type="text"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border" required>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="titleEs">Título (ES) <span class="required" aria-label="requerido">*</span></label>
+                        <input id="titleEs" 
+                            [(ngModel)]="formData().title.es" 
+                            name="titleEs" 
+                            type="text"
+                            required
+                            aria-required="true"
+                            aria-describedby="titleEs-desc">
+                        <small id="titleEs-desc" class="sr-only">Título del plan en español</small>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Title (EN)</label>
-                        <input [(ngModel)]="formData().title.en" name="titleEn" type="text"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                    <div class="form-group">
+                        <label for="titleEn">Título (EN)</label>
+                        <input id="titleEn" 
+                            [(ngModel)]="formData().title.en" 
+                            name="titleEn" 
+                            type="text"
+                            aria-describedby="titleEn-desc">
+                        <small id="titleEn-desc" class="sr-only">Título del plan en inglés</small>
                     </div>
                 </div>
 
                 <!-- Description -->
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Description (ES)</label>
-                        <textarea [(ngModel)]="formData().description.es" name="descEs" rows="2"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border"></textarea>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="descEs">Descripción (ES)</label>
+                        <textarea id="descEs" 
+                            [(ngModel)]="formData().description.es" 
+                            name="descEs" 
+                            rows="3"
+                            aria-describedby="descEs-desc"></textarea>
+                        <small id="descEs-desc" class="sr-only">Descripción del plan en español</small>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Description (EN)</label>
-                        <textarea [(ngModel)]="formData().description.en" name="descEn" rows="2"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border"></textarea>
+                    <div class="form-group">
+                        <label for="descEn">Descripción (EN)</label>
+                        <textarea id="descEn" 
+                            [(ngModel)]="formData().description.en" 
+                            name="descEn" 
+                            rows="3"
+                            aria-describedby="descEn-desc"></textarea>
+                        <small id="descEn-desc" class="sr-only">Descripción del plan en inglés</small>
                     </div>
                 </div>
 
                 <!-- Price & Order -->
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Price</label>
-                        <input [(ngModel)]="formData().price" name="price" type="number" step="0.01"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="price">Precio</label>
+                        <input id="price" 
+                            [(ngModel)]="formData().price" 
+                            name="price" 
+                            type="number" 
+                            step="0.01"
+                            min="0"
+                            aria-describedby="price-desc">
+                        <small id="price-desc" class="sr-only">Precio del plan en dólares</small>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Order</label>
-                        <input [(ngModel)]="formData().order" name="order" type="number"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                    <div class="form-group">
+                        <label for="order">Orden</label>
+                        <input id="order" 
+                            [(ngModel)]="formData().order" 
+                            name="order" 
+                            type="number"
+                            min="0"
+                            aria-describedby="order-desc">
+                        <small id="order-desc" class="sr-only">Orden de visualización del plan</small>
                     </div>
                 </div>
 
                 <!-- Features -->
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Features (ES) - One per line</label>
-                        <textarea [(ngModel)]="formData().featuresInputEs" name="featEs" rows="4"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border"></textarea>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="featEs">Características (ES) - Una por línea</label>
+                        <textarea id="featEs" 
+                            [(ngModel)]="formData().featuresInputEs" 
+                            name="featEs" 
+                            rows="4"
+                            aria-describedby="featEs-desc"></textarea>
+                        <small id="featEs-desc" class="sr-only">Lista de características del plan en español, una por línea</small>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Features (EN) - One per line</label>
-                        <textarea [(ngModel)]="formData().featuresInputEn" name="featEn" rows="4"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border"></textarea>
+                    <div class="form-group">
+                        <label for="featEn">Características (EN) - Una por línea</label>
+                        <textarea id="featEn" 
+                            [(ngModel)]="formData().featuresInputEn" 
+                            name="featEn" 
+                            rows="4"
+                            aria-describedby="featEn-desc"></textarea>
+                        <small id="featEn-desc" class="sr-only">Lista de características del plan en inglés, una por línea</small>
                     </div>
                 </div>
 
-                <div class="flex items-center">
-                    <input [(ngModel)]="formData().active" name="active" type="checkbox"
-                        class="h-4 w-4 text-primary border-gray-300 rounded">
-                    <label class="ml-2 block text-sm text-gray-900">Active</label>
+                <div class="checkbox-group">
+                    <input id="active" 
+                        [(ngModel)]="formData().active" 
+                        name="active" 
+                        type="checkbox"
+                        aria-describedby="active-desc">
+                    <label for="active">Activo</label>
+                    <small id="active-desc" class="sr-only">Marcar si el plan está activo y disponible</small>
                 </div>
 
-                <div class="flex justify-end gap-3 mt-6">
-                    <button type="button" (click)="closeModal()"
-                        class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Cancel</button>
+                <div class="modal-actions">
+                    <button type="button" 
+                        (click)="closeModal()"
+                        class="btn-cancel"
+                        aria-label="Cancelar">
+                        Cancelar
+                    </button>
                     <button type="submit"
-                        class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark">Save</button>
+                        class="btn-save"
+                        aria-label="Guardar plan">
+                        Guardar
+                    </button>
                 </div>
             </form>
         </div>

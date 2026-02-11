@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DataService } from '../../../services/data';
 import { ToastService } from '../../../services/toast.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-cafe-info',
@@ -25,19 +26,73 @@ export class CafeInfo implements OnInit {
 
   constructor(
     private dataService: DataService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private http: HttpClient
   ) { }
 
   ngOnInit() {
-    // In a real app, fetch from backend. For now simulation.
-    setTimeout(() => {
-      this.info = { ...this.dataService.getCafeInfo() };
-      this.loading = false;
-    }, 500);
+    // Fetch fresh data from API
+    this.dataService.fetchCafeInfo().subscribe({
+      next: (data) => {
+        if (data) {
+          this.info = {
+            name: data.name || '',
+            phone: data.phone || '',
+            address: data.address || '',
+            latitude: data.coordinates?.lat || 0,
+            longitude: data.coordinates?.lng || 0,
+            tagline: data.tagline || { es: '', en: '', fr: '' },
+            description: data.description || { es: '', en: '', fr: '' }
+          };
+        }
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error fetching cafe info:', err);
+        this.loading = false;
+        this.toastService.error('Error al cargar la información del café');
+      }
+    });
   }
 
   save() {
-    this.toastService.success('Información guardada correctamente (Simulado)');
-    console.log('Saving info:', this.info);
+    const updateData = {
+      name: this.info.name,
+      phone: this.info.phone,
+      address: this.info.address,
+      latitude: this.info.latitude,
+      longitude: this.info.longitude,
+      tagline: this.info.tagline,
+      description: this.info.description
+    };
+
+    this.http.put('http://localhost:3000/api/cafe/info', updateData).subscribe({
+      next: () => {
+        this.toastService.success('Información guardada correctamente');
+        // Refresh data
+        this.dataService.fetchCafeInfo().subscribe();
+        // Announce success to screen readers
+        this.announceToScreenReader('Información guardada correctamente');
+      },
+      error: (err) => {
+        console.error('Error saving cafe info:', err);
+        this.toastService.error('Error al guardar la información');
+        this.announceToScreenReader('Error al guardar la información');
+      }
+    });
+  }
+
+  private announceToScreenReader(message: string) {
+    const announcement = document.createElement('div');
+    announcement.setAttribute('role', 'status');
+    announcement.setAttribute('aria-live', 'polite');
+    announcement.setAttribute('aria-atomic', 'true');
+    announcement.className = 'sr-only';
+    announcement.textContent = message;
+    document.body.appendChild(announcement);
+    
+    setTimeout(() => {
+      document.body.removeChild(announcement);
+    }, 1000);
   }
 }

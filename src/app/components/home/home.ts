@@ -91,4 +91,18 @@ export class Home implements OnInit {
   closeMenu() {
     this.menuOpen = false;
   }
+
+  onNewsletterSubmit(event: Event) {
+    event.preventDefault();
+    // Newsletter submission logic would go here
+    console.log('Newsletter subscription');
+  }
+
+  @HostListener('keydown', ['$event'])
+  handleKeyboard(event: KeyboardEvent) {
+    // Close menu on Escape key
+    if (event.key === 'Escape' && this.menuOpen) {
+      this.closeMenu();
+    }
+  }
 }

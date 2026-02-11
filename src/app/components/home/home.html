@@ -1,45 +1,96 @@
-<header class="header" [class.scrolled]="isScrolled">
-  <nav class="nav container">
+<header class="header" [class.scrolled]="isScrolled" role="banner">
+  <nav class="nav container" aria-label="Navegación principal">
     <div class="nav-brand">
-      <a (click)="scrollToSection('hero'); closeMenu()" class="brand-link">
+      <a (click)="scrollToSection('hero'); closeMenu()" 
+         class="brand-link"
+         aria-label="Ir al inicio - Café del Valle"
+         href="#hero">
         <div class="logo-container">
-          <img src="/images/IMG_20250919_144616_546.png" alt="Café del Valle" class="brand-logo" width="40" height="40"
-            loading="eager" />
+          <img src="/images/IMG_20250919_144616_546.png" 
+               alt="Café del Valle - Logo" 
+               class="brand-logo" 
+               width="40" 
+               height="40"
+               loading="eager" />
         </div>
         <span class="brand-text">Café del Valle</span>
       </a>
     </div>
 
-    <ul class="nav-links" [class.active]="menuOpen">
-      <li><a (click)="scrollToSection('about'); closeMenu()">{{ translate('nav.about') }}</a></li>
-      <li><a (click)="scrollToSection('coffee'); closeMenu()">{{ translate('nav.coffee') }}</a></li>
-      <li><a (click)="scrollToSection('menu'); closeMenu()">{{ translate('nav.menu') }}</a></li>
-      <li><a (click)="scrollToSection('blog'); closeMenu()">{{ translate('nav.blog') }}</a></li>
-      <li><a (click)="scrollToSection('contact'); closeMenu()">{{ translate('nav.contact') }}</a></li>
+    <ul class="nav-links" 
+        [class.active]="menuOpen"
+        role="list"
+        [attr.aria-hidden]="!menuOpen"
+        [attr.aria-label]="'Menú de navegación principal'">
+      <li role="listitem">
+        <a (click)="scrollToSection('about'); closeMenu()" 
+           href="#about"
+           [attr.aria-current]="false">
+          {{ translate('nav.about') }}
+        </a>
+      </li>
+      <li role="listitem">
+        <a (click)="scrollToSection('coffee'); closeMenu()" 
+           href="#coffee"
+           [attr.aria-current]="false">
+          {{ translate('nav.coffee') }}
+        </a>
+      </li>
+      <li role="listitem">
+        <a (click)="scrollToSection('menu'); closeMenu()" 
+           href="#menu"
+           [attr.aria-current]="false">
+          {{ translate('nav.menu') }}
+        </a>
+      </li>
+      <li role="listitem">
+        <a (click)="scrollToSection('blog'); closeMenu()" 
+           href="#blog"
+           [attr.aria-current]="false">
+          {{ translate('nav.blog') }}
+        </a>
+      </li>
+      <li role="listitem">
+        <a (click)="scrollToSection('contact'); closeMenu()" 
+           href="#contact"
+           [attr.aria-current]="false">
+          {{ translate('nav.contact') }}
+        </a>
+      </li>
     </ul>
 
     <div class="nav-actions">
-      <div class="language-dropdown">
+      <div class="language-dropdown" role="group" aria-label="Seleccionar idioma">
         @for (lang of languages; track lang.code) {
-        <button class="lang-pill" [class.active]="currentLanguage === lang.code" (click)="setLanguage(lang.code)"
-          [attr.aria-label]="'Switch to ' + lang.label">
-          <span class="lang-flag">{{ lang.flag }}</span>
+        <button class="lang-pill" 
+                [class.active]="currentLanguage === lang.code" 
+                (click)="setLanguage(lang.code)"
+                type="button"
+                [attr.aria-label]="'Cambiar a ' + lang.label"
+                [attr.aria-pressed]="currentLanguage === lang.code">
+          <span class="lang-flag" aria-hidden="true">{{ lang.flag }}</span>
           <span class="lang-label">{{ lang.label }}</span>
         </button>
         }
       </div>
 
-      <button class="nav-toggle" (click)="toggleMenu()" aria-label="Toggle menu" [attr.aria-expanded]="menuOpen">
-        <div class="hamburger" [class.open]="menuOpen">
+      <button class="nav-toggle" 
+              (click)="toggleMenu()" 
+              type="button"
+              [attr.aria-label]="menuOpen ? 'Cerrar menú' : 'Abrir menú'" 
+              [attr.aria-expanded]="menuOpen"
+              [attr.aria-controls]="'main-navigation'">
+        <div class="hamburger" [class.open]="menuOpen" aria-hidden="true">
           <span></span>
           <span></span>
         </div>
+        <span class="sr-only">{{ menuOpen ? 'Cerrar' : 'Abrir' }} menú de navegación</span>
       </button>
     </div>
   </nav>
 </header>
 
-<main>
+<main id="main-content" role="main">
   <app-hero></app-hero>
   <app-about></app-about>
   <app-coffee></app-coffee>
@@ -51,56 +102,109 @@
   <app-contact></app-contact>
 </main>
 
-<footer class="footer">
+<footer class="footer" role="contentinfo">
   <div class="container footer-grid">
     <div class="footer-brand-section">
       <div class="footer-logo-wrapper">
-        <img src="/images/IMG_20250919_144618_468.png" alt="Café del Valle Logo" class="footer-logo" loading="lazy" />
+        <img src="/images/IMG_20250919_144618_468.png" 
+             alt="Café del Valle - Logo" 
+             class="footer-logo" 
+             loading="lazy" />
       </div>
       <p class="footer-tagline">{{ translate('footer.tagline') }}</p>
-      <div class="social-links">
-        <a href="#" aria-label="Instagram">IG</a>
-        <a href="#" aria-label="Facebook">FB</a>
-        <a href="#" aria-label="WhatsApp">WA</a>
+      <div class="social-links" role="list" aria-label="Enlaces a redes sociales">
+        <a href="#" 
+           aria-label="Síguenos en Instagram"
+           rel="noopener noreferrer"
+           target="_blank"
+           role="listitem">IG</a>
+        <a href="#" 
+           aria-label="Síguenos en Facebook"
+           rel="noopener noreferrer"
+           target="_blank"
+           role="listitem">FB</a>
+        <a href="#" 
+           aria-label="Contáctanos por WhatsApp"
+           rel="noopener noreferrer"
+           target="_blank"
+           role="listitem">WA</a>
       </div>
     </div>
 
     <nav class="footer-nav" aria-label="Enlaces rápidos">
-      <h4>{{ translate('footer.links') }}</h4>
-      <ul>
-        <li><a (click)="scrollToSection('about')">{{ translate('footer.about') }}</a></li>
-        <li><a (click)="scrollToSection('coffee')">{{ translate('footer.coffee') }}</a></li>
-        <li><a (click)="scrollToSection('menu')">{{ translate('footer.menu') || 'Nuestra Carta' }}</a></li>
-        <li><a (click)="scrollToSection('blog')">{{ translate('footer.blog') || 'Blog' }}</a></li>
+      <h2>{{ translate('footer.links') }}</h2>
+      <ul role="list">
+        <li role="listitem">
+          <a (click)="scrollToSection('about')" 
+             href="#about">
+            {{ translate('footer.about') }}
+          </a>
+        </li>
+        <li role="listitem">
+          <a (click)="scrollToSection('coffee')" 
+             href="#coffee">
+            {{ translate('footer.coffee') }}
+          </a>
+        </li>
+        <li role="listitem">
+          <a (click)="scrollToSection('menu')" 
+             href="#menu">
+            {{ translate('footer.menu') || 'Nuestra Carta' }}
+          </a>
+        </li>
+        <li role="listitem">
+          <a (click)="scrollToSection('blog')" 
+             href="#blog">
+            {{ translate('footer.blog') || 'Blog' }}
+          </a>
+        </li>
       </ul>
     </nav>
 
     <div class="footer-contact">
-      <h4>{{ translate('footer.contact.title') }}</h4>
+      <h2>{{ translate('footer.contact.title') }}</h2>
       <address>
         <p>Atanacio Santos y Calle Augusto Moreira<br>
           Portoviejo, Ecuador</p>
-        <p class="contact-highlight">Tel: <a href="tel:+593997186022">+593 99 718 6022</a></p>
+        <p class="contact-highlight">
+          Tel: <a href="tel:+593997186022" 
+                  aria-label="Llamar al teléfono +593 99 718 6022">
+            +593 99 718 6022
+          </a>
+        </p>
       </address>
     </div>
 
     <div class="footer-newsletter">
-      <h4>Newsletter</h4>
+      <h2>Newsletter</h2>
       <p>{{ translate('footer.newsletter.desc') || 'Recibe nuestras novedades.' }}</p>
-      <form class="newsletter-form">
-        <input type="email" [placeholder]="translate('footer.email.placeholder') || 'Tu email'"
-          aria-label="Email para newsletter" />
-        <button type="submit" class="btn btn-primary btn-sm">→</button>
+      <form class="newsletter-form" 
+            aria-label="Formulario de suscripción al newsletter"
+            (ngSubmit)="onNewsletterSubmit($event)">
+        <label for="newsletter-email" class="sr-only">Email para newsletter</label>
+        <input type="email" 
+               id="newsletter-email"
+               [placeholder]="translate('footer.email.placeholder') || 'Tu email'"
+               aria-label="Email para newsletter"
+               aria-required="true"
+               autocomplete="email"
+               required />
+        <button type="submit" 
+                class="btn btn-primary btn-sm"
+                aria-label="Suscribirse al newsletter">
+          <span aria-hidden="true">→</span>
+          <span class="sr-only">Suscribirse</span>
+        </button>
       </form>
     </div>
   </div>
 
   <div class="footer-bottom container">
     <p>&copy; {{ getCurrentYear() }} Café del Valle. {{ translate('footer.rights') }}</p>
-    <div class="footer-legal">
-      <a href="#">Privacidad</a>
-      <a href="#">Términos</a>
-      <a routerLink="/admin/login">Acceso Administrativo</a>
-    </div>
+    <nav class="footer-legal" aria-label="Enlaces legales">
+      <a href="#" aria-label="Política de privacidad">Privacidad</a>
+      <a href="#" aria-label="Términos y condiciones">Términos</a>
+      <a routerLink="/admin/login" aria-label="Acceso al panel administrativo">Acceso Administrativo</a>
+    </nav>
   </div>
 </footer>

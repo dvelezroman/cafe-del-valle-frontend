@@ -5,7 +5,7 @@
     </div>
 
     <div class="blog-list">
-        @for (post of posts; track post.id) {
+        @for (post of posts(); track post.id) {
         <div class="blog-item admin-card glass-card">
             <div class="post-preview-img">
                 <img [src]="post.image || '/images/Logo2.jpeg'" [alt]="post.title" />

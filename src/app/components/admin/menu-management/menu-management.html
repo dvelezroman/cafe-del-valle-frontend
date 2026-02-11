@@ -1,42 +1,82 @@
 <div class="admin-section">
     <div class="section-header">
-        <h2>Gestión del Menú</h2>
-        <button class="btn btn-primary">+ Nuevo Item</button>
+        <h1>Gestión del Menú</h1>
+        <button class="btn btn-primary" 
+                type="button"
+                aria-label="Agregar nuevo item al menú">
+            + Nuevo Item
+        </button>
     </div>
 
     <div class="admin-card glass-card">
-        <div class="items-table-wrapper">
-            <table class="items-table">
+        <div class="items-table-wrapper" role="region" aria-label="Lista de items del menú">
+            <table class="items-table" role="table" aria-label="Items del menú">
                 <thead>
-                    <tr>
-                        <th>Imagen</th>
-                        <th>Nombre</th>
-                        <th>Categoría</th>
-                        <th>Precio</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
+                    <tr role="row">
+                        <th scope="col">Imagen</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Categoría</th>
+                        <th scope="col">Precio</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @for (item of menuItems; track item.id) {
+                    @if (menuItems().length === 0) {
                     <tr>
-                        <td>
-                            <div class="item-thumb">
-                                <img [src]="item.image || '/images/Logo2.jpeg'" [alt]="item.name" />
+                        <td colspan="6" class="text-center text-muted" role="cell">
+                            <div class="empty-state">
+                                <p>No hay items en el menú. Agrega el primer item para comenzar.</p>
                             </div>
                         </td>
-                        <td>{{ item.name }}</td>
-                        <td><span class="badge">{{ item.category }}</span></td>
-                        <td>${{ item.price.toFixed(2) }}</td>
-                        <td>
-                            <span class="status-pill" [class.available]="item.available">
+                    </tr>
+                    }
+                    @for (item of menuItems(); track item.id) {
+                    <tr role="row">
+                        <td role="cell">
+                            <div class="item-thumb">
+                                <img [src]="item.image || '/images/Logo2.jpeg'" 
+                                     [alt]="'Imagen de ' + item.name" 
+                                     loading="lazy" />
+                            </div>
+                        </td>
+                        <td role="cell">
+                            <strong>{{ item.name }}</strong>
+                        </td>
+                        <td role="cell">
+                            <span class="badge" [attr.aria-label]="'Categoría: ' + item.category">
+                                {{ item.category }}
+                            </span>
+                        </td>
+                        <td role="cell">
+                            <span [attr.aria-label]="'Precio: ' + item.price.toFixed(2) + ' dólares'">
+                                ${{ item.price.toFixed(2) }}
+                            </span>
+                        </td>
+                        <td role="cell">
+                            <span class="status-pill" 
+                                  [class.available]="item.available"
+                                  [attr.aria-label]="item.available ? 'Disponible' : 'Agotado'"
+                                  role="status">
                                 {{ item.available ? 'Disponible' : 'Agotado' }}
                             </span>
                         </td>
-                        <td>
-                            <div class="action-btns">
-                                <button class="btn-icon" aria-label="Editar">✏️</button>
-                                <button class="btn-icon delete" aria-label="Eliminar">🗑️</button>
+                        <td role="cell">
+                            <div class="action-btns" role="group" aria-label="Acciones para {{ item.name }}">
+                                <button class="btn-icon" 
+                                        type="button"
+                                        [attr.aria-label]="'Editar ' + item.name"
+                                        title="Editar item">
+                                    <span aria-hidden="true">✏️</span>
+                                    <span class="sr-only">Editar</span>
+                                </button>
+                                <button class="btn-icon delete" 
+                                        type="button"
+                                        [attr.aria-label]="'Eliminar ' + item.name"
+                                        title="Eliminar item">
+                                    <span aria-hidden="true">🗑️</span>
+                                    <span class="sr-only">Eliminar</span>
+                                </button>
                             </div>
                         </td>
                     </tr>

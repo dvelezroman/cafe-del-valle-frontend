@@ -1,4 +1,4 @@
-import { Component, computed } from '@angular/core';
+import { Component, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DataService, BlogPost } from '../../services/data';
 import { TranslationService } from '../../services/translation.service';
@@ -9,7 +9,7 @@ import { TranslationService } from '../../services/translation.service';
   templateUrl: './blog.html',
   styleUrl: './blog.scss'
 })
-export class Blog {
+export class Blog implements OnInit {
   // Computed signals for reactive data
   blogPosts = computed(() => {
     const posts = this.dataService.blogPosts();
@@ -27,6 +27,20 @@ export class Blog {
     public dataService: DataService,
     public translationService: TranslationService
   ) { }
+
+  ngOnInit() {
+    // Ensure data is fetched when component initializes
+    if (this.dataService.blogPosts().length === 0) {
+      this.dataService.fetchBlogPosts().subscribe({
+        next: () => {
+          console.log('Blog posts loaded:', this.dataService.blogPosts().length);
+        },
+        error: (err) => {
+          console.error('Error loading blog posts:', err);
+        }
+      });
+    }
+  }
 
   translate(key: string, params?: { [key: string]: string }): string {
     return this.translationService.translate(key, params);

@@ -1,4 +1,4 @@
-import { Component, computed } from '@angular/core';
+import { Component, computed, OnInit } from '@angular/core';
 import { DataService } from '../../services/data';
 import { CoffeeVariety } from '../../services/data';
 import { TranslationService } from '../../services/translation.service';
@@ -9,13 +9,27 @@ import { TranslationService } from '../../services/translation.service';
   templateUrl: './coffee.html',
   styleUrl: './coffee.scss'
 })
-export class Coffee {
+export class Coffee implements OnInit {
   constructor(
     public dataService: DataService,
     public translationService: TranslationService
   ) { }
 
   coffeeVarieties = computed(() => this.dataService.coffeeVarieties());
+
+  ngOnInit() {
+    // Ensure data is fetched when component initializes
+    if (this.dataService.coffeeVarieties().length === 0) {
+      this.dataService.fetchCoffeeVarieties().subscribe({
+        next: () => {
+          console.log('Coffee varieties loaded:', this.dataService.coffeeVarieties().length);
+        },
+        error: (err) => {
+          console.error('Error loading coffee varieties:', err);
+        }
+      });
+    }
+  }
 
   translate(key: string, params?: { [key: string]: string }): string {
     return this.translationService.translate(key, params);
@@ -30,6 +44,28 @@ export class Coffee {
     };
     const translationKey = keyMap[variety.id];
     return translationKey ? this.translate(translationKey) : variety.description;
+  }
+
+  getFlavorNotes(variety: CoffeeVariety): string[] {
+    if (!variety.flavorNotes) {
+      return [];
+    }
+    
+    // If it's already an array, return it
+    if (Array.isArray(variety.flavorNotes)) {
+      return variety.flavorNotes;
+    }
+    
+    // If it's an object with language keys, extract the current language
+    const lang = this.translationService.getCurrentLanguageValue();
+    const notes = variety.flavorNotes as any;
+    
+    if (notes && typeof notes === 'object') {
+      // Try current language first, then fallback to 'es', then any available
+      return notes[lang] || notes['es'] || notes['en'] || notes['fr'] || [];
+    }
+    
+    return [];
   }
 
   translateFlavorNote(note: string): string {

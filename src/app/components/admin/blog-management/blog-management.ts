@@ -9,13 +9,18 @@ import { DataService } from '../../../services/data';
   styleUrl: './blog-management.scss'
 })
 export class BlogManagement implements OnInit {
-  posts: any[] = [];
+  posts: any;
 
-  constructor(private dataService: DataService) { }
+  constructor(private dataService: DataService) {
+    this.posts = this.dataService.blogPosts;
+  }
 
   ngOnInit() {
-    this.dataService.getBlogPosts().subscribe(posts => {
-      this.posts = posts;
+    // Fetch fresh data from API
+    this.dataService.fetchBlogPosts().subscribe({
+      error: (err) => {
+        console.error('Error fetching blog posts:', err);
+      }
     });
   }
 }

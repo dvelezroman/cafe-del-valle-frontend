@@ -9,11 +9,18 @@ import { DataService } from '../../../services/data';
   styleUrl: './menu-management.scss'
 })
 export class MenuManagement implements OnInit {
-  menuItems: any[] = [];
+  menuItems: any;
 
-  constructor(private dataService: DataService) { }
+  constructor(private dataService: DataService) {
+    this.menuItems = this.dataService.menuItems;
+  }
 
   ngOnInit() {
-    this.menuItems = this.dataService.getMenuItems();
+    // Fetch fresh data from API
+    this.dataService.fetchMenuItems().subscribe({
+      error: (err) => {
+        console.error('Error fetching menu items:', err);
+      }
+    });
   }
 }

@@ -1,55 +1,138 @@
 <div class="admin-section">
     <div class="section-header">
-        <h2>Información del Negocio</h2>
-        <button class="btn btn-primary" (click)="save()">Guardar Cambios</button>
+        <h1>Información del Negocio</h1>
+        <button class="btn btn-primary" 
+                (click)="save()"
+                type="button"
+                aria-label="Guardar cambios en la información del negocio">
+            Guardar Cambios
+        </button>
     </div>
 
     @if (loading) {
-    <div class="loading-state">
-        <span class="spinner"></span>
+    <div class="loading-state" role="status" aria-live="polite" aria-label="Cargando información">
+        <span class="spinner" aria-hidden="true"></span>
+        <span class="sr-only">Cargando información del negocio...</span>
     </div>
     } @else {
     <div class="admin-card glass-card">
-        <form class="admin-form">
+        <form class="admin-form" 
+              (ngSubmit)="save()"
+              [attr.aria-label]="'Formulario de información del negocio'">
             <div class="form-grid">
                 <div class="form-group">
-                    <label>Nombre del Café</label>
-                    <input type="text" [(ngModel)]="info.name" name="name" />
+                    <label for="cafe-name">Nombre del Café</label>
+                    <input type="text" 
+                           id="cafe-name"
+                           [(ngModel)]="info.name" 
+                           name="name"
+                           aria-required="false"
+                           aria-describedby="cafe-name-help" />
+                    <small id="cafe-name-help" class="sr-only">Nombre oficial del establecimiento</small>
                 </div>
                 <div class="form-group">
-                    <label>Teléfono</label>
-                    <input type="text" [(ngModel)]="info.phone" name="phone" />
+                    <label for="cafe-phone">Teléfono</label>
+                    <input type="tel" 
+                           id="cafe-phone"
+                           [(ngModel)]="info.phone" 
+                           name="phone"
+                           aria-required="false"
+                           aria-describedby="cafe-phone-help"
+                           autocomplete="tel" />
+                    <small id="cafe-phone-help" class="sr-only">Número de teléfono de contacto</small>
                 </div>
                 <div class="form-group span-2">
-                    <label>Dirección</label>
-                    <input type="text" [(ngModel)]="info.address" name="address" />
+                    <label for="cafe-address">Dirección</label>
+                    <input type="text" 
+                           id="cafe-address"
+                           [(ngModel)]="info.address" 
+                           name="address"
+                           aria-required="false"
+                           aria-describedby="cafe-address-help"
+                           autocomplete="street-address" />
+                    <small id="cafe-address-help" class="sr-only">Dirección completa del establecimiento</small>
                 </div>
                 <div class="form-group">
-                    <label>Latitud</label>
-                    <input type="number" [(ngModel)]="info.latitude" name="lat" />
+                    <label for="cafe-latitude">Latitud</label>
+                    <input type="number" 
+                           id="cafe-latitude"
+                           [(ngModel)]="info.latitude" 
+                           name="lat"
+                           step="any"
+                           aria-required="false"
+                           aria-describedby="cafe-latitude-help" />
+                    <small id="cafe-latitude-help" class="sr-only">Coordenada de latitud para el mapa</small>
                 </div>
                 <div class="form-group">
-                    <label>Longitud</label>
-                    <input type="number" [(ngModel)]="info.longitude" name="lng" />
+                    <label for="cafe-longitude">Longitud</label>
+                    <input type="number" 
+                           id="cafe-longitude"
+                           [(ngModel)]="info.longitude" 
+                           name="lng"
+                           step="any"
+                           aria-required="false"
+                           aria-describedby="cafe-longitude-help" />
+                    <small id="cafe-longitude-help" class="sr-only">Coordenada de longitud para el mapa</small>
                 </div>
             </div>
 
             <div class="form-section">
-                <h3>Traducciones</h3>
-                <div class="tabs">
-                    <button [class.active]="activeLang === 'es'" (click)="activeLang = 'es'">Español</button>
-                    <button [class.active]="activeLang === 'en'" (click)="activeLang = 'en'">Inglés</button>
-                    <button [class.active]="activeLang === 'fr'" (click)="activeLang = 'fr'">Francés</button>
+                <h2>Traducciones</h2>
+                <div class="tabs" role="tablist" aria-label="Seleccionar idioma para editar">
+                    <button type="button"
+                            role="tab"
+                            [attr.aria-selected]="activeLang === 'es'"
+                            [attr.aria-controls]="'tab-panel-es'"
+                            [class.active]="activeLang === 'es'" 
+                            (click)="activeLang = 'es'"
+                            id="tab-es">
+                        Español
+                    </button>
+                    <button type="button"
+                            role="tab"
+                            [attr.aria-selected]="activeLang === 'en'"
+                            [attr.aria-controls]="'tab-panel-en'"
+                            [class.active]="activeLang === 'en'" 
+                            (click)="activeLang = 'en'"
+                            id="tab-en">
+                        Inglés
+                    </button>
+                    <button type="button"
+                            role="tab"
+                            [attr.aria-selected]="activeLang === 'fr'"
+                            [attr.aria-controls]="'tab-panel-fr'"
+                            [class.active]="activeLang === 'fr'" 
+                            (click)="activeLang = 'fr'"
+                            id="tab-fr">
+                        Francés
+                    </button>
                 </div>
 
-                <div class="tab-content">
+                <div class="tab-content" 
+                     [attr.id]="'tab-panel-' + activeLang"
+                     [attr.aria-labelledby]="'tab-' + activeLang"
+                     role="tabpanel">
                     <div class="form-group">
-                        <label>Slogan (Tagline)</label>
-                        <input type="text" [(ngModel)]="info.tagline[activeLang]" name="tagline" />
+                        <label for="cafe-tagline">Slogan (Tagline)</label>
+                        <input type="text" 
+                               id="cafe-tagline"
+                               [(ngModel)]="info.tagline[activeLang]" 
+                               name="tagline"
+                               [attr.aria-describedby]="'tagline-help-' + activeLang" />
+                        <small [attr.id]="'tagline-help-' + activeLang" class="sr-only">
+                            Slogan del café en {{ activeLang === 'es' ? 'español' : activeLang === 'en' ? 'inglés' : 'francés' }}
+                        </small>
                     </div>
                     <div class="form-group">
-                        <label>Descripción</label>
-                        <textarea rows="4" [(ngModel)]="info.description[activeLang]" name="description"></textarea>
+                        <label for="cafe-description">Descripción</label>
+                        <textarea rows="4" 
+                                  id="cafe-description"
+                                  [(ngModel)]="info.description[activeLang]" 
+                                  name="description"
+                                  [attr.aria-describedby]="'description-help-' + activeLang"></textarea>
+                        <small [attr.id]="'description-help-' + activeLang" class="sr-only">
+                            Descripción del café en {{ activeLang === 'es' ? 'español' : activeLang === 'en' ? 'inglés' : 'francés' }}
+                        </small>
                     </div>
                 </div>
             </div>

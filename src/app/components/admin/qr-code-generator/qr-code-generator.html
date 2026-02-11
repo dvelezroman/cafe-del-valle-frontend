@@ -44,35 +44,47 @@
 
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary" [disabled]="isGenerating()">
-                    <span *ngIf="!isGenerating()">Generate Codes</span>
-                    <span *ngIf="isGenerating()">Generating...</span>
+                    @if (!isGenerating()) {
+                    <span>Generate Codes</span>
+                    } @else {
+                    <span>Generating...</span>
+                    }
                 </button>
             </div>
         </form>
     </div>
 
     <!-- Generated Codes Preview -->
-    <div class="codes-preview" *ngIf="showPreview() && codes().length > 0">
+    @if (showPreview() && codes().length > 0) {
+    <div class="codes-preview">
         <div class="preview-header">
             <h2>Generated Codes ({{ codes().length}})</h2>
             <button class="btn btn-success" (click)="downloadPDF()" [disabled]="isDownloading()">
-                <span *ngIf="!isDownloading()">📥 Download All as PDF</span>
-                <span *ngIf="isDownloading()">Downloading...</span>
+                @if (!isDownloading()) {
+                <span>📥 Download All as PDF</span>
+                } @else {
+                <span>Downloading...</span>
+                }
             </button>
         </div>
 
         <div class="codes-grid">
-            <div class="code-card" *ngFor="let code of codes().slice(0, 20)">
+            @for (code of codes().slice(0, 20); track code.id) {
+            <div class="code-card">
                 <div class="code-value">{{ code.code }}</div>
                 <div class="code-status" [class]="code.status.toLowerCase()">
                     {{ code.status }}
                 </div>
             </div>
-            <div class="code-card more" *ngIf="codes().length > 20">
+            }
+            @if (codes().length > 20) {
+            <div class="code-card more">
                 <div class="more-text">
                     +{{ codes().length - 20 }} more codes
                 </div>
             </div>
+            }
         </div>
     </div>
+    }
 </div>

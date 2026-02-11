@@ -1,4 +1,4 @@
-import { Component, computed, signal, inject } from '@angular/core';
+import { Component, computed, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DataService, MenuItem } from '../../services/data';
 import { TranslationService } from '../../services/translation.service';
@@ -11,13 +11,27 @@ type MenuCategory = 'bebidas' | 'comidas' | 'postres' | 'especiales' | 'todos';
   templateUrl: './menu.html',
   styleUrl: './menu.scss'
 })
-export class Menu {
+export class Menu implements OnInit {
   private dataService = inject(DataService);
   public translationService = inject(TranslationService);
 
   selectedCategory = signal<MenuCategory>('todos');
 
   menuItems = this.dataService.menuItems;
+
+  ngOnInit() {
+    // Ensure data is fetched when component initializes
+    if (this.dataService.menuItems().length === 0) {
+      this.dataService.fetchMenuItems().subscribe({
+        next: () => {
+          console.log('Menu items loaded:', this.dataService.menuItems().length);
+        },
+        error: (err) => {
+          console.error('Error loading menu items:', err);
+        }
+      });
+    }
+  }
 
   filteredItems = computed(() => {
     const category = this.selectedCategory();

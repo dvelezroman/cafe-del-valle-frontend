@@ -7,39 +7,46 @@
     </header>
 
     <div class="coffee-grid" role="list">
-      @for (variety of coffeeVarieties(); track variety.id) {
-      <article class="coffee-card glass-card" role="listitem">
-        <div class="coffee-image-wrapper image-container">
-          @if (variety.image) {
-          <img [src]="variety.image" [alt]="variety.name + ' cultivado en ' + variety.region" loading="lazy"
-            (error)="handleImageError($event, variety)" />
-          } @else {
-          <div class="coffee-placeholder center-content">
-            <span>☕</span>
-          </div>
-          }
-          <div class="coffee-badge">{{ variety.region }}</div>
-        </div>
-
-        <div class="coffee-content">
-          <header class="coffee-header">
-            <h3>{{ variety.name }}</h3>
-          </header>
-
-          <p class="coffee-description">{{ getCoffeeDescription(variety) }}</p>
-
-          <footer class="coffee-footer">
-            <div class="coffee-notes-container">
-              <span class="notes-title">{{ translate('coffee.flavor.notes') }}</span>
-              <div class="notes-list">
-                @for (note of variety.flavorNotes; track note) {
-                <span class="note-pill">{{ translateFlavorNote(note) }}</span>
-                }
-              </div>
+      @if (coffeeVarieties().length > 0) {
+        @for (variety of coffeeVarieties(); track variety.id) {
+        <article class="coffee-card glass-card" role="listitem">
+          <div class="coffee-image-wrapper image-container">
+            @if (variety.image) {
+            <img [src]="variety.image" [alt]="variety.name + ' cultivado en ' + variety.region" loading="lazy"
+              (error)="handleImageError($event, variety)" />
+            } @else {
+            <div class="coffee-placeholder center-content">
+              <span>☕</span>
             </div>
-          </footer>
+            }
+            <div class="coffee-badge">{{ variety.region }}</div>
+          </div>
+
+          <div class="coffee-content">
+            <header class="coffee-header">
+              <h3>{{ variety.name }}</h3>
+            </header>
+
+            <p class="coffee-description">{{ getCoffeeDescription(variety) }}</p>
+
+            <footer class="coffee-footer">
+              <div class="coffee-notes-container">
+                <span class="notes-title">{{ translate('coffee.flavor.notes') }}</span>
+                <div class="notes-list">
+                  @for (note of getFlavorNotes(variety); track note) {
+                  <span class="note-pill">{{ translateFlavorNote(note) }}</span>
+                  }
+                </div>
+              </div>
+            </footer>
+          </div>
+        </article>
+        }
+      } @else {
+        <div class="empty-state">
+          <div class="empty-icon">☕</div>
+          <p>{{ translate('coffee.no.varieties') || 'No hay variedades de café disponibles en este momento.' }}</p>
         </div>
-      </article>
       }
     </div>
   </div>

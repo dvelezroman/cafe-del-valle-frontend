@@ -24,7 +24,8 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let subscriber of subscribers()">
+                @for (subscriber of subscribers(); track subscriber.id) {
+                <tr>
                     <td class="code-value">{{ subscriber.code.code }}</td>
                     <td>{{ subscriber.name }}</td>
                     <td>{{ subscriber.email }}</td>
@@ -39,11 +40,13 @@
                     </td>
                     <td>
                         <div class="quota-info">
-                            <span *ngIf="subscriber.quotaRemaining !== null">
-                                {{ subscriber.quotaRemaining }} / {{ subscriber.quotaUsed + subscriber.quotaRemaining!
-                                }}
+                            @if (subscriber.quotaRemaining !== null) {
+                            <span>
+                                {{ subscriber.quotaRemaining }} / {{ subscriber.quotaUsed + subscriber.quotaRemaining! }}
                             </span>
-                            <span *ngIf="subscriber.quotaRemaining === null">Unlimited</span>
+                            } @else {
+                            <span>Unlimited</span>
+                            }
                         </div>
                     </td>
                     <td>
@@ -60,17 +63,21 @@
                         </div>
                     </td>
                 </tr>
-                <tr *ngIf="subscribers().length === 0">
+                }
+                @if (subscribers().length === 0) {
+                <tr>
                     <td colspan="7" class="text-center text-muted">
                         No subscribers found. Create your first subscriber to get started.
                     </td>
                 </tr>
+                }
             </tbody>
         </table>
     </div>
 
     <!-- Create Subscriber Modal -->
-    <div class="modal-overlay" *ngIf="isModalOpen()" (click)="closeModal()">
+    @if (isModalOpen()) {
+    <div class="modal-overlay" (click)="closeModal()">
         <div class="modal-content" (click)="$event.stopPropagation()">
             <div class="modal-header">
                 <h2>Add New Subscriber</h2>
@@ -82,9 +89,11 @@
                     <label for="codeId">Select Available Code *</label>
                     <select id="codeId" [(ngModel)]="formData().codeId" name="codeId" required>
                         <option value="">-- Select a code --</option>
-                        <option *ngFor="let code of availableCodes()" [value]="code.id">
+                        @for (code of availableCodes(); track code.id) {
+                        <option [value]="code.id">
                             {{ code.code }}
                         </option>
+                        }
                     </select>
                     <small>{{ availableCodes().length }} codes available</small>
                 </div>
@@ -108,9 +117,11 @@
                     <label for="planId">Subscription Plan *</label>
                     <select id="planId" [(ngModel)]="formData().planId" name="planId" required>
                         <option value="">-- Select a plan --</option>
-                        <option *ngFor="let plan of plans()" [value]="plan.id">
+                        @for (plan of plans(); track plan.id) {
+                        <option [value]="plan.id">
                             {{ plan.title.es }} - \${{ plan.price }}
                         </option>
+                        }
                     </select>
                 </div>
 
@@ -130,4 +141,5 @@
             </form>
         </div>
     </div>
+    }
 </div>
