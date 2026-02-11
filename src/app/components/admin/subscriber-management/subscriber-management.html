@@ -18,6 +18,8 @@
                     <th>Name</th>
                     <th>Email</th>
                     <th>Plan</th>
+                    <th>Price</th>
+                    <th>Partner</th>
                     <th>Status</th>
                     <th>Quota</th>
                     <th>Actions</th>
@@ -26,17 +28,54 @@
             <tbody>
                 @for (subscriber of subscribers(); track subscriber.id) {
                 <tr>
-                    <td class="code-value">{{ subscriber.code.code }}</td>
+                    <td class="code-value">
+                        @if (subscriber.code) {
+                        {{ subscriber.code.code }}
+                        } @else {
+                        <span class="text-muted">PENDING</span>
+                        }
+                    </td>
                     <td>{{ subscriber.name }}</td>
                     <td>{{ subscriber.email }}</td>
                     <td>
-                        {{ subscriber.plan?.title?.es }}<br />
-                        <small>\${{ subscriber.plan?.price }}</small>
+                        {{ subscriber.plan?.title?.es || subscriber.plan?.title?.en }}<br />
+                    </td>
+                    <td>
+                        @if (subscriber.discountedPrice && subscriber.discountedPrice < subscriber.originalPrice) {
+                        <div>
+                            <span class="text-muted" style="text-decoration: line-through;">\${{ subscriber.originalPrice }}</span>
+                            <br />
+                            <strong>\${{ subscriber.discountedPrice }}</strong>
+                            @if (subscriber.discounts && subscriber.discounts.length > 0) {
+                            <br />
+                            <small class="discount-badge">
+                                {{ subscriber.discounts[0].discountType === 'PERCENTAGE' ? subscriber.discounts[0].discountValue + '%' : '\$' + subscriber.discounts[0].discountValue }} off
+                            </small>
+                            }
+                        </div>
+                        } @else {
+                        \${{ subscriber.originalPrice }}
+                        }
+                    </td>
+                    <td>
+                        @if (subscriber.partnerProfile) {
+                        <div>
+                            <span class="status-pill info">Socio</span>
+                            <br />
+                            <small>Puntos: {{ subscriber.partnerProfile.points }}</small>
+                        </div>
+                        } @else {
+                        <span class="text-muted">-</span>
+                        }
                     </td>
                     <td>
                         <span class="status-badge" [class]="subscriber.status.toLowerCase()">
                             {{ subscriber.status }}
                         </span>
+                        @if (subscriber.status === 'PENDING') {
+                        <br />
+                        <small class="text-muted">Sin código asignado</small>
+                        }
                     </td>
                     <td>
                         <div class="quota-info">
@@ -51,9 +90,14 @@
                     </td>
                     <td>
                         <div class="action-buttons">
+                            @if (subscriber.status === 'PENDING') {
+                            <button class="btn-sm btn-primary" (click)="assignCodeToPending(subscriber)">
+                                Asignar Código
+                            </button>
+                            }
                             <button class="btn-sm" [class.btn-warning]="subscriber.status === 'ACTIVE'"
-                                [class.btn-success]="subscriber.status === 'PAUSED'"
-                                (click)="updateStatus(subscriber.id, subscriber.status === 'ACTIVE' ? 'PAUSED' : 'ACTIVE')">
+                                [class.btn-success]="subscriber.status === 'SUSPENDED'"
+                                (click)="updateStatus(subscriber.id, subscriber.status === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE')">
                                 {{ subscriber.status === 'ACTIVE' ? 'Pause' : 'Activate' }}
                             </button>
                             <button class="btn-sm btn-danger" (click)="updateStatus(subscriber.id, 'CANCELLED')"
@@ -66,7 +110,7 @@
                 }
                 @if (subscribers().length === 0) {
                 <tr>
-                    <td colspan="7" class="text-center text-muted">
+                    <td colspan="9" class="text-center text-muted">
                         No subscribers found. Create your first subscriber to get started.
                     </td>
                 </tr>

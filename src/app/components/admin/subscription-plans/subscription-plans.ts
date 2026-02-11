@@ -26,7 +26,10 @@ export class SubscriptionPlansComponent implements OnInit {
         featuresInputEs: '',
         featuresInputEn: '',
         active: true,
-        order: 0
+        order: 0,
+        billingPeriod: 'MONTHLY' as 'MONTHLY' | 'YEARLY' | 'CUSTOM',
+        billingDuration: null as number | null,
+        billingDurationLabel: { es: '', en: '' }
     });
 
     ngOnInit() {
@@ -44,7 +47,10 @@ export class SubscriptionPlansComponent implements OnInit {
                 featuresInputEs: Array.isArray(plan.features?.es) ? plan.features.es.join('\n') : plan.features?.es || '',
                 featuresInputEn: Array.isArray(plan.features?.en) ? plan.features.en.join('\n') : plan.features?.en || '',
                 active: plan.active,
-                order: plan.order
+                order: plan.order,
+                billingPeriod: plan.billingPeriod || 'MONTHLY',
+                billingDuration: plan.billingDuration || null,
+                billingDurationLabel: plan.billingDurationLabel || { es: '', en: '' }
             });
         } else {
             this.editingPlan.set(null);
@@ -66,13 +72,16 @@ export class SubscriptionPlansComponent implements OnInit {
             featuresInputEs: '',
             featuresInputEn: '',
             active: true,
-            order: 0
+            order: 0,
+            billingPeriod: 'MONTHLY',
+            billingDuration: null,
+            billingDurationLabel: { es: '', en: '' }
         });
     }
 
     savePlan() {
         const data = this.formData();
-        const payload = {
+        const payload: any = {
             title: data.title,
             description: data.description,
             price: data.price,
@@ -81,8 +90,15 @@ export class SubscriptionPlansComponent implements OnInit {
                 en: data.featuresInputEn.split('\n').filter(f => f.trim())
             },
             active: data.active,
-            order: data.order
+            order: data.order,
+            billingPeriod: data.billingPeriod
         };
+
+        // Only include billingDuration and billingDurationLabel if period is CUSTOM
+        if (data.billingPeriod === 'CUSTOM') {
+            payload.billingDuration = data.billingDuration;
+            payload.billingDurationLabel = data.billingDurationLabel;
+        }
 
         if (this.editingPlan()) {
             this.subscriptionService.updatePlan(this.editingPlan()!.id, payload).subscribe(() => {

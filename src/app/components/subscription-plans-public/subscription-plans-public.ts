@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { SubscriptionService, SubscriptionPlan } from '../../services/subscription.service';
 import { ToastService } from '../../services/toast.service';
 import { FormsModule } from '@angular/forms';
+import { TranslationService } from '../../services/translation.service';
 
 @Component({
     selector: 'app-subscription-plans-public',
@@ -14,10 +15,53 @@ import { FormsModule } from '@angular/forms';
 export class SubscriptionPlansPublicComponent implements OnInit {
     private subscriptionService = inject(SubscriptionService);
     private toastService = inject(ToastService);
+    private translationService = inject(TranslationService);
 
     plans = signal<SubscriptionPlan[]>([]);
     isModalOpen = signal(false);
     selectedPlan = signal<SubscriptionPlan | null>(null);
+
+    getPlanFeatures(plan: SubscriptionPlan): string[] {
+        if (!plan.features) {
+            return [];
+        }
+        
+        // If it's already an array, return it
+        if (Array.isArray(plan.features)) {
+            return plan.features;
+        }
+        
+        // If it's an object with language keys, extract the current language
+        const lang = this.translationService.getCurrentLanguageValue();
+        const features = plan.features as any;
+        
+        if (features && typeof features === 'object') {
+            // Try current language first, then fallback to 'es', then any available
+            return features[lang] || features['es'] || features['en'] || features['fr'] || [];
+        }
+        
+        return [];
+    }
+
+    getBillingPeriodLabel(plan: SubscriptionPlan): string {
+        const lang = this.translationService.getCurrentLanguageValue();
+        
+        if (plan.billingPeriod === 'MONTHLY') {
+            return lang === 'es' ? '/ mes' : lang === 'en' ? '/ month' : '/ mois';
+        }
+        
+        if (plan.billingPeriod === 'YEARLY') {
+            return lang === 'es' ? '/ año' : lang === 'en' ? '/ year' : '/ an';
+        }
+        
+        if (plan.billingPeriod === 'CUSTOM' && plan.billingDurationLabel) {
+            const label = plan.billingDurationLabel as any;
+            return label[lang] || label['es'] || label['en'] || '';
+        }
+        
+        // Fallback
+        return lang === 'es' ? '/ mes' : '/ month';
+    }
 
     // Interest Form Data
     formData = signal({

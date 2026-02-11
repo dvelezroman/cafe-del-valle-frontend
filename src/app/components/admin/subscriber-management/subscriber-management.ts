@@ -84,12 +84,36 @@ export class SubscriberManagementComponent implements OnInit {
         });
     }
 
-    updateStatus(id: string, status: 'ACTIVE' | 'PAUSED' | 'CANCELLED') {
+    updateStatus(id: string, status: 'ACTIVE' | 'SUSPENDED' | 'EXPIRED' | 'CANCELLED' | 'PENDING') {
         if (confirm(`Change subscriber status to ${status}?`)) {
             this.subscriberService.updateSubscriberStatus(id, status).subscribe({
                 next: () => this.toastService.success('Status updated successfully'),
                 error: () => this.toastService.error('Failed to update status')
             });
         }
+    }
+
+    assignCodeToPending(subscriber: Subscriber) {
+        if (!subscriber || subscriber.status !== 'PENDING') {
+            this.toastService.error('Only pending subscribers can have codes assigned');
+            return;
+        }
+
+        const availableCodes = this.availableCodes();
+        if (availableCodes.length === 0) {
+            this.toastService.error('No available codes. Please generate codes first.');
+            return;
+        }
+
+        const codeId = availableCodes[0].id; // Use first available code
+        this.subscriberService.assignCodeToPendingSubscriber(subscriber.id, codeId).subscribe({
+            next: () => {
+                this.toastService.success('Code assigned successfully');
+                this.loadAvailableCodes();
+            },
+            error: (err: any) => {
+                this.toastService.error(err.error?.message || 'Failed to assign code');
+            }
+        });
     }
 }

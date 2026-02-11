@@ -288,6 +288,25 @@
     }
 }
 
+select {
+    padding: 0.875rem 1.125rem;
+    border: 2px solid rgba(45, 27, 14, 0.1);
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 1rem;
+    color: var(--coffee-deep);
+    background: var(--white);
+    transition: all 0.2s;
+    width: 100%;
+    cursor: pointer;
+
+    &:focus {
+        outline: none;
+        border-color: var(--accent-gold);
+        box-shadow: 0 0 0 4px rgba(197, 160, 89, 0.1);
+    }
+}
+
 .modal-actions {
     display: flex;
     justify-content: flex-end;

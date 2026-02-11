@@ -49,7 +49,7 @@
                         <td>
                             <div class="action-btns">
                                 <button class="btn btn-sm btn-success"
-                                    (click)="validate(partner.id, 'APPROVED')">Aprobar</button>
+                                    (click)="openApprovalModal(partner)">Aprobar</button>
                                 <button class="btn btn-sm btn-danger"
                                     (click)="validate(partner.id, 'REJECTED')">Rechazar</button>
                             </div>
@@ -62,3 +62,90 @@
         }
     </div>
 </div>
+
+<!-- Approval Modal -->
+@if (showApprovalModal && selectedPartner) {
+<div class="modal-overlay" (click)="closeApprovalModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2>Aprobar Socio</h2>
+            <button class="close-btn" (click)="closeApprovalModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <p><strong>{{ selectedPartner.user.name }}</strong></p>
+            <p>{{ selectedPartner.user.email }}</p>
+            <p>Puntos: {{ selectedPartner.points }}</p>
+            
+            <div class="form-group">
+                <label for="planSelect">Seleccionar Plan de Suscripción *</label>
+                <select id="planSelect" [(ngModel)]="selectedPlan" class="form-control">
+                    <option [value]="null">-- Seleccionar plan --</option>
+                    @for (plan of availablePlans; track plan.id) {
+                    <option [value]="plan">{{ plan.title?.es || plan.title?.en }} - ${{ plan.price }}</option>
+                    }
+                </select>
+            </div>
+
+            @if (selectedPlan) {
+            <div class="discount-preview">
+                <h4>Vista Previa de Precio</h4>
+                <p>Precio Original: ${{ selectedPlan.price }}</p>
+                <p>Puntos del Socio: {{ selectedPartner.points }}</p>
+                <!-- Descuentos se calcularán en el backend -->
+            </div>
+            }
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="closeApprovalModal()">Cancelar</button>
+            <button class="btn btn-primary" 
+                [disabled]="!selectedPlan"
+                (click)="validate(selectedPartner.id, 'APPROVED', selectedPlan?.id)">
+                Confirmar Aprobación
+            </button>
+        </div>
+    </div>
+</div>
+}
+
+<!-- Subscription Assignment Modal -->
+@if (showSubscriptionModal && selectedPartner) {
+<div class="modal-overlay" (click)="closeSubscriptionModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2>Asignar Suscripción Adicional</h2>
+            <button class="close-btn" (click)="closeSubscriptionModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <p><strong>{{ selectedPartner.user.name }}</strong></p>
+            <p>Suscripciones actuales: {{ getPartnerSubscriptions(selectedPartner.id).length }}</p>
+            
+            <div class="form-group">
+                <label for="codeSelect">Código Disponible *</label>
+                <select id="codeSelect" #codeSelect class="form-control">
+                    <option value="">-- Seleccionar código --</option>
+                    @for (code of availableCodes; track code.id) {
+                    <option [value]="code.id">{{ code.code }}</option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="planSelectSub">Plan de Suscripción *</label>
+                <select id="planSelectSub" #planSelectSub class="form-control">
+                    <option value="">-- Seleccionar plan --</option>
+                    @for (plan of availablePlans; track plan.id) {
+                    <option [value]="plan.id">{{ plan.title?.es || plan.title?.en }} - ${{ plan.price }}</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="closeSubscriptionModal()">Cancelar</button>
+            <button class="btn btn-primary" 
+                (click)="assignAdditionalSubscription(selectedPartner.id, codeSelect.value, planSelectSub.value)">
+                Asignar Suscripción
+            </button>
+        </div>
+    </div>
+</div>
+}

@@ -18,22 +18,44 @@ export interface SubscriberCode {
     };
 }
 
+export interface SubscriptionDiscount {
+    id: string;
+    discountType: 'PERCENTAGE' | 'FIXED_AMOUNT' | 'POINTS_REDEMPTION';
+    discountValue: number;
+    promotionId?: string;
+    pointsUsed?: number;
+    active: boolean;
+    validUntil?: string;
+    promotion?: {
+        name: { es: string; en: string };
+    };
+}
+
 export interface Subscriber {
     id: string;
     name: string;
     email: string;
     phone: string;
-    status: 'ACTIVE' | 'PAUSED' | 'CANCELLED';
+    status: 'ACTIVE' | 'SUSPENDED' | 'EXPIRED' | 'CANCELLED' | 'PENDING';
     quotaRemaining: number | null;
     quotaUsed: number;
     createdAt: string;
-    code: {
+    code?: {
         code: string;
     };
     plan?: {
         title: { es: string; en: string };
         price: number;
     };
+    partnerProfileId?: string;
+    partnerProfile?: {
+        id: string;
+        points: number;
+        referralCode: string;
+    };
+    originalPrice: number;
+    discountedPrice?: number;
+    discounts?: SubscriptionDiscount[];
     notes?: string;
     usageEvents?: UsageEvent[];
 }
@@ -138,8 +160,14 @@ export class SubscriberManagementService {
     }
 
     // Update subscriber status
-    updateSubscriberStatus(id: string, status: 'ACTIVE' | 'PAUSED' | 'CANCELLED'): Observable<Subscriber> {
+    updateSubscriberStatus(id: string, status: 'ACTIVE' | 'SUSPENDED' | 'EXPIRED' | 'CANCELLED' | 'PENDING'): Observable<Subscriber> {
         return this.http.patch<Subscriber>(`${this.baseUrl}/subscribers/${id}/status`, { status })
+            .pipe(tap(() => this.getAllSubscribers().subscribe()));
+    }
+
+    // Assign code to pending subscriber
+    assignCodeToPendingSubscriber(subscriberId: string, codeId: string): Observable<Subscriber> {
+        return this.http.patch<Subscriber>(`${this.baseUrl}/subscribers/${subscriberId}/assign-code`, { codeId })
             .pipe(tap(() => this.getAllSubscribers().subscribe()));
     }
 

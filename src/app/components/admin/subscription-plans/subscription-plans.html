@@ -128,6 +128,60 @@
                     </div>
                 </div>
 
+                <!-- Billing Period -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="billingPeriod">Período de Facturación</label>
+                        <select id="billingPeriod"
+                            [(ngModel)]="formData().billingPeriod"
+                            name="billingPeriod"
+                            aria-describedby="billingPeriod-desc">
+                            <option value="MONTHLY">Mensual</option>
+                            <option value="YEARLY">Anual</option>
+                            <option value="CUSTOM">Personalizado</option>
+                        </select>
+                        <small id="billingPeriod-desc" class="sr-only">Selecciona el período de facturación del plan</small>
+                    </div>
+                    @if (formData().billingPeriod === 'CUSTOM') {
+                    <div class="form-group">
+                        <label for="billingDuration">Duración (meses)</label>
+                        <input id="billingDuration"
+                            [(ngModel)]="formData().billingDuration"
+                            name="billingDuration"
+                            type="number"
+                            min="1"
+                            aria-describedby="billingDuration-desc">
+                        <small id="billingDuration-desc" class="sr-only">Duración del período personalizado en meses</small>
+                    </div>
+                    }
+                </div>
+
+                @if (formData().billingPeriod === 'CUSTOM') {
+                <!-- Custom Duration Labels -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="billingLabelEs">Etiqueta Duración (ES)</label>
+                        <input id="billingLabelEs"
+                            [(ngModel)]="formData().billingDurationLabel.es"
+                            name="billingLabelEs"
+                            type="text"
+                            placeholder="Ej: 3 meses"
+                            aria-describedby="billingLabelEs-desc">
+                        <small id="billingLabelEs-desc" class="sr-only">Etiqueta personalizada para la duración en español</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="billingLabelEn">Etiqueta Duración (EN)</label>
+                        <input id="billingLabelEn"
+                            [(ngModel)]="formData().billingDurationLabel.en"
+                            name="billingLabelEn"
+                            type="text"
+                            placeholder="Ej: 3 months"
+                            aria-describedby="billingLabelEn-desc">
+                        <small id="billingLabelEn-desc" class="sr-only">Etiqueta personalizada para la duración en inglés</small>
+                    </div>
+                </div>
+                }
+
                 <!-- Features -->
                 <div class="form-row">
                     <div class="form-group">

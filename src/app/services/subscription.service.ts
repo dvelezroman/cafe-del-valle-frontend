@@ -2,6 +2,8 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 
+export type BillingPeriod = 'MONTHLY' | 'YEARLY' | 'CUSTOM';
+
 export interface SubscriptionPlan {
     id: string;
     title: any; // Json in DB, handled as object here
@@ -10,6 +12,9 @@ export interface SubscriptionPlan {
     features: any;
     active: boolean;
     order: number;
+    billingPeriod?: BillingPeriod;
+    billingDuration?: number; // For CUSTOM period, duration in months
+    billingDurationLabel?: any; // Json - Custom label like "3 meses", "6 meses", etc.
     createdAt: string;
     updatedAt: string;
 }
