@@ -1,6 +1,7 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SubscriptionService, SubscriptionPlan } from '../../services/subscription.service';
+import { ToastService } from '../../services/toast.service';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -12,6 +13,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class SubscriptionPlansPublicComponent implements OnInit {
     private subscriptionService = inject(SubscriptionService);
+    private toastService = inject(ToastService);
 
     plans = signal<SubscriptionPlan[]>([]);
     isModalOpen = signal(false);
@@ -66,7 +68,7 @@ export class SubscriptionPlansPublicComponent implements OnInit {
             error: (err) => {
                 console.error('Error submitting interest', err);
                 this.isSubmitting.set(false);
-                alert('Could not submit your interest. Please try again.');
+                this.toastService.error('Could not submit your interest. Please try again.');
             }
         });
     }

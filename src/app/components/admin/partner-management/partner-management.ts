@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from '../../../services/auth.service';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-partner-management',
@@ -16,7 +17,8 @@ export class PartnerManagement implements OnInit {
 
   constructor(
     private http: HttpClient,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastService: ToastService
   ) { }
 
   ngOnInit() {
@@ -24,8 +26,7 @@ export class PartnerManagement implements OnInit {
   }
 
   fetchPending() {
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
-    this.http.get<any[]>(this.apiUrl, { headers }).subscribe({
+    this.http.get<any[]>(this.apiUrl).subscribe({
       next: (res) => {
         this.pendingPartners = res;
         this.loading = false;
@@ -37,13 +38,12 @@ export class PartnerManagement implements OnInit {
   validate(id: string, status: 'APPROVED' | 'REJECTED') {
     if (!confirm(`¿Estás seguro de que deseas ${status === 'APPROVED' ? 'aprobar' : 'rechazar'} a este socio?`)) return;
 
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
-    this.http.patch(`http://localhost:3000/api/admin/partners/${id}/validate`, { status }, { headers }).subscribe({
+    this.http.patch(`http://localhost:3000/api/admin/partners/${id}/validate`, { status, referralPoints: 50 }).subscribe({
       next: () => {
         this.pendingPartners = this.pendingPartners.filter(p => p.id !== id);
-        alert(`Socio ${status === 'APPROVED' ? 'aprobado' : 'rechazado'} con éxito.`);
+        this.toastService.success(`Socio ${status === 'APPROVED' ? 'aprobado' : 'rechazado'} con éxito.`);
       },
-      error: (err) => alert('Error al procesar la solicitud.')
+      error: (err) => this.toastService.error('Error al procesar la solicitud.')
     });
   }
 }

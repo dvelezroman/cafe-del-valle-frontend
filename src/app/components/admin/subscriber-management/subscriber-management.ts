@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SubscriberManagementService, Subscriber } from '../../../services/subscriber-management.service';
 import { SubscriptionService } from '../../../services/subscription.service';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
     selector: 'app-subscriber-management',
@@ -14,6 +15,7 @@ import { SubscriptionService } from '../../../services/subscription.service';
 export class SubscriberManagementComponent implements OnInit {
     private subscriberService = inject(SubscriberManagementService);
     private subscriptionService = inject(SubscriptionService);
+    private toastService = inject(ToastService);
 
     subscribers = this.subscriberService.subscribers;
     plans = this.subscriptionService.plans;
@@ -67,7 +69,7 @@ export class SubscriberManagementComponent implements OnInit {
     createSubscriber() {
         const data = this.formData();
         if (!data.codeId || !data.name || !data.email || !data.phone || !data.planId) {
-            alert('Please fill in all required fields');
+            this.toastService.error('Please fill in all required fields');
             return;
         }
 
@@ -76,16 +78,17 @@ export class SubscriberManagementComponent implements OnInit {
                 this.closeModal();
                 this.loadAvailableCodes();
             },
-            error: (err) => {
-                alert(err.error?.message || 'Failed to create subscriber');
+            error: (err: any) => {
+                this.toastService.error(err.error?.message || 'Failed to create subscriber');
             }
         });
     }
 
-    updateStatus(id: string, status: string) {
+    updateStatus(id: string, status: 'ACTIVE' | 'PAUSED' | 'CANCELLED') {
         if (confirm(`Change subscriber status to ${status}?`)) {
             this.subscriberService.updateSubscriberStatus(id, status).subscribe({
-                error: () => alert('Failed to update status')
+                next: () => this.toastService.success('Status updated successfully'),
+                error: () => this.toastService.error('Failed to update status')
             });
         }
     }

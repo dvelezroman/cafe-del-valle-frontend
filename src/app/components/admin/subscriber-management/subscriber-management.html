@@ -29,8 +29,8 @@
                     <td>{{ subscriber.name }}</td>
                     <td>{{ subscriber.email }}</td>
                     <td>
-                        {{ subscriber.plan.title.es }}<br />
-                        <small>\${{ subscriber.plan.price }}</small>
+                        {{ subscriber.plan?.title?.es }}<br />
+                        <small>\${{ subscriber.plan?.price }}</small>
                     </td>
                     <td>
                         <span class="status-badge" [class]="subscriber.status.toLowerCase()">

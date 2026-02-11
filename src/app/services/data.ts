@@ -1,6 +1,7 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable, tap, map } from 'rxjs';
+import { TranslationService } from './translation.service';
 
 export interface CoffeeVariety {
   id: string;
@@ -44,14 +45,14 @@ export interface CafeInfo {
 
 export interface BlogPost {
   id: string;
-  title: any;
+  title: string; // Changed from any to string
   slug: string;
-  excerpt: any;
-  content: any;
+  excerpt: string; // Changed from any to string
+  content: string; // Changed from any to string
   author: string;
   publishedAt: string;
   image?: string;
-  category?: any;
+  category?: string; // Changed from any to string
   tags?: string[];
   featured?: boolean;
 }
@@ -72,6 +73,7 @@ export interface MenuItem {
 })
 export class DataService {
   private apiUrl = 'http://localhost:3000/api';
+  private translationService = inject(TranslationService);
 
   // Signals for state management
   cafeInfo = signal<CafeInfo | null>(null);
@@ -95,7 +97,7 @@ export class DataService {
   }
 
   fetchCafeInfo(): Observable<CafeInfo> {
-    return this.http.get<any>(`${this.apiUrl}/cafe-info`).pipe(
+    return this.http.get<any>(`${this.apiUrl}/cafe/info`).pipe(
       tap(res => {
         const info = {
           ...res,
@@ -107,13 +109,13 @@ export class DataService {
   }
 
   fetchCoffeeVarieties(): Observable<CoffeeVariety[]> {
-    return this.http.get<CoffeeVariety[]>(`${this.apiUrl}/coffee-varieties`).pipe(
+    return this.http.get<CoffeeVariety[]>(`${this.apiUrl}/cafe/varieties`).pipe(
       tap(res => this.coffeeVarieties.set(res))
     );
   }
 
   fetchMenuItems(): Observable<MenuItem[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/menu-items`).pipe(
+    return this.http.get<any[]>(`${this.apiUrl}/menu/items`).pipe(
       tap(res => {
         const items = res.map(i => ({ ...i, category: i.category.toLowerCase() })) as any;
         this.menuItems.set(items);
@@ -134,9 +136,33 @@ export class DataService {
   }
 
   fetchBlogPosts(): Observable<BlogPost[]> {
-    return this.http.get<BlogPost[]>(`${this.apiUrl}/blog/posts`).pipe(
-      tap(res => this.blogPosts.set(res))
+    return this.http.get<any[]>(`${this.apiUrl}/blog/posts`).pipe(
+      map(res => {
+        const lang = this.translationService.getCurrentLanguageValue();
+        const transformed = res.map((post: any) => ({
+          ...post,
+          title: this.extractLangValue(post.title, lang),
+          excerpt: this.extractLangValue(post.excerpt, lang),
+          content: this.extractLangValue(post.content, lang),
+          category: (typeof post.category === 'object' && post.category?.name)
+            ? this.extractLangValue(post.category.name, lang)
+            : this.extractLangValue(post.category, lang)
+        }));
+        return transformed;
+      }),
+      tap(posts => this.blogPosts.set(posts))
     );
+  }
+
+  // Helper method to extract language-specific value from multilingual object
+  private extractLangValue(value: any, lang: string): string {
+    if (typeof value === 'string') {
+      return value;
+    }
+    if (value && typeof value === 'object') {
+      return value[lang] || value['es'] || JSON.stringify(value);
+    }
+    return String(value || '');
   }
 
   getBlogPosts(): Observable<BlogPost[]> {

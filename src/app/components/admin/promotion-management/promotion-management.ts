@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from '../../../services/auth.service';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-promotion-management',
@@ -20,7 +21,8 @@ export class PromotionManagement implements OnInit {
 
   constructor(
     private http: HttpClient,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastService: ToastService
   ) { }
 
   ngOnInit() {
@@ -28,17 +30,16 @@ export class PromotionManagement implements OnInit {
   }
 
   fetchData() {
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
 
     // Fetch system config
-    this.http.get<any>(`${this.adminApi}/config`, { headers }).subscribe({
+    this.http.get<any>(`${this.adminApi}/config`).subscribe({
       next: (config) => {
         this.referralPoints = parseInt(config.POINTS_PER_REFERRAL, 10);
       }
     });
 
     // Fetch promotions
-    this.http.get<any[]>(`${this.adminApi}/promotions`, { headers }).subscribe({
+    this.http.get<any[]>(`${this.adminApi}/promotions`).subscribe({
       next: (res) => {
         this.promotions = res;
         this.loading = false;
@@ -48,12 +49,11 @@ export class PromotionManagement implements OnInit {
   }
 
   saveReferralPoints() {
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
-    this.http.patch(`${this.adminApi}/config/referral-points`, { points: this.referralPoints }, { headers }).subscribe({
+    this.http.patch(`${this.adminApi}/config/referral-points`, { points: this.referralPoints }).subscribe({
       next: () => {
-        alert('Configuración actualizada con éxito.');
+        this.toastService.success('Configuración actualizada con éxito.');
       },
-      error: () => alert('Error al actualizar la configuración.')
+      error: () => this.toastService.error('Error al actualizar la configuración.')
     });
   }
 }

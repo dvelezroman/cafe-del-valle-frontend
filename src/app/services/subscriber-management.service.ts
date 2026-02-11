@@ -1,5 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
@@ -29,10 +30,12 @@ export interface Subscriber {
     code: {
         code: string;
     };
-    plan: {
+    plan?: {
         title: { es: string; en: string };
         price: number;
     };
+    notes?: string;
+    usageEvents?: UsageEvent[];
 }
 
 export interface UsageEvent {
@@ -124,16 +127,24 @@ export class SubscriberManagementService {
             .pipe(tap(subscribers => this.subscribers.set(subscribers)));
     }
 
-    getSubscriberById(id: string) {
+    // Get subscriber by ID
+    getSubscriber(id: string): Observable<Subscriber> {
         return this.http.get<Subscriber>(`${this.baseUrl}/subscribers/${id}`);
     }
 
-    updateSubscriberStatus(id: string, status: string) {
-        return this.http.patch(`${this.baseUrl}/subscribers/${id}/status`, { status })
+    // Get subscriber by Code
+    getSubscriberByCode(code: string): Observable<Subscriber> {
+        return this.http.get<Subscriber>(`${this.baseUrl}/subscribers/by-code/${code}`);
+    }
+
+    // Update subscriber status
+    updateSubscriberStatus(id: string, status: 'ACTIVE' | 'PAUSED' | 'CANCELLED'): Observable<Subscriber> {
+        return this.http.patch<Subscriber>(`${this.baseUrl}/subscribers/${id}/status`, { status })
             .pipe(tap(() => this.getAllSubscribers().subscribe()));
     }
 
-    getSubscriberHistory(id: string) {
+    // Get History
+    getUsageHistory(id: string): Observable<UsageEvent[]> {
         return this.http.get<UsageEvent[]>(`${this.baseUrl}/subscribers/${id}/history`);
     }
 

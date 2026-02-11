@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-partner-dashboard',
@@ -17,7 +18,8 @@ export class Dashboard implements OnInit {
 
   constructor(
     private http: HttpClient,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastService: ToastService
   ) { }
 
   ngOnInit() {
@@ -26,8 +28,7 @@ export class Dashboard implements OnInit {
   }
 
   fetchProfile() {
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
-    this.http.get<any>('http://localhost:3000/api/partner/profile', { headers }).subscribe({
+    this.http.get<any>('http://localhost:3000/api/partner/profile').subscribe({
       next: (res) => {
         this.profile = res;
         this.loading = false;
@@ -45,7 +46,7 @@ export class Dashboard implements OnInit {
   copyCode() {
     if (this.profile?.referralCode) {
       navigator.clipboard.writeText(this.profile.referralCode);
-      alert('Código copiado al portapapeles!');
+      this.toastService.success('Código copiado al portapapeles!');
     }
   }
 }

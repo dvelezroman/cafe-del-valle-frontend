@@ -1,5 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { Hero } from '../hero/hero';
 import { About } from '../about/about';
 import { Coffee } from '../coffee/coffee';
@@ -15,6 +16,7 @@ import { SubscriptionPlansPublicComponent } from '../subscription-plans-public/s
   selector: 'app-home',
   imports: [
     CommonModule,
+    RouterModule,
     Hero,
     About,
     Coffee,

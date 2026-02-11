@@ -79,4 +79,10 @@ export class SubscriptionService {
             tap(interests => this.interests.set(interests))
         );
     }
+
+    updateInterestStatus(id: string, status: string): Observable<SubscriptionInterest> {
+        return this.http.patch<SubscriptionInterest>(`${this.apiUrl}/admin/interests/${id}`, { status }).pipe(
+            tap(() => this.getAdminInterests().subscribe())
+        );
+    }
 }

@@ -2,6 +2,7 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SubscriberManagementService, SubscriberCode } from '../../../services/subscriber-management.service';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
     selector: 'app-code-management',
@@ -12,6 +13,7 @@ import { SubscriberManagementService, SubscriberCode } from '../../../services/s
 })
 export class CodeManagementComponent implements OnInit {
     private subscriberService = inject(SubscriberManagementService);
+    private toastService = inject(ToastService);
 
     codes = this.subscriberService.codes;
     selectedFilter = signal<string>('all');
@@ -43,7 +45,7 @@ export class CodeManagementComponent implements OnInit {
     downloadSelected() {
         const ids = Array.from(this.selectedCodes());
         if (ids.length === 0) {
-            alert('Please select at least one code');
+            this.toastService.error('Please select at least one code');
             return;
         }
 
@@ -56,14 +58,15 @@ export class CodeManagementComponent implements OnInit {
                 link.click();
                 window.URL.revokeObjectURL(url);
             },
-            error: () => alert('Failed to download PDF')
+            error: () => this.toastService.error('Failed to download PDF')
         });
     }
 
     revokeCode(id: string, code: string) {
         if (confirm(`Are you sure you want to revoke code ${code}?`)) {
             this.subscriberService.revokeCode(id).subscribe({
-                error: () => alert('Failed to revoke code')
+                next: () => this.toastService.success('Code revoked successfully'),
+                error: () => this.toastService.error('Failed to revoke code')
             });
         }
     }

@@ -16,6 +16,7 @@ import { SubscriptionInterestsComponent } from './components/admin/subscription-
 import { QrCodeGeneratorComponent } from './components/admin/qr-code-generator/qr-code-generator';
 import { CodeManagementComponent } from './components/admin/code-management/code-management';
 import { SubscriberManagementComponent } from './components/admin/subscriber-management/subscriber-management';
+import { QuickRedemptionComponent } from './components/admin/quick-redemption/quick-redemption';
 import { adminGuard } from './guards/admin.guard';
 import { inject } from '@angular/core';
 import { AuthService } from './services/auth.service';
@@ -47,7 +48,8 @@ export const routes: Routes = [
             { path: 'leads', component: SubscriptionInterestsComponent },
             { path: 'qr-generator', component: QrCodeGeneratorComponent },
             { path: 'codes', component: CodeManagementComponent },
-            { path: 'subscribers', component: SubscriberManagementComponent }
+            { path: 'subscribers', component: SubscriberManagementComponent },
+            { path: 'redemption', component: QuickRedemptionComponent }
         ]
     },
     {

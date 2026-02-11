@@ -2,6 +2,7 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SubscriberManagementService } from '../../../services/subscriber-management.service';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
     selector: 'app-qr-code-generator',
@@ -12,6 +13,7 @@ import { SubscriberManagementService } from '../../../services/subscriber-manage
 })
 export class QrCodeGeneratorComponent implements OnInit {
     private subscriberService = inject(SubscriberManagementService);
+    private toastService = inject(ToastService);
 
     stats = this.subscriberService.codeStats;
     codes = this.subscriberService.codes;
@@ -32,7 +34,7 @@ export class QrCodeGeneratorComponent implements OnInit {
     generateCodes() {
         const data = this.formData();
         if (data.quantity < 1 || data.quantity > 500) {
-            alert('Quantity must be between 1 and 500');
+            this.toastService.error('Quantity must be between 1 and 500');
             return;
         }
 
@@ -46,7 +48,7 @@ export class QrCodeGeneratorComponent implements OnInit {
             },
             error: () => {
                 this.isGenerating.set(false);
-                alert('Failed to generate codes');
+                this.toastService.error('Failed to generate codes');
             }
         });
     }
@@ -65,14 +67,14 @@ export class QrCodeGeneratorComponent implements OnInit {
             },
             error: () => {
                 this.isDownloading.set(false);
-                alert('Failed to download PDF');
+                this.toastService.error('Failed to download PDF');
             }
         });
     }
 
     downloadSelectedPDF(selectedIds: string[]) {
         if (selectedIds.length === 0) {
-            alert('Please select at least one code');
+            this.toastService.error('Please select at least one code');
             return;
         }
 

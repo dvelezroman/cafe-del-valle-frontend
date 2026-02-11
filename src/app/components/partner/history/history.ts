@@ -23,8 +23,7 @@ export class History implements OnInit {
   }
 
   fetchHistory() {
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${this.authService.getToken()}`);
-    this.http.get<any>('http://localhost:3000/api/partner/profile', { headers }).subscribe({
+    this.http.get<any>('http://localhost:3000/api/partner/profile').subscribe({
       next: (res) => {
         this.records = res.consumptionRecords;
         this.loading = false;

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DataService } from '../../../services/data';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-cafe-info',
@@ -22,7 +23,10 @@ export class CafeInfo implements OnInit {
     description: { es: '', en: '', fr: '' }
   };
 
-  constructor(private dataService: DataService) { }
+  constructor(
+    private dataService: DataService,
+    private toastService: ToastService
+  ) { }
 
   ngOnInit() {
     // In a real app, fetch from backend. For now simulation.
@@ -33,7 +37,7 @@ export class CafeInfo implements OnInit {
   }
 
   save() {
-    alert('Información guardada correctamente (Simulado)');
+    this.toastService.success('Información guardada correctamente (Simulado)');
     console.log('Saving info:', this.info);
   }
 }
