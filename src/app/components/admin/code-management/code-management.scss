@@ -1,45 +1,82 @@
+/* Mobile First - Base Styles (Mobile) */
 .code-management-container {
-    padding: 2rem;
+    padding: 1rem;
     max-width: 1400px;
     margin: 0 auto;
+
+    @media (min-width: 768px) {
+        padding: 2rem;
+    }
 }
 
 .page-header {
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
+
+    @media (min-width: 768px) {
+        margin-bottom: 2rem;
+    }
 
     h1 {
-        font-size: 2rem;
+        font-size: 1.5rem;
         color: #2c3e50;
         margin-bottom: 0.5rem;
+
+        @media (min-width: 768px) {
+            font-size: 2rem;
+        }
     }
 
     .subtitle {
         color: #7f8c8d;
+        font-size: 0.875rem;
+
+        @media (min-width: 768px) {
+            font-size: 1rem;
+        }
     }
 }
 
 .toolbar {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: 1rem;
+    margin-bottom: 1.5rem;
+
+    @media (min-width: 640px) {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
 }
 
 .filters {
     display: flex;
+    flex-wrap: wrap;
     gap: 0.5rem;
+    width: 100%;
+
+    @media (min-width: 640px) {
+        width: auto;
+    }
 }
 
 .filter-btn {
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 0.875rem;
     border: 2px solid #e0e0e0;
     background: white;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s;
     font-weight: 500;
+    font-size: 0.8125rem;
+    min-height: 44px; // Touch target
+    touch-action: manipulation;
+
+    @media (min-width: 768px) {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        min-height: auto;
+    }
 
     &:hover {
         border-color: #3498db;
@@ -53,12 +90,20 @@
 }
 
 .btn {
-    padding: 0.75rem 1.5rem;
+    padding: 0.75rem 1.25rem;
     border: none;
     border-radius: 8px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s;
+    min-height: 44px; // Touch target
+    width: 100%;
+    touch-action: manipulation;
+
+    @media (min-width: 640px) {
+        width: auto;
+        padding: 0.75rem 1.5rem;
+    }
 
     &:disabled {
         opacity: 0.5;
@@ -79,22 +124,36 @@
     background: white;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -1rem;
+
+    @media (min-width: 768px) {
+        margin: 0;
+    }
 }
 
 .codes-table {
     width: 100%;
+    min-width: 600px; // Minimum width for horizontal scroll on mobile
     border-collapse: collapse;
 
     thead {
         background: #f8f9fa;
 
         th {
-            padding: 1rem;
+            padding: 0.75rem 0.5rem;
             text-align: left;
             font-weight: 600;
+            font-size: 0.75rem;
             color: #2c3e50;
             border-bottom: 2px solid #e9ecef;
+            white-space: nowrap;
+
+            @media (min-width: 768px) {
+                padding: 1rem;
+                font-size: 0.875rem;
+            }
         }
     }
 
@@ -109,23 +168,41 @@
         }
 
         td {
-            padding: 1rem;
+            padding: 0.875rem 0.5rem;
+            font-size: 0.8125rem;
+            vertical-align: middle;
+
+            @media (min-width: 768px) {
+                padding: 1rem;
+                font-size: 0.9375rem;
+            }
 
             &.code-value {
                 font-family: 'Courier New', monospace;
                 font-weight: 600;
                 color: #2c3e50;
+                font-size: 0.75rem;
+
+                @media (min-width: 768px) {
+                    font-size: 0.875rem;
+                }
             }
         }
     }
 
     .status-badge {
         display: inline-block;
-        padding: 0.25rem 0.75rem;
+        padding: 0.25rem 0.625rem;
         border-radius: 12px;
-        font-size: 0.75rem;
+        font-size: 0.6875rem;
         font-weight: 600;
         text-transform: uppercase;
+        white-space: nowrap;
+
+        @media (min-width: 768px) {
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+        }
 
         &.generated {
             background: #d4edda;
@@ -152,7 +229,11 @@
     }
 
     small {
-        font-size: 0.85rem;
+        font-size: 0.75rem;
+
+        @media (min-width: 768px) {
+            font-size: 0.85rem;
+        }
         color: #7f8c8d;
     }
 }
@@ -160,11 +241,24 @@
 .btn-icon {
     background: none;
     border: none;
-    font-size: 1.2rem;
+    font-size: 1.125rem;
     cursor: pointer;
-    padding: 0.25rem 0.5rem;
+    padding: 0.5rem;
     opacity: 0.7;
     transition: opacity 0.2s;
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
+
+    @media (min-width: 768px) {
+        font-size: 1.2rem;
+        padding: 0.25rem 0.5rem;
+        min-width: auto;
+        min-height: auto;
+    }
 
     &:hover:not(:disabled) {
         opacity: 1;

@@ -123,6 +123,10 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: 1rem;
+
+    @media (min-width: 1024px) {
+        display: none; // Hide cards on desktop, show table
+    }
 }
 
 .lead-card {
@@ -310,6 +314,8 @@
     justify-content: center;
     gap: 0.5rem;
     box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+    min-height: 44px; // Touch target
+    touch-action: manipulation;
 
     &:hover {
         background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
@@ -334,25 +340,49 @@
     border-radius: var(--radius-md);
     border: 1px solid rgba(45, 27, 14, 0.08);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-    overflow: hidden;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -1rem;
+
+    @media (min-width: 1024px) {
+        display: block;
+        margin: 0;
+    }
+}
+
+.leads-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -1rem;
+
+    @media (min-width: 1024px) {
+        margin: 0;
+    }
 }
 
 .leads-table {
     width: 100%;
+    min-width: 800px; // Minimum width for horizontal scroll on mobile
     border-collapse: collapse;
 
     thead {
         background: rgba(45, 27, 14, 0.02);
 
         th {
-            padding: 1.25rem 1rem;
-            font-size: 0.75rem;
+            padding: 0.75rem 0.5rem;
+            font-size: 0.6875rem;
             font-weight: 700;
             text-transform: uppercase;
             color: var(--coffee-rich);
             letter-spacing: 0.1em;
             text-align: left;
             border-bottom: 2px solid rgba(45, 27, 14, 0.1);
+            white-space: nowrap;
+
+            @media (min-width: 1024px) {
+                padding: 1.25rem 1rem;
+                font-size: 0.75rem;
+            }
         }
     }
 
@@ -371,10 +401,15 @@
         }
 
         td {
-            padding: 1.5rem 1rem;
-            font-size: 0.9375rem;
+            padding: 1rem 0.5rem;
+            font-size: 0.8125rem;
             color: var(--coffee-deep);
             vertical-align: middle;
+
+            @media (min-width: 1024px) {
+                padding: 1.5rem 1rem;
+                font-size: 0.9375rem;
+            }
         }
     }
 }
