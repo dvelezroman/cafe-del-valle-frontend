@@ -1,0 +1,29 @@
+@if (show) {
+<div class="confirmation-modal-overlay" (click)="close()">
+    <div class="confirmation-modal-content" (click)="$event.stopPropagation()">
+        <div class="confirmation-modal-header">
+            <h2>{{ options.title }}</h2>
+            <button class="close-btn" (click)="close()" aria-label="Cerrar">×</button>
+        </div>
+        <div class="confirmation-modal-body">
+            <p [innerHTML]="options.message"></p>
+        </div>
+        <div class="confirmation-modal-footer">
+            @if (options.showCancel) {
+            <button type="button" class="btn btn-secondary" (click)="cancel()">
+                {{ options.cancelText }}
+            </button>
+            }
+            <button 
+                type="button" 
+                class="btn"
+                [class.btn-primary]="options.confirmButtonClass === 'primary'"
+                [class.btn-danger]="options.confirmButtonClass === 'danger'"
+                [class.btn-warning]="options.confirmButtonClass === 'warning'"
+                (click)="confirm()">
+                {{ options.confirmText }}
+            </button>
+        </div>
+    </div>
+</div>
+}

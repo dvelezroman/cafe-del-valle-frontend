@@ -218,13 +218,20 @@
                     <button type="button" 
                         (click)="closeModal()"
                         class="btn-cancel"
+                        [disabled]="isSaving()"
                         aria-label="Cancelar">
                         Cancelar
                     </button>
                     <button type="submit"
                         class="btn-save"
+                        [disabled]="isSaving()"
                         aria-label="Guardar plan">
-                        Guardar
+                        @if (isSaving()) {
+                            <span class="btn-spinner"></span>
+                            Guardando...
+                        } @else {
+                            Guardar
+                        }
                     </button>
                 </div>
             </form>

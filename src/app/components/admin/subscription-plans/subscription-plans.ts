@@ -2,6 +2,8 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SubscriptionService, SubscriptionPlan } from '../../../services/subscription.service';
 import { FormsModule } from '@angular/forms';
+import { ConfirmationService } from '../../../services/confirmation.service';
+import { take } from 'rxjs/operators';
 
 @Component({
     selector: 'app-subscription-plans',
@@ -12,10 +14,12 @@ import { FormsModule } from '@angular/forms';
 })
 export class SubscriptionPlansComponent implements OnInit {
     private subscriptionService = inject(SubscriptionService);
+    private confirmationService = inject(ConfirmationService);
 
     plans = this.subscriptionService.plans;
     isModalOpen = signal(false);
     editingPlan = signal<SubscriptionPlan | null>(null);
+    isSaving = signal(false);
 
     // Form Model
     formData = signal({
@@ -80,6 +84,8 @@ export class SubscriptionPlansComponent implements OnInit {
     }
 
     savePlan() {
+        if (this.isSaving()) return;
+
         const data = this.formData();
         const payload: any = {
             title: data.title,
@@ -100,20 +106,33 @@ export class SubscriptionPlansComponent implements OnInit {
             payload.billingDurationLabel = data.billingDurationLabel;
         }
 
-        if (this.editingPlan()) {
-            this.subscriptionService.updatePlan(this.editingPlan()!.id, payload).subscribe(() => {
+        this.isSaving.set(true);
+        const operation = this.editingPlan() 
+            ? this.subscriptionService.updatePlan(this.editingPlan()!.id, payload)
+            : this.subscriptionService.createPlan(payload);
+
+        operation.subscribe({
+            next: () => {
+                this.isSaving.set(false);
                 this.closeModal();
-            });
-        } else {
-            this.subscriptionService.createPlan(payload).subscribe(() => {
-                this.closeModal();
-            });
-        }
+            },
+            error: () => {
+                this.isSaving.set(false);
+            }
+        });
     }
 
     deletePlan(id: string) {
-        if (confirm('Are you sure you want to delete this plan?')) {
-            this.subscriptionService.deletePlan(id).subscribe();
-        }
+        this.confirmationService.show({
+            title: 'Confirmar Eliminación',
+            message: '¿Estás seguro de que deseas eliminar este plan de suscripción?<br><br><strong>Esta acción no se puede deshacer.</strong>',
+            confirmText: 'Eliminar',
+            cancelText: 'Cancelar',
+            confirmButtonClass: 'danger'
+        }).pipe(take(1)).subscribe((result: any) => {
+            if (result.confirmed) {
+                this.subscriptionService.deletePlan(id).subscribe();
+            }
+        });
     }
 }

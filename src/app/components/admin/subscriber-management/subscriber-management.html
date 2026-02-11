@@ -30,7 +30,13 @@
                 <tr>
                     <td class="code-value">
                         @if (subscriber.code) {
-                        {{ subscriber.code.code }}
+                            @if (subscriber.code.status === 'REVOKED') {
+                                <span class="text-muted" style="text-decoration: line-through;">{{ subscriber.code.code }}</span>
+                                <br />
+                                <small class="text-danger">REVOKED</small>
+                            } @else {
+                                {{ subscriber.code.code }}
+                            }
                         } @else {
                         <span class="text-muted">PENDING</span>
                         }
@@ -90,9 +96,13 @@
                     </td>
                     <td>
                         <div class="action-buttons">
-                            @if (subscriber.status === 'PENDING') {
+                            @if (subscriber.status === 'PENDING' || (subscriber.code && subscriber.code.status === 'REVOKED')) {
                             <button class="btn-sm btn-primary" (click)="assignCodeToPending(subscriber)">
-                                Asignar Código
+                                @if (subscriber.code && subscriber.code.status === 'REVOKED') {
+                                    Asignar Nuevo Código
+                                } @else {
+                                    Asignar Código
+                                }
                             </button>
                             }
                             <button class="btn-sm" [class.btn-warning]="subscriber.status === 'ACTIVE'"
@@ -131,15 +141,49 @@
             <form (ngSubmit)="createSubscriber()" class="modal-form">
                 <div class="form-group">
                     <label for="codeId">Select Available Code *</label>
-                    <select id="codeId" [(ngModel)]="formData().codeId" name="codeId" required>
-                        <option value="">-- Select a code --</option>
-                        @for (code of availableCodes(); track code.id) {
-                        <option [value]="code.id">
-                            {{ code.code }}
-                        </option>
+                    <div class="code-select-wrapper">
+                        <input 
+                            type="text" 
+                            id="codeId" 
+                            [value]="getCodeInputValue()"
+                            (input)="onCodeSearchChange($any($event.target).value)"
+                            (focus)="onCodeInputFocus()"
+                            (blur)="onCodeInputBlur()"
+                            name="codeId" 
+                            placeholder="Type to search codes..."
+                            class="code-search-input"
+                            autocomplete="off"
+                            required />
+                        @if (showCodeDropdown() && filteredCodes().length > 0) {
+                        <div class="code-dropdown">
+                            @for (code of filteredCodes(); track code.id) {
+                            <div 
+                                class="code-option"
+                                [class.selected]="formData().codeId === code.id"
+                                (mousedown)="selectCode(code)">
+                                {{ code.code }}
+                            </div>
+                            }
+                        </div>
                         }
-                    </select>
-                    <small>{{ availableCodes().length }} codes available</small>
+                        @if (showCodeDropdown() && filteredCodes().length === 0 && codeSearchTerm()) {
+                        <div class="code-dropdown">
+                            <div class="code-option no-results">
+                                No codes found matching "{{ codeSearchTerm() }}"
+                            </div>
+                        </div>
+                        }
+                    </div>
+                    <small class="search-hint">
+                        @if (codeSearchTerm()) {
+                            Showing {{ filteredCodes().length }} of {{ availableCodes().length }} codes
+                        } @else {
+                            {{ availableCodes().length }} codes available
+                        }
+                    </small>
+                    @if (filteredCodes().length === 0 && !codeSearchTerm() && availableCodes().length === 0) {
+                        <small class="text-muted">No codes available. Please generate codes first.</small>
+                    }
                 </div>
 
                 <div class="form-group">
@@ -175,14 +219,106 @@
                 </div>
 
                 <div class="modal-actions">
-                    <button type="button" class="btn btn-secondary" (click)="closeModal()">
+                    <button type="button" class="btn btn-secondary" (click)="closeModal()" [disabled]="isCreating()">
                         Cancel
                     </button>
-                    <button type="submit" class="btn btn-primary">
-                        Create Subscriber
+                    <button type="submit" class="btn btn-primary" [disabled]="isCreating()">
+                        @if (isCreating()) {
+                            <span class="btn-spinner"></span>
+                            Creando...
+                        } @else {
+                            Create Subscriber
+                        }
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+    }
+
+    <!-- Code Assignment Modal -->
+    @if (showCodeAssignmentModal() && selectedSubscriber()) {
+    <div class="modal-overlay" (click)="closeCodeAssignmentModal()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h2>
+                    @if (selectedSubscriber()?.code && selectedSubscriber()?.code?.status === 'REVOKED') {
+                        Asignar Nuevo Código
+                    } @else {
+                        Asignar Código
+                    }
+                </h2>
+                <button class="close-btn" (click)="closeCodeAssignmentModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>{{ selectedSubscriber()?.name }}</strong></p>
+                <p>{{ selectedSubscriber()?.email }}</p>
+                @if (selectedSubscriber()?.code && selectedSubscriber()?.code?.status === 'REVOKED') {
+                    <p class="text-danger">
+                        <strong>Código anterior revocado:</strong> {{ selectedSubscriber()?.code.code }}
+                    </p>
+                }
+                
+                <div class="form-group">
+                    <label for="codeIdAssign">Select Available Code *</label>
+                    <div class="code-select-wrapper">
+                        <input 
+                            type="text" 
+                            id="codeIdAssign" 
+                            [value]="getCodeInputValue()"
+                            (input)="onCodeSearchChange($any($event.target).value)"
+                            (focus)="onCodeInputFocus()"
+                            (blur)="onCodeInputBlur()"
+                            name="codeIdAssign" 
+                            placeholder="Type to search codes..."
+                            class="code-search-input"
+                            autocomplete="off"
+                            required />
+                        @if (showCodeDropdown() && filteredCodes().length > 0) {
+                        <div class="code-dropdown">
+                            @for (code of filteredCodes(); track code.id) {
+                            <div 
+                                class="code-option"
+                                [class.selected]="formData().codeId === code.id"
+                                (mousedown)="selectCode(code)">
+                                {{ code.code }}
+                            </div>
+                            }
+                        </div>
+                        }
+                        @if (showCodeDropdown() && filteredCodes().length === 0 && codeSearchTerm()) {
+                        <div class="code-dropdown">
+                            <div class="code-option no-results">
+                                No codes found matching "{{ codeSearchTerm() }}"
+                            </div>
+                        </div>
+                        }
+                    </div>
+                    <small class="search-hint">
+                        @if (codeSearchTerm()) {
+                            Showing {{ filteredCodes().length }} of {{ availableCodes().length }} codes
+                        } @else {
+                            {{ availableCodes().length }} codes available
+                        }
+                    </small>
+                    @if (filteredCodes().length === 0 && !codeSearchTerm() && availableCodes().length === 0) {
+                        <small class="text-muted">No codes available. Please generate codes first.</small>
+                    }
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" (click)="closeCodeAssignmentModal()" [disabled]="isAssigningCode()">
+                    Cancel
+                </button>
+                <button type="button" class="btn btn-primary" [disabled]="!formData().codeId || isAssigningCode()" (click)="assignSelectedCode(formData().codeId)">
+                    @if (isAssigningCode()) {
+                        <span class="btn-spinner"></span>
+                        Asignando...
+                    } @else {
+                        Asignar Código
+                    }
+                </button>
+            </div>
         </div>
     </div>
     }

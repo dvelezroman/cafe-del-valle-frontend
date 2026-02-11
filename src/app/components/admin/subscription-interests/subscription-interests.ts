@@ -2,6 +2,8 @@ import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SubscriptionService } from '../../../services/subscription.service';
+import { ConfirmationService } from '../../../services/confirmation.service';
+import { take } from 'rxjs/operators';
 
 @Component({
     selector: 'app-subscription-interests',
@@ -12,6 +14,7 @@ import { SubscriptionService } from '../../../services/subscription.service';
 })
 export class SubscriptionInterestsComponent implements OnInit {
     private subscriptionService = inject(SubscriptionService);
+    private confirmationService = inject(ConfirmationService);
 
     interests = this.subscriptionService.interests;
     searchTerm = signal('');
@@ -32,8 +35,16 @@ export class SubscriptionInterestsComponent implements OnInit {
     }
 
     markAsContacted(id: string) {
-        if (confirm('¿Marcar este lead como contactado?')) {
-            this.subscriptionService.updateInterestStatus(id, 'CONTACTED').subscribe();
-        }
+        this.confirmationService.show({
+            title: 'Confirmar',
+            message: '¿Marcar este lead como contactado?',
+            confirmText: 'Confirmar',
+            cancelText: 'Cancelar',
+            confirmButtonClass: 'primary'
+        }).pipe(take(1)).subscribe((result: any) => {
+            if (result.confirmed) {
+                this.subscriptionService.updateInterestStatus(id, 'CONTACTED').subscribe();
+            }
+        });
     }
 }

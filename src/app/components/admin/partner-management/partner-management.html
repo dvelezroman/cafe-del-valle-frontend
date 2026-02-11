@@ -1,12 +1,16 @@
 <div class="admin-section">
+    <!-- Pending Partners Section -->
     <div class="section-header">
         <h2>Solicitudes de Socios</h2>
         <div class="stats">
             <span class="badge">{{ pendingPartners.length }} Pendientes</span>
+            <span class="badge badge-success">{{ approvedPartners.length }} Aprobados</span>
         </div>
     </div>
 
+    <!-- Pending Partners -->
     <div class="admin-card glass-card">
+        <h3 class="card-title">Solicitudes Pendientes</h3>
         @if (loading) {
         <div class="loading-state">
             <span class="spinner"></span>
@@ -52,6 +56,107 @@
                                     (click)="openApprovalModal(partner)">Aprobar</button>
                                 <button class="btn btn-sm btn-danger"
                                     (click)="validate(partner.id, 'REJECTED')">Rechazar</button>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        }
+    </div>
+
+    <!-- Approved Partners Section -->
+    <div class="admin-card glass-card">
+        <h3 class="card-title">Socios Aprobados</h3>
+        @if (loading) {
+        <div class="loading-state">
+            <span class="spinner"></span>
+        </div>
+        } @else if (approvedPartners.length === 0) {
+        <div class="empty-state">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <p>No hay socios aprobados en este momento.</p>
+        </div>
+        } @else {
+        <div class="table-wrapper">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Cédula / ID</th>
+                        <th>Teléfono</th>
+                        <th>Puntos</th>
+                        <th>Suscripciones</th>
+                        <th>Referido por</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (partner of approvedPartners; track partner.id) {
+                    <tr>
+                        <td><strong>{{ partner.user.name }}</strong></td>
+                        <td>{{ partner.user.email }}</td>
+                        <td>{{ partner.idNumber }}</td>
+                        <td>{{ partner.phone }}</td>
+                        <td>
+                            <span class="status-pill info">{{ partner.points || 0 }} pts</span>
+                        </td>
+                        <td>
+                            <span class="status-pill">{{ getPartnerSubscriptions(partner.id).length }}</span>
+                            @if (getPartnerSubscriptions(partner.id).length > 0) {
+                            <br />
+                            <small class="text-muted">
+                                @for (sub of getPartnerSubscriptions(partner.id); track sub.id) {
+                                {{ sub.code?.code || 'PENDING' }}
+                                @if (!$last) {, }
+                                }
+                            </small>
+                            }
+                        </td>
+                        <td>
+                            @if (partner.referredBy) {
+                            <span class="status-pill info">{{ partner.referredBy.user.name }}</span>
+                            } @else {
+                            <span class="text-muted">-</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="btn btn-sm btn-primary"
+                                    (click)="openDetailsModal(partner)"
+                                    title="Ver detalles">
+                                    👁️ Detalles
+                                </button>
+                                <button class="btn btn-sm btn-secondary"
+                                    (click)="openEditModal(partner)"
+                                    title="Editar información">
+                                    ✏️ Editar
+                                </button>
+                                <button class="btn btn-sm btn-info"
+                                    (click)="openPointsModal(partner)"
+                                    title="Modificar puntos">
+                                    ⭐ Puntos
+                                </button>
+                                <button class="btn btn-sm btn-warning"
+                                    (click)="togglePartnerStatus(partner)"
+                                    [title]="partner.status === 'APPROVED' ? 'Suspender socio' : 'Activar socio'">
+                                    {{ partner.status === 'APPROVED' ? '⏸️ Suspender' : '▶️ Activar' }}
+                                </button>
+                                <button class="btn btn-sm btn-primary"
+                                    (click)="openSubscriptionModal(partner)"
+                                    title="Asignar suscripción">
+                                    ➕ Suscripción
+                                </button>
+                                <button class="btn btn-sm btn-danger"
+                                    (click)="openDeleteModal(partner)"
+                                    title="Eliminar socio">
+                                    🗑️ Eliminar
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -107,6 +212,219 @@
 </div>
 }
 
+<!-- Edit Partner Modal -->
+@if (showEditModal && selectedPartner) {
+<div class="modal-overlay" (click)="closeEditModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2>Editar Socio</h2>
+            <button class="close-btn" (click)="closeEditModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <form (ngSubmit)="savePartner()" class="modal-form">
+                <div class="form-group">
+                    <label for="editName">Nombre *</label>
+                    <input type="text" id="editName" [(ngModel)]="editFormData.name" name="editName" required class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="editEmail">Email *</label>
+                    <input type="email" id="editEmail" [(ngModel)]="editFormData.email" name="editEmail" required class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="editPhone">Teléfono *</label>
+                    <input type="tel" id="editPhone" [(ngModel)]="editFormData.phone" name="editPhone" required class="form-control" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="closeEditModal()" [disabled]="isSaving">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="isSaving">
+                        @if (isSaving) {
+                            <span class="btn-spinner"></span>
+                            Guardando...
+                        } @else {
+                            Guardar Cambios
+                        }
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+}
+
+<!-- Update Points Modal -->
+@if (showPointsModal && selectedPartner) {
+<div class="modal-overlay" (click)="closePointsModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2>Modificar Puntos</h2>
+            <button class="close-btn" (click)="closePointsModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <p><strong>{{ selectedPartner.user.name }}</strong></p>
+            <p>Puntos actuales: <strong>{{ selectedPartner.points || 0 }}</strong></p>
+            <form (ngSubmit)="savePoints()" class="modal-form">
+                <div class="form-group">
+                    <label for="points">Nuevos Puntos *</label>
+                    <input type="number" id="points" [(ngModel)]="pointsFormData.points" name="points" required min="0" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="reason">Razón (opcional)</label>
+                    <textarea id="reason" [(ngModel)]="pointsFormData.reason" name="reason" rows="3" class="form-control"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="closePointsModal()" [disabled]="isSavingPoints">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="isSavingPoints">
+                        @if (isSavingPoints) {
+                            <span class="btn-spinner"></span>
+                            Actualizando...
+                        } @else {
+                            Actualizar Puntos
+                        }
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+}
+
+<!-- Partner Details Modal -->
+@if (showDetailsModal && selectedPartner) {
+<div class="modal-overlay" (click)="closeDetailsModal()">
+    <div class="modal-content details-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2>Detalles del Socio</h2>
+            <button class="close-btn" (click)="closeDetailsModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="details-section">
+                <h3>Información Personal</h3>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <label>Nombre:</label>
+                        <span>{{ selectedPartner.user.name }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Email:</label>
+                        <span>{{ selectedPartner.user.email }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Cédula / ID:</label>
+                        <span>{{ selectedPartner.idNumber }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Teléfono:</label>
+                        <span>{{ selectedPartner.phone }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Puntos:</label>
+                        <span class="points-value">{{ selectedPartner.points || 0 }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Estado:</label>
+                        <span class="status-pill" [class.approved]="selectedPartner.status === 'APPROVED'">
+                            {{ selectedPartner.status }}
+                        </span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Código de Referido:</label>
+                        <span class="code-value">{{ selectedPartner.referralCode }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Referido por:</label>
+                        <span>@if (selectedPartner.referredBy) { {{ selectedPartner.referredBy.user.name }} } @else { - }</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="details-section">
+                <h3>Suscripciones ({{ getPartnerSubscriptions(selectedPartner.id).length }})</h3>
+                @if (getPartnerSubscriptions(selectedPartner.id).length === 0) {
+                    <p class="text-muted">No hay suscripciones asignadas</p>
+                } @else {
+                    <div class="subscriptions-list">
+                        @for (sub of getPartnerSubscriptions(selectedPartner.id); track sub.id) {
+                        <div class="subscription-item">
+                            <div><strong>{{ sub.plan?.title?.es || sub.plan?.title?.en }}</strong></div>
+                            <div>Código: {{ sub.code?.code || 'PENDING' }}</div>
+                            <div>Estado: <span class="status-badge" [class]="sub.status.toLowerCase()">{{ sub.status }}</span></div>
+                        </div>
+                        }
+                    </div>
+                }
+            </div>
+
+            <div class="details-section">
+                <h3>Historial de Consumos</h3>
+                @if (consumptionHistory.length === 0) {
+                    <p class="text-muted">No hay registros de consumo</p>
+                } @else {
+                    <div class="consumption-list">
+                        @for (record of consumptionHistory; track record.id) {
+                        <div class="consumption-item">
+                            <div class="consumption-header">
+                                <span class="date">{{ record.createdAt | date:'short' }}</span>
+                                @if (record.pointsUsed > 0 || record.pointsEarned > 0) {
+                                <span class="points-change" [class.positive]="record.pointsEarned > 0" [class.negative]="record.pointsUsed > 0">
+                                    @if (record.pointsEarned > 0) { +{{ record.pointsEarned }} }
+                                    @if (record.pointsUsed > 0) { -{{ record.pointsUsed }} }
+                                </span>
+                                }
+                            </div>
+                            <div class="consumption-details">
+                                @if (record.promotion) {
+                                    <div><strong>{{ record.promotion.name?.es || record.promotion.name?.en }}</strong></div>
+                                }
+                                @if (record.productName) {
+                                    <div>{{ record.productName }}</div>
+                                }
+                            </div>
+                        </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="closeDetailsModal()">Cerrar</button>
+        </div>
+    </div>
+</div>
+}
+
+<!-- Delete Partner Modal -->
+@if (showDeleteModal && selectedPartner) {
+<div class="modal-overlay" (click)="closeDeleteModal()">
+    <div class="modal-content delete-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2>Confirmar Eliminación</h2>
+            <button class="close-btn" (click)="closeDeleteModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <p>¿Estás seguro de que deseas eliminar permanentemente al socio <strong>"{{ selectedPartner.user.name }}"</strong>?</p>
+            <p class="warning-text">Esta acción eliminará:</p>
+            <ul class="warning-list">
+                <li>El perfil del socio</li>
+                <li>La cuenta de usuario asociada</li>
+                <li>Todos los registros relacionados</li>
+            </ul>
+            <p class="warning-text"><strong>Esta acción no se puede deshacer.</strong></p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="closeDeleteModal()" [disabled]="isDeleting">Cancelar</button>
+            <button type="button" class="btn btn-danger" [disabled]="isDeleting" (click)="deletePartner()">
+                @if (isDeleting) {
+                    <span class="btn-spinner"></span>
+                    Eliminando...
+                } @else {
+                    Eliminar Permanentemente
+                }
+            </button>
+        </div>
+    </div>
+</div>
+}
+
 <!-- Subscription Assignment Modal -->
 @if (showSubscriptionModal && selectedPartner) {
 <div class="modal-overlay" (click)="closeSubscriptionModal()">
@@ -140,10 +458,229 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-secondary" (click)="closeSubscriptionModal()">Cancelar</button>
+            <button class="btn btn-secondary" (click)="closeSubscriptionModal()" [disabled]="isAssigningSubscription">Cancelar</button>
             <button class="btn btn-primary" 
+                [disabled]="isAssigningSubscription"
                 (click)="assignAdditionalSubscription(selectedPartner.id, codeSelect.value, planSelectSub.value)">
-                Asignar Suscripción
+                @if (isAssigningSubscription) {
+                    <span class="btn-spinner"></span>
+                    Asignando...
+                } @else {
+                    Asignar Suscripción
+                }
+            </button>
+        </div>
+    </div>
+</div>
+}
+
+<!-- Edit Partner Modal -->
+@if (showEditModal && selectedPartner) {
+<div class="modal-overlay" (click)="closeEditModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2>Editar Socio</h2>
+            <button class="close-btn" (click)="closeEditModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <form (ngSubmit)="savePartner()" class="modal-form">
+                <div class="form-group">
+                    <label for="editName">Nombre *</label>
+                    <input type="text" id="editName" [(ngModel)]="editFormData.name" name="editName" required class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="editEmail">Email *</label>
+                    <input type="email" id="editEmail" [(ngModel)]="editFormData.email" name="editEmail" required class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="editPhone">Teléfono *</label>
+                    <input type="tel" id="editPhone" [(ngModel)]="editFormData.phone" name="editPhone" required class="form-control" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="closeEditModal()" [disabled]="isSaving">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="isSaving">
+                        @if (isSaving) {
+                            <span class="btn-spinner"></span>
+                            Guardando...
+                        } @else {
+                            Guardar Cambios
+                        }
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+}
+
+<!-- Update Points Modal -->
+@if (showPointsModal && selectedPartner) {
+<div class="modal-overlay" (click)="closePointsModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2>Modificar Puntos</h2>
+            <button class="close-btn" (click)="closePointsModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <p><strong>{{ selectedPartner.user.name }}</strong></p>
+            <p>Puntos actuales: <strong>{{ selectedPartner.points || 0 }}</strong></p>
+            <form (ngSubmit)="savePoints()" class="modal-form">
+                <div class="form-group">
+                    <label for="points">Nuevos Puntos *</label>
+                    <input type="number" id="points" [(ngModel)]="pointsFormData.points" name="points" required min="0" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="reason">Razón (opcional)</label>
+                    <textarea id="reason" [(ngModel)]="pointsFormData.reason" name="reason" rows="3" class="form-control"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="closePointsModal()" [disabled]="isSavingPoints">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="isSavingPoints">
+                        @if (isSavingPoints) {
+                            <span class="btn-spinner"></span>
+                            Actualizando...
+                        } @else {
+                            Actualizar Puntos
+                        }
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+}
+
+<!-- Partner Details Modal -->
+@if (showDetailsModal && selectedPartner) {
+<div class="modal-overlay" (click)="closeDetailsModal()">
+    <div class="modal-content details-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2>Detalles del Socio</h2>
+            <button class="close-btn" (click)="closeDetailsModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="details-section">
+                <h3>Información Personal</h3>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <label>Nombre:</label>
+                        <span>{{ selectedPartner.user.name }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Email:</label>
+                        <span>{{ selectedPartner.user.email }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Cédula / ID:</label>
+                        <span>{{ selectedPartner.idNumber }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Teléfono:</label>
+                        <span>{{ selectedPartner.phone }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Puntos:</label>
+                        <span class="points-value">{{ selectedPartner.points || 0 }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Estado:</label>
+                        <span class="status-pill" [class.approved]="selectedPartner.status === 'APPROVED'">
+                            {{ selectedPartner.status }}
+                        </span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Código de Referido:</label>
+                        <span class="code-value">{{ selectedPartner.referralCode }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Referido por:</label>
+                        <span>@if (selectedPartner.referredBy) { {{ selectedPartner.referredBy.user.name }} } @else { - }</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="details-section">
+                <h3>Suscripciones ({{ getPartnerSubscriptions(selectedPartner.id).length }})</h3>
+                @if (getPartnerSubscriptions(selectedPartner.id).length === 0) {
+                    <p class="text-muted">No hay suscripciones asignadas</p>
+                } @else {
+                    <div class="subscriptions-list">
+                        @for (sub of getPartnerSubscriptions(selectedPartner.id); track sub.id) {
+                        <div class="subscription-item">
+                            <div><strong>{{ sub.plan?.title?.es || sub.plan?.title?.en }}</strong></div>
+                            <div>Código: {{ sub.code?.code || 'PENDING' }}</div>
+                            <div>Estado: <span class="status-badge" [class]="sub.status.toLowerCase()">{{ sub.status }}</span></div>
+                        </div>
+                        }
+                    </div>
+                }
+            </div>
+
+            <div class="details-section">
+                <h3>Historial de Consumos</h3>
+                @if (consumptionHistory.length === 0) {
+                    <p class="text-muted">No hay registros de consumo</p>
+                } @else {
+                    <div class="consumption-list">
+                        @for (record of consumptionHistory; track record.id) {
+                        <div class="consumption-item">
+                            <div class="consumption-header">
+                                <span class="date">{{ record.createdAt | date:'short' }}</span>
+                                @if (record.pointsUsed > 0 || record.pointsEarned > 0) {
+                                <span class="points-change" [class.positive]="record.pointsEarned > 0" [class.negative]="record.pointsUsed > 0">
+                                    @if (record.pointsEarned > 0) { +{{ record.pointsEarned }} }
+                                    @if (record.pointsUsed > 0) { -{{ record.pointsUsed }} }
+                                </span>
+                                }
+                            </div>
+                            <div class="consumption-details">
+                                @if (record.promotion) {
+                                    <div><strong>{{ record.promotion.name?.es || record.promotion.name?.en }}</strong></div>
+                                }
+                                @if (record.productName) {
+                                    <div>{{ record.productName }}</div>
+                                }
+                            </div>
+                        </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="closeDetailsModal()">Cerrar</button>
+        </div>
+    </div>
+</div>
+}
+
+<!-- Delete Partner Modal -->
+@if (showDeleteModal && selectedPartner) {
+<div class="modal-overlay" (click)="closeDeleteModal()">
+    <div class="modal-content delete-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2>Confirmar Eliminación</h2>
+            <button class="close-btn" (click)="closeDeleteModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <p>¿Estás seguro de que deseas eliminar permanentemente al socio <strong>"{{ selectedPartner.user.name }}"</strong>?</p>
+            <p class="warning-text">Esta acción eliminará:</p>
+            <ul class="warning-list">
+                <li>El perfil del socio</li>
+                <li>La cuenta de usuario asociada</li>
+                <li>Todos los registros relacionados</li>
+            </ul>
+            <p class="warning-text"><strong>Esta acción no se puede deshacer.</strong></p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="closeDeleteModal()" [disabled]="isDeleting">Cancelar</button>
+            <button type="button" class="btn btn-danger" [disabled]="isDeleting" (click)="deletePartner()">
+                @if (isDeleting) {
+                    <span class="btn-spinner"></span>
+                    Eliminando...
+                } @else {
+                    Eliminar Permanentemente
+                }
             </button>
         </div>
     </div>

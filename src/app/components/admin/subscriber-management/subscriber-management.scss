@@ -388,10 +388,103 @@
             border-radius: 8px;
             font-size: 1rem;
             transition: border-color 0.3s;
+            min-height: 44px; // Touch target
+
+            @media (min-width: 768px) {
+                min-height: auto;
+            }
 
             &:focus {
                 outline: none;
                 border-color: #3498db;
+                box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+            }
+
+            &:disabled {
+                background-color: #f5f5f5;
+                cursor: not-allowed;
+                opacity: 0.6;
+            }
+        }
+
+        .code-select-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .code-search-input {
+            padding-left: 2.5rem;
+            padding-right: 2.5rem;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2395a5a6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cpath d='m21 21-4.35-4.35'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: 0.75rem center;
+            background-size: 1rem 1rem;
+            cursor: text;
+
+            &:focus {
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%233498db' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cpath d='m21 21-4.35-4.35'%3E%3C/path%3E%3C/svg%3E");
+            }
+
+            &::after {
+                content: '▼';
+                position: absolute;
+                right: 0.75rem;
+                top: 50%;
+                transform: translateY(-50%);
+                pointer-events: none;
+                color: #95a5a6;
+                font-size: 0.75rem;
+            }
+        }
+
+        .code-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            border: 2px solid #e0e0e0;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            margin-top: -2px;
+            -webkit-overflow-scrolling: touch;
+
+            .code-option {
+                padding: 0.75rem 1rem;
+                padding-left: 2.5rem;
+                cursor: pointer;
+                font-size: 0.9375rem;
+                color: var(--coffee-deep);
+                transition: background-color 0.2s;
+                border-bottom: 1px solid #f0f0f0;
+
+                &:last-child {
+                    border-bottom: none;
+                }
+
+                &:hover {
+                    background-color: #f8f9fa;
+                }
+
+                &.selected {
+                    background-color: rgba(52, 152, 219, 0.1);
+                    color: #3498db;
+                    font-weight: 600;
+                }
+
+                &.no-results {
+                    color: #95a5a6;
+                    font-style: italic;
+                    cursor: default;
+
+                    &:hover {
+                        background-color: transparent;
+                    }
+                }
             }
         }
 
@@ -399,6 +492,12 @@
             display: block;
             color: #95a5a6;
             margin-top: 0.5rem;
+            font-size: 0.8125rem;
+
+            &.search-hint {
+                color: #7f8c8d;
+                font-weight: 500;
+            }
         }
     }
 
@@ -425,4 +524,29 @@
             }
         }
     }
+}
+
+/* Button Spinner */
+.btn-spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: btn-spin 0.6s linear infinite;
+    margin-right: 0.5rem;
+    vertical-align: middle;
+}
+
+@keyframes btn-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.modal-actions .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
 }

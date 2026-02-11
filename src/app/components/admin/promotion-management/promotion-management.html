@@ -35,8 +35,18 @@
                     <p class="cost">{{ promo.pointsCost }} Puntos</p>
                     <p class="desc">{{ promo.description.es }}</p>
                     <div class="promo-actions">
-                        <button class="btn-icon">✏️</button>
-                        <button class="btn-icon delete">🗑️</button>
+                        <button 
+                            class="btn-icon" 
+                            (click)="openEditModal(promo)"
+                            aria-label="Editar promoción">
+                            ✏️
+                        </button>
+                        <button 
+                            class="btn-icon delete" 
+                            (click)="openDeleteModal(promo)"
+                            aria-label="Eliminar promoción">
+                            🗑️
+                        </button>
                     </div>
                 </div>
             </div>
@@ -44,5 +54,154 @@
         </div>
     </div>
 
-    <!-- Note: Modal for new promotion would go here, for now keeping it simple -->
+    <!-- Edit Promotion Modal -->
+    @if (showEditModal && selectedPromotion) {
+    <div class="modal-overlay" (click)="closeEditModal()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h2>Editar Promoción</h2>
+                <button class="close-btn" (click)="closeEditModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form (ngSubmit)="savePromotion()" class="promotion-form">
+                    <div class="form-group">
+                        <label for="nameEs">Nombre (Español) *</label>
+                        <input 
+                            type="text" 
+                            id="nameEs" 
+                            [(ngModel)]="editFormData.name.es" 
+                            name="nameEs" 
+                            required 
+                            class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nameEn">Nombre (English)</label>
+                        <input 
+                            type="text" 
+                            id="nameEn" 
+                            [(ngModel)]="editFormData.name.en" 
+                            name="nameEn" 
+                            class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nameFr">Nombre (Français)</label>
+                        <input 
+                            type="text" 
+                            id="nameFr" 
+                            [(ngModel)]="editFormData.name.fr" 
+                            name="nameFr" 
+                            class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="descriptionEs">Descripción (Español) *</label>
+                        <textarea 
+                            id="descriptionEs" 
+                            [(ngModel)]="editFormData.description.es" 
+                            name="descriptionEs" 
+                            required 
+                            rows="3"
+                            class="form-control"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="descriptionEn">Descripción (English)</label>
+                        <textarea 
+                            id="descriptionEn" 
+                            [(ngModel)]="editFormData.description.en" 
+                            name="descriptionEn" 
+                            rows="3"
+                            class="form-control"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="descriptionFr">Descripción (Français)</label>
+                        <textarea 
+                            id="descriptionFr" 
+                            [(ngModel)]="editFormData.description.fr" 
+                            name="descriptionFr" 
+                            rows="3"
+                            class="form-control"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pointsCost">Costo en Puntos *</label>
+                        <input 
+                            type="number" 
+                            id="pointsCost" 
+                            [(ngModel)]="editFormData.pointsCost" 
+                            name="pointsCost" 
+                            required 
+                            min="0"
+                            class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="image">URL de Imagen</label>
+                        <input 
+                            type="url" 
+                            id="image" 
+                            [(ngModel)]="editFormData.image" 
+                            name="image" 
+                            class="form-control" />
+                    </div>
+
+                    <div class="form-group checkbox-group">
+                        <input 
+                            type="checkbox" 
+                            id="active" 
+                            [(ngModel)]="editFormData.active" 
+                            name="active" />
+                        <label for="active">Promoción Activa</label>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="closeEditModal()" [disabled]="isSaving">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-primary" [disabled]="isSaving">
+                            @if (isSaving) {
+                                <span class="btn-spinner"></span>
+                                Guardando...
+                            } @else {
+                                Guardar Cambios
+                            }
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    }
+
+    <!-- Delete Confirmation Modal -->
+    @if (showDeleteModal && selectedPromotion) {
+    <div class="modal-overlay" (click)="closeDeleteModal()">
+        <div class="modal-content delete-modal" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h2>Confirmar Eliminación</h2>
+                <button class="close-btn" (click)="closeDeleteModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que deseas eliminar la promoción <strong>"{{ selectedPromotion.name?.es || selectedPromotion.name?.en }}"</strong>?</p>
+                <p class="warning-text">Esta acción no se puede deshacer.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="closeDeleteModal()" [disabled]="isDeleting">
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-danger" [disabled]="isDeleting" (click)="deletePromotion()">
+                    @if (isDeleting) {
+                        <span class="btn-spinner"></span>
+                        Eliminando...
+                    } @else {
+                        Eliminar
+                    }
+                </button>
+            </div>
+        </div>
+    </div>
+    }
 </div>

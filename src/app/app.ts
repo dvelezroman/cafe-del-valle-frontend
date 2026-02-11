@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ToastComponent } from './components/toast/toast.component';
+import { ConfirmationModalComponent } from './components/confirmation-modal/confirmation-modal';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ToastComponent],
+  imports: [RouterOutlet, ToastComponent, ConfirmationModalComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

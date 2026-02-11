@@ -13,6 +13,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class CafeInfo implements OnInit {
   loading = true;
+  isSaving = false;
   activeLang: 'es' | 'en' | 'fr' = 'es';
   info: any = {
     name: '',
@@ -56,6 +57,8 @@ export class CafeInfo implements OnInit {
   }
 
   save() {
+    if (this.isSaving) return;
+
     const updateData = {
       name: this.info.name,
       phone: this.info.phone,
@@ -66,8 +69,10 @@ export class CafeInfo implements OnInit {
       description: this.info.description
     };
 
+    this.isSaving = true;
     this.http.put('http://localhost:3000/api/cafe/info', updateData).subscribe({
       next: () => {
+        this.isSaving = false;
         this.toastService.success('Información guardada correctamente');
         // Refresh data
         this.dataService.fetchCafeInfo().subscribe();
@@ -75,6 +80,7 @@ export class CafeInfo implements OnInit {
         this.announceToScreenReader('Información guardada correctamente');
       },
       error: (err) => {
+        this.isSaving = false;
         console.error('Error saving cafe info:', err);
         this.toastService.error('Error al guardar la información');
         this.announceToScreenReader('Error al guardar la información');

@@ -3,9 +3,15 @@
         <h1>Información del Negocio</h1>
         <button class="btn btn-primary" 
                 (click)="save()"
+                [disabled]="isSaving"
                 type="button"
                 aria-label="Guardar cambios en la información del negocio">
-            Guardar Cambios
+            @if (isSaving) {
+                <span class="btn-spinner"></span>
+                Guardando...
+            } @else {
+                Guardar Cambios
+            }
         </button>
     </div>
 

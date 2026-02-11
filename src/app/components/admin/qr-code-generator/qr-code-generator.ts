@@ -1,6 +1,7 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { SubscriberManagementService } from '../../../services/subscriber-management.service';
 import { ToastService } from '../../../services/toast.service';
 
@@ -14,6 +15,7 @@ import { ToastService } from '../../../services/toast.service';
 export class QrCodeGeneratorComponent implements OnInit {
     private subscriberService = inject(SubscriberManagementService);
     private toastService = inject(ToastService);
+    private router = inject(Router);
 
     stats = this.subscriberService.codeStats;
     codes = this.subscriberService.codes;
@@ -94,5 +96,13 @@ export class QrCodeGeneratorComponent implements OnInit {
                 alert('Failed to download PDF');
             }
         });
+    }
+
+    navigateToCodes(filter?: string) {
+        const queryParams: any = {};
+        if (filter) {
+            queryParams.filter = filter;
+        }
+        this.router.navigate(['/admin/dashboard/codes'], { queryParams });
     }
 }

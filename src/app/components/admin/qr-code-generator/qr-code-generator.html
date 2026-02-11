@@ -7,11 +7,11 @@
 
     <!-- Stats Cards -->
     <div class="stats-grid">
-        <div class="stat-card">
+        <div class="stat-card clickable" (click)="navigateToCodes('all')" role="button" tabindex="0" (keydown.enter)="navigateToCodes('all')" (keydown.space)="navigateToCodes('all'); $event.preventDefault()">
             <div class="stat-value">{{ stats().total }}</div>
             <div class="stat-label">Total Codes</div>
         </div>
-        <div class="stat-card success">
+        <div class="stat-card success clickable" (click)="navigateToCodes('GENERATED')" role="button" tabindex="0" (keydown.enter)="navigateToCodes('GENERATED')" (keydown.space)="navigateToCodes('GENERATED'); $event.preventDefault()">
             <div class="stat-value">{{ stats().available }}</div>
             <div class="stat-label">Available</div>
         </div>

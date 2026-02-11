@@ -42,6 +42,7 @@ export interface Subscriber {
     createdAt: string;
     code?: {
         code: string;
+        status?: 'GENERATED' | 'ASSIGNED' | 'REVOKED';
     };
     plan?: {
         title: { es: string; en: string };

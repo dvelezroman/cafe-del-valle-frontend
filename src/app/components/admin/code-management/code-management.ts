@@ -1,8 +1,11 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SubscriberManagementService, SubscriberCode } from '../../../services/subscriber-management.service';
 import { ToastService } from '../../../services/toast.service';
+import { ConfirmationService } from '../../../services/confirmation.service';
+import { take } from 'rxjs/operators';
 
 @Component({
     selector: 'app-code-management',
@@ -14,13 +17,32 @@ import { ToastService } from '../../../services/toast.service';
 export class CodeManagementComponent implements OnInit {
     private subscriberService = inject(SubscriberManagementService);
     private toastService = inject(ToastService);
+    private confirmationService = inject(ConfirmationService);
+    private route = inject(ActivatedRoute);
+    private router = inject(Router);
 
     codes = this.subscriberService.codes;
     selectedFilter = signal<string>('all');
     selectedCodes = signal<Set<string>>(new Set());
 
     ngOnInit() {
-        this.subscriberService.getAllCodes().subscribe();
+        // Check for filter query parameter
+        this.route.queryParams.subscribe(params => {
+            const filter = params['filter'];
+            if (filter) {
+                // Map filter values
+                const filterMap: { [key: string]: string } = {
+                    'all': 'all',
+                    'GENERATED': 'GENERATED',
+                    'available': 'GENERATED'
+                };
+                const mappedFilter = filterMap[filter] || filter;
+                this.selectedFilter.set(mappedFilter);
+                this.filterCodes(mappedFilter);
+            } else {
+                this.subscriberService.getAllCodes().subscribe();
+            }
+        });
     }
 
     filterCodes(status: string) {
@@ -63,11 +85,19 @@ export class CodeManagementComponent implements OnInit {
     }
 
     revokeCode(id: string, code: string) {
-        if (confirm(`Are you sure you want to revoke code ${code}?`)) {
-            this.subscriberService.revokeCode(id).subscribe({
-                next: () => this.toastService.success('Code revoked successfully'),
-                error: () => this.toastService.error('Failed to revoke code')
-            });
-        }
+        this.confirmationService.show({
+            title: 'Confirmar Revocación',
+            message: `¿Estás seguro de que deseas revocar el código <strong>${code}</strong>?<br><br><strong>Esta acción no se puede deshacer.</strong>`,
+            confirmText: 'Revocar',
+            cancelText: 'Cancelar',
+            confirmButtonClass: 'danger'
+        }).pipe(take(1)).subscribe((result: any) => {
+            if (result.confirmed) {
+                this.subscriberService.revokeCode(id).subscribe({
+                    next: () => this.toastService.success('Code revoked successfully'),
+                    error: () => this.toastService.error('Failed to revoke code')
+                });
+            }
+        });
     }
 }
