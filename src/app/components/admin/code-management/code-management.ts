@@ -34,6 +34,8 @@ export class CodeManagementComponent implements OnInit {
                 const filterMap: { [key: string]: string } = {
                     'all': 'all',
                     'GENERATED': 'GENERATED',
+                    'ASSIGNED': 'ASSIGNED',
+                    'REVOKED': 'REVOKED',
                     'available': 'GENERATED'
                 };
                 const mappedFilter = filterMap[filter] || filter;

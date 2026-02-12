@@ -24,11 +24,27 @@ export class SubscriberManagementComponent implements OnInit {
     plans = this.subscriptionService.plans;
   availableCodes = signal<any[]>([]);
   codeSearchTerm = signal<string>('');
+  codeSearchTermAssign = signal<string>('');
   showCodeDropdown = signal<boolean>(false);
+  showCodeDropdownAssign = signal<boolean>(false);
 
-  // Computed signal for filtered codes
+  // Computed signal for filtered codes (for create modal)
   filteredCodes = computed(() => {
     const searchTerm = this.codeSearchTerm().toLowerCase().trim();
+    const codes = this.availableCodes();
+    
+    if (!searchTerm) {
+      return codes;
+    }
+    
+    return codes.filter(code => 
+      code.code.toLowerCase().includes(searchTerm)
+    );
+  });
+
+  // Computed signal for filtered codes (for assign modal)
+  filteredCodesAssign = computed(() => {
+    const searchTerm = this.codeSearchTermAssign().toLowerCase().trim();
     const codes = this.availableCodes();
     
     if (!searchTerm) {
@@ -84,8 +100,9 @@ export class SubscriberManagementComponent implements OnInit {
   closeCodeAssignmentModal() {
     this.showCodeAssignmentModal.set(false);
     this.selectedSubscriber.set(null);
-    this.codeSearchTerm.set('');
-    this.showCodeDropdown.set(false);
+    this.codeSearchTermAssign.set('');
+    this.showCodeDropdownAssign.set(false);
+    this.formData.update(data => ({ ...data, codeId: '' }));
   }
 
   resetForm() {
@@ -130,6 +147,12 @@ export class SubscriberManagementComponent implements OnInit {
     this.showCodeDropdown.set(false);
   }
 
+  selectCodeAssign(code: any) {
+    this.formData.update(data => ({ ...data, codeId: code.id }));
+    this.codeSearchTermAssign.set(code.code);
+    this.showCodeDropdownAssign.set(false);
+  }
+
   onCodeInputFocus() {
     this.showCodeDropdown.set(true);
   }
@@ -139,6 +162,38 @@ export class SubscriberManagementComponent implements OnInit {
     setTimeout(() => {
       this.showCodeDropdown.set(false);
     }, 200);
+  }
+
+  onCodeInputFocusAssign() {
+    this.showCodeDropdownAssign.set(true);
+  }
+
+  onCodeInputBlurAssign() {
+    // Delay to allow click on dropdown items
+    setTimeout(() => {
+      this.showCodeDropdownAssign.set(false);
+    }, 200);
+  }
+
+  onCodeSearchChangeAssign(value: string) {
+    this.codeSearchTermAssign.set(value);
+    // Clear selection if search doesn't match
+    const currentCode = this.formData().codeId;
+    if (currentCode) {
+      const code = this.availableCodes().find(c => c.id === currentCode);
+      if (!code || !code.code.toLowerCase().includes(value.toLowerCase())) {
+        this.formData.update(data => ({ ...data, codeId: '' }));
+      }
+    }
+  }
+
+  getCodeInputValueAssign(): string {
+    const codeId = this.formData().codeId;
+    if (codeId) {
+      const code = this.availableCodes().find(c => c.id === codeId);
+      return code ? code.code : this.codeSearchTermAssign();
+    }
+    return this.codeSearchTermAssign();
   }
 
   createSubscriber() {
@@ -196,6 +251,11 @@ export class SubscriberManagementComponent implements OnInit {
             this.toastService.error('No available codes. Please generate codes first.');
             return;
         }
+
+        // Reset form data and search term for assignment modal
+        this.formData.update(data => ({ ...data, codeId: '' }));
+        this.codeSearchTermAssign.set('');
+        this.showCodeDropdownAssign.set(false);
 
         // Open modal to select code
         this.selectedSubscriber.set(subscriber);

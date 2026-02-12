@@ -17,6 +17,8 @@ import { QrCodeGeneratorComponent } from './components/admin/qr-code-generator/q
 import { CodeManagementComponent } from './components/admin/code-management/code-management';
 import { SubscriberManagementComponent } from './components/admin/subscriber-management/subscriber-management';
 import { QuickRedemptionComponent } from './components/admin/quick-redemption/quick-redemption';
+import { SubscriberRedemptionHistoryComponent } from './components/admin/subscriber-redemption-history/subscriber-redemption-history';
+import { PartnerRedemptionHistoryComponent } from './components/admin/partner-redemption-history/partner-redemption-history';
 import { adminGuard } from './guards/admin.guard';
 import { inject } from '@angular/core';
 import { AuthService } from './services/auth.service';
@@ -49,7 +51,9 @@ export const routes: Routes = [
             { path: 'qr-generator', component: QrCodeGeneratorComponent },
             { path: 'codes', component: CodeManagementComponent },
             { path: 'subscribers', component: SubscriberManagementComponent },
-            { path: 'redemption', component: QuickRedemptionComponent }
+            { path: 'redemption', component: QuickRedemptionComponent },
+            { path: 'subscriber-history', component: SubscriberRedemptionHistoryComponent },
+            { path: 'partner-history', component: PartnerRedemptionHistoryComponent }
         ]
     },
     {

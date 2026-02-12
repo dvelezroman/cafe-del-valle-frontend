@@ -1,0 +1,145 @@
+<div class="redemption-history-container">
+    <div class="page-header">
+        <div>
+            <h1>Historial de Canjes - Socios</h1>
+            <p class="subtitle">Visualiza todos los canjes y consumos realizados por los socios</p>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-card">
+        <h2 class="filters-title">Filtros</h2>
+        <div class="filters-grid">
+            <div class="form-group">
+                <label for="partnerFilter">Filtrar por Socio</label>
+                <select 
+                    id="partnerFilter" 
+                    [(ngModel)]="selectedPartnerId"
+                    (change)="onPartnerFilterChange()"
+                    class="form-select">
+                    <option value="">Todos los socios</option>
+                    @for (partner of partners(); track partner.id) {
+                        <option [value]="partner.id">
+                            {{ partner.user.name }} 
+                            ({{ partner.referralCode }})
+                        </option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <button class="btn btn-secondary" (click)="clearFilters()">
+                    Limpiar Filtros
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value">{{ filteredRecords().length }}</div>
+            <div class="stat-label">Total de Registros</div>
+        </div>
+        <div class="stat-card points-used">
+            <div class="stat-value">{{ getTotalPointsUsed() }}</div>
+            <div class="stat-label">Puntos Usados</div>
+        </div>
+        <div class="stat-card points-earned">
+            <div class="stat-value">{{ getTotalPointsEarned() }}</div>
+            <div class="stat-label">Puntos Ganados</div>
+        </div>
+        <div class="stat-card net-points">
+            <div class="stat-value">{{ getTotalPointsEarned() - getTotalPointsUsed() }}</div>
+            <div class="stat-label">Puntos Netos</div>
+        </div>
+    </div>
+
+    <!-- History Table -->
+    <div class="table-card">
+        @if (isLoading()) {
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <p>Cargando historial...</p>
+            </div>
+        } @else if (filteredRecords().length === 0) {
+            <div class="empty-state">
+                <div class="empty-icon">📋</div>
+                <h3>No hay registros de consumo</h3>
+                <p>No se encontraron registros con los filtros seleccionados.</p>
+            </div>
+        } @else {
+            <div class="table-wrapper">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha y Hora</th>
+                            <th>Socio</th>
+                            <th>Código de Referido</th>
+                            <th>Promoción/Producto</th>
+                            <th>Puntos Usados</th>
+                            <th>Puntos Ganados</th>
+                            <th>Puntos Netos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (record of filteredRecords(); track record.id) {
+                            <tr>
+                                <td>
+                                    <div class="date-cell">
+                                        <span class="date">{{ record.createdAt | date: 'shortDate' }}</span>
+                                        <span class="time">{{ record.createdAt | date: 'shortTime' }}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="partner-cell">
+                                        <strong>{{ record.partner.user.name }}</strong>
+                                        <small>{{ record.partner.user.email }}</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="referral-code-badge">{{ record.partner.referralCode }}</span>
+                                </td>
+                                <td>
+                                    @if (record.promotion) {
+                                        <div class="promotion-cell">
+                                            <strong>{{ record.promotion.name.es || record.promotion.name.en }}</strong>
+                                            <small>Costo: {{ record.promotion.pointsCost }} pts</small>
+                                        </div>
+                                    } @else if (record.productName) {
+                                        <span class="product-name">{{ record.productName }}</span>
+                                    } @else {
+                                        <span class="text-muted">—</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (record.pointsUsed > 0) {
+                                        <span class="points-badge used">{{ record.pointsUsed }}</span>
+                                    } @else {
+                                        <span class="text-muted">—</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (record.pointsEarned > 0) {
+                                        <span class="points-badge earned">{{ record.pointsEarned }}</span>
+                                    } @else {
+                                        <span class="text-muted">—</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if ((record.pointsEarned - record.pointsUsed) !== 0) {
+                                        <span class="points-badge" [class.net-positive]="(record.pointsEarned - record.pointsUsed) > 0" [class.net-negative]="(record.pointsEarned - record.pointsUsed) < 0">
+                                            {{ record.pointsEarned - record.pointsUsed > 0 ? '+' : '' }}{{ record.pointsEarned - record.pointsUsed }}
+                                        </span>
+                                    } @else {
+                                        <span class="text-muted">—</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

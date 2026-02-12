@@ -15,11 +15,11 @@
             <div class="stat-value">{{ stats().available }}</div>
             <div class="stat-label">Available</div>
         </div>
-        <div class="stat-card info">
+        <div class="stat-card info clickable" (click)="navigateToCodes('ASSIGNED')" role="button" tabindex="0" (keydown.enter)="navigateToCodes('ASSIGNED')" (keydown.space)="navigateToCodes('ASSIGNED'); $event.preventDefault()">
             <div class="stat-value">{{ stats().assigned }}</div>
             <div class="stat-label">Assigned</div>
         </div>
-        <div class="stat-card warning">
+        <div class="stat-card warning clickable" (click)="navigateToCodes('REVOKED')" role="button" tabindex="0" (keydown.enter)="navigateToCodes('REVOKED')" (keydown.space)="navigateToCodes('REVOKED'); $event.preventDefault()">
             <div class="stat-value">{{ stats().revoked }}</div>
             <div class="stat-label">Revoked</div>
         </div>

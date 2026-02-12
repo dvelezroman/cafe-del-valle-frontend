@@ -239,83 +239,145 @@
     <!-- Code Assignment Modal -->
     @if (showCodeAssignmentModal() && selectedSubscriber()) {
     <div class="modal-overlay" (click)="closeCodeAssignmentModal()">
-        <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-content code-assignment-modal" (click)="$event.stopPropagation()">
             <div class="modal-header">
-                <h2>
-                    @if (selectedSubscriber()?.code && selectedSubscriber()?.code?.status === 'REVOKED') {
-                        Asignar Nuevo Código
-                    } @else {
-                        Asignar Código
-                    }
-                </h2>
-                <button class="close-btn" (click)="closeCodeAssignmentModal()">×</button>
+                <div class="modal-title-section">
+                    <div class="modal-icon">
+                        @if (selectedSubscriber()?.code && selectedSubscriber()?.code?.status === 'REVOKED') {
+                            🔄
+                        } @else {
+                            ✨
+                        }
+                    </div>
+                    <div>
+                        <h2>
+                            @if (selectedSubscriber()?.code && selectedSubscriber()?.code?.status === 'REVOKED') {
+                                Asignar Nuevo Código
+                            } @else {
+                                Asignar Código
+                            }
+                        </h2>
+                        <p class="modal-subtitle">Selecciona un código disponible para asignar</p>
+                    </div>
+                </div>
+                <button class="close-btn" (click)="closeCodeAssignmentModal()" aria-label="Cerrar modal">
+                    <span aria-hidden="true">×</span>
+                </button>
             </div>
+            
             <div class="modal-body">
-                <p><strong>{{ selectedSubscriber()?.name }}</strong></p>
-                <p>{{ selectedSubscriber()?.email }}</p>
+                <!-- Subscriber Info Card -->
+                <div class="subscriber-info-card">
+                    <div class="subscriber-avatar">
+                        <span>{{ selectedSubscriber()?.name?.charAt(0)?.toUpperCase() || 'U' }}</span>
+                    </div>
+                    <div class="subscriber-details">
+                        <h3>{{ selectedSubscriber()?.name }}</h3>
+                        <p class="subscriber-email">
+                            <span class="icon">📧</span>
+                            {{ selectedSubscriber()?.email }}
+                        </p>
+                        @if (selectedSubscriber()?.phone) {
+                            <p class="subscriber-phone">
+                                <span class="icon">📱</span>
+                                {{ selectedSubscriber()?.phone }}
+                            </p>
+                        }
+                    </div>
+                </div>
+
+                <!-- Revoked Code Warning -->
                 @if (selectedSubscriber()?.code && selectedSubscriber()?.code?.status === 'REVOKED') {
-                    <p class="text-danger">
-                        <strong>Código anterior revocado:</strong> {{ selectedSubscriber()?.code.code }}
-                    </p>
+                    <div class="revoked-code-alert">
+                        <div class="alert-icon">⚠️</div>
+                        <div class="alert-content">
+                            <strong>Código anterior revocado</strong>
+                            <span class="revoked-code-value">{{ selectedSubscriber()!.code!.code }}</span>
+                        </div>
+                    </div>
                 }
-                
-                <div class="form-group">
-                    <label for="codeIdAssign">Select Available Code *</label>
+
+                <!-- Code Selection -->
+                <div class="form-group code-selection-group">
+                    <label for="codeIdAssign" class="form-label">
+                        <span class="label-icon">🔍</span>
+                        Buscar y Seleccionar Código
+                        <span class="required-indicator">*</span>
+                    </label>
                     <div class="code-select-wrapper">
-                        <input 
-                            type="text" 
-                            id="codeIdAssign" 
-                            [value]="getCodeInputValue()"
-                            (input)="onCodeSearchChange($any($event.target).value)"
-                            (focus)="onCodeInputFocus()"
-                            (blur)="onCodeInputBlur()"
-                            name="codeIdAssign" 
-                            placeholder="Type to search codes..."
-                            class="code-search-input"
-                            autocomplete="off"
-                            required />
-                        @if (showCodeDropdown() && filteredCodes().length > 0) {
+                        <div class="code-input-container">
+                            <input 
+                                type="text" 
+                                id="codeIdAssign" 
+                                [value]="getCodeInputValueAssign()"
+                                (input)="onCodeSearchChangeAssign($any($event.target).value)"
+                                (focus)="onCodeInputFocusAssign()"
+                                (blur)="onCodeInputBlurAssign()"
+                                name="codeIdAssign" 
+                                placeholder="Escribe para buscar códigos disponibles..."
+                                class="code-search-input"
+                                autocomplete="off"
+                                required />
+                            <span class="input-icon">🔑</span>
+                        </div>
+                        @if (showCodeDropdownAssign() && filteredCodesAssign().length > 0) {
                         <div class="code-dropdown">
-                            @for (code of filteredCodes(); track code.id) {
+                            @for (code of filteredCodesAssign(); track code.id) {
                             <div 
                                 class="code-option"
                                 [class.selected]="formData().codeId === code.id"
-                                (mousedown)="selectCode(code)">
-                                {{ code.code }}
+                                (mousedown)="selectCodeAssign(code)">
+                                <span class="code-value">{{ code.code }}</span>
+                                @if (formData().codeId === code.id) {
+                                    <span class="check-icon">✓</span>
+                                }
                             </div>
                             }
                         </div>
                         }
-                        @if (showCodeDropdown() && filteredCodes().length === 0 && codeSearchTerm()) {
+                        @if (showCodeDropdownAssign() && filteredCodesAssign().length === 0 && codeSearchTermAssign()) {
                         <div class="code-dropdown">
                             <div class="code-option no-results">
-                                No codes found matching "{{ codeSearchTerm() }}"
+                                <span class="no-results-icon">🔍</span>
+                                <span>No se encontraron códigos que coincidan con "{{ codeSearchTermAssign() }}"</span>
                             </div>
                         </div>
                         }
                     </div>
-                    <small class="search-hint">
-                        @if (codeSearchTerm()) {
-                            Showing {{ filteredCodes().length }} of {{ availableCodes().length }} codes
+                    <div class="form-hints">
+                        @if (codeSearchTermAssign()) {
+                            <div class="hint-item">
+                                <span class="hint-icon">📊</span>
+                                Mostrando {{ filteredCodesAssign().length }} de {{ availableCodes().length }} códigos
+                            </div>
                         } @else {
-                            {{ availableCodes().length }} codes available
+                            <div class="hint-item">
+                                <span class="hint-icon">✅</span>
+                                {{ availableCodes().length }} códigos disponibles
+                            </div>
                         }
-                    </small>
-                    @if (filteredCodes().length === 0 && !codeSearchTerm() && availableCodes().length === 0) {
-                        <small class="text-muted">No codes available. Please generate codes first.</small>
-                    }
+                        @if (filteredCodesAssign().length === 0 && !codeSearchTermAssign() && availableCodes().length === 0) {
+                            <div class="hint-item warning">
+                                <span class="hint-icon">⚠️</span>
+                                No hay códigos disponibles. Por favor genera códigos primero.
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
+            
             <div class="modal-actions">
                 <button type="button" class="btn btn-secondary" (click)="closeCodeAssignmentModal()" [disabled]="isAssigningCode()">
-                    Cancel
+                    <span class="btn-icon">✕</span>
+                    Cancelar
                 </button>
                 <button type="button" class="btn btn-primary" [disabled]="!formData().codeId || isAssigningCode()" (click)="assignSelectedCode(formData().codeId)">
                     @if (isAssigningCode()) {
                         <span class="btn-spinner"></span>
-                        Asignando...
+                        <span>Asignando...</span>
                     } @else {
-                        Asignar Código
+                        <span class="btn-icon">✓</span>
+                        <span>Asignar Código</span>
                     }
                 </button>
             </div>

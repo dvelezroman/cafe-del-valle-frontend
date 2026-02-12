@@ -1,0 +1,139 @@
+<div class="redemption-history-container">
+    <div class="page-header">
+        <div>
+            <h1>Historial de Canjes - Suscriptores</h1>
+            <p class="subtitle">Visualiza todos los canjes realizados por los suscriptores</p>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-card">
+        <h2 class="filters-title">Filtros</h2>
+        <div class="filters-grid">
+            <div class="form-group">
+                <label for="subscriberFilter">Filtrar por Suscriptor</label>
+                <select 
+                    id="subscriberFilter" 
+                    [(ngModel)]="selectedSubscriberId"
+                    (change)="onSubscriberFilterChange()"
+                    class="form-select">
+                    <option value="">Todos los suscriptores</option>
+                    @for (subscriber of subscribers(); track subscriber.id) {
+                        <option [value]="subscriber.id">
+                            {{ subscriber.name }} 
+                            @if (subscriber.code && subscriber.code.code) {
+                                ({{ subscriber.code.code }})
+                            }
+                        </option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="codeFilter">Filtrar por Código</label>
+                <input 
+                    type="text" 
+                    id="codeFilter" 
+                    [(ngModel)]="codeFilter"
+                    (input)="onCodeFilterChange()"
+                    placeholder="Buscar por código..."
+                    class="form-input" />
+            </div>
+
+            <div class="form-group">
+                <button class="btn btn-secondary" (click)="clearFilters()">
+                    Limpiar Filtros
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value">{{ filteredEvents().length }}</div>
+            <div class="stat-label">Total de Canjes</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ usageEvents().length }}</div>
+            <div class="stat-label">Total General</div>
+        </div>
+    </div>
+
+    <!-- History Table -->
+    <div class="table-card">
+        @if (isLoading()) {
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <p>Cargando historial...</p>
+            </div>
+        } @else if (filteredEvents().length === 0) {
+            <div class="empty-state">
+                <div class="empty-icon">📋</div>
+                <h3>No hay canjes registrados</h3>
+                <p>No se encontraron canjes con los filtros seleccionados.</p>
+            </div>
+        } @else {
+            <div class="table-wrapper">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha y Hora</th>
+                            <th>Suscriptor</th>
+                            <th>Código</th>
+                            <th>Plan</th>
+                            <th>Producto/Servicio</th>
+                            <th>Cantidad</th>
+                            <th>Registrado por</th>
+                            <th>Notas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (event of filteredEvents(); track event.id) {
+                            <tr>
+                                <td>
+                                    <div class="date-cell">
+                                        <span class="date">{{ event.timestamp | date: 'shortDate' }}</span>
+                                        <span class="time">{{ event.timestamp | date: 'shortTime' }}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="subscriber-cell">
+                                        <strong>{{ event.subscriber.name }}</strong>
+                                        <small>{{ event.subscriber.email }}</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="code-badge">{{ event.subscriber.code?.code || 'N/A' }}</span>
+                                </td>
+                                <td>
+                                    <span class="plan-badge">
+                                        {{ event.subscriber.plan?.title?.es || event.subscriber.plan?.title?.en || 'N/A' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="item-type">{{ event.itemType }}</span>
+                                </td>
+                                <td>
+                                    <span class="quantity-badge">{{ event.quantity }}</span>
+                                </td>
+                                <td>
+                                    <div class="recorded-by-cell">
+                                        <span>{{ event.recordedBy.name }}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    @if (event.notes) {
+                                        <span class="notes-text">{{ event.notes }}</span>
+                                    } @else {
+                                        <span class="text-muted">—</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
