@@ -13,9 +13,10 @@
         <h3 class="card-title">Solicitudes Pendientes</h3>
         @if (loading()) {
         <div class="loading-state">
-            <span class="spinner"></span>
+            <div class="admin-loading loading-lg"></div>
+            <p>Cargando solicitudes...</p>
         </div>
-        } @else if (pendingPartners.length === 0) {
+        } @else if (pendingPartners().length === 0) {
         <div class="empty-state">
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -73,9 +74,10 @@
         <h3 class="card-title">Socios Aprobados</h3>
         @if (loading()) {
         <div class="loading-state">
-            <span class="spinner"></span>
+            <div class="admin-loading loading-lg"></div>
+            <p>Cargando socios aprobados...</p>
         </div>
-        } @else if (approvedPartners.length === 0) {
+        } @else if (approvedPartners().length === 0) {
         <div class="empty-state">
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>

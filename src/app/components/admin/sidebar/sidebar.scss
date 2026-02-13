@@ -10,7 +10,7 @@
     padding: 1.25rem 0.875rem;
     position: fixed;
     top: 0;
-    left: -280px;
+    left: 0;
     z-index: 100;
     border-right: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow: 4px 0 24px rgba(0, 0, 0, 0.2);
@@ -19,9 +19,10 @@
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
+    transform: translateX(-100%);
 
     &.open {
-        transform: translateX(280px);
+        transform: translateX(0);
     }
 
     /* Overlay for mobile */

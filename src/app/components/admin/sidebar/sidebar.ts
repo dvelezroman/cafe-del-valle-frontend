@@ -14,8 +14,9 @@ export class Sidebar implements AfterViewInit {
   isOpen = signal(false);
 
   ngAfterViewInit() {
-    // Trap focus when sidebar is open on mobile
+    // Ensure sidebar is closed by default on mobile
     if (window.innerWidth < 768) {
+      this.isOpen.set(false);
       this.setupFocusTrap();
     }
   }
@@ -44,6 +45,11 @@ export class Sidebar implements AfterViewInit {
       this.isOpen.set(false);
       document.body.style.overflow = '';
     } else {
+      // Ensure sidebar is closed by default on mobile
+      if (window.innerWidth < 768) {
+        this.isOpen.set(false);
+        document.body.style.overflow = '';
+      }
       this.setupFocusTrap();
     }
   }
@@ -79,6 +85,15 @@ export class Sidebar implements AfterViewInit {
   close() {
     this.isOpen.set(false);
     this.updateBodyScroll();
+    // Return focus to menu toggle on mobile
+    if (window.innerWidth < 768) {
+      setTimeout(() => {
+        const menuToggle = document.querySelector('.menu-toggle') as HTMLElement;
+        if (menuToggle) {
+          menuToggle.focus();
+        }
+      }, 100);
+    }
   }
 
   private updateBodyScroll() {

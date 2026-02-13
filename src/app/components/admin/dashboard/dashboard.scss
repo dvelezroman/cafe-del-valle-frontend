@@ -18,21 +18,23 @@
 }
 
 .admin-content.sidebar-open {
-    transform: translateX(280px);
-    overflow: hidden;
-    
-    &::after {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
-        z-index: 99;
-        pointer-events: all;
+    @media (max-width: 767px) {
+        transform: translateX(0);
+        overflow: hidden;
+        
+        &::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 99;
+            pointer-events: all;
+        }
     }
 }
 
