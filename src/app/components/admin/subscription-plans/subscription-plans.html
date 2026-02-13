@@ -2,7 +2,7 @@
     <div class="section-header">
         <h1>Planes de Suscripción</h1>
         <button (click)="openModal()" 
-            class="btn-primary"
+            class="admin-btn btn-primary"
             type="button"
             aria-label="Crear nuevo plan">
             + Nuevo Plan
@@ -46,12 +46,12 @@
 
     <!-- Modal -->
     @if (isModalOpen()) {
-    <div class="modal-overlay" 
+    <div class="admin-modal-overlay" 
         (click)="closeModal()"
         role="dialog"
         aria-modal="true"
         [attr.aria-labelledby]="editingPlan() ? 'edit-plan-title' : 'new-plan-title'">
-        <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="admin-modal modal-large" (click)="$event.stopPropagation()">
             <h3 [id]="editingPlan() ? 'edit-plan-title' : 'new-plan-title'">
                 {{ editingPlan() ? 'Editar Plan' : 'Nuevo Plan' }}
             </h3>
@@ -217,17 +217,17 @@
                 <div class="modal-actions">
                     <button type="button" 
                         (click)="closeModal()"
-                        class="btn-cancel"
+                        class="admin-btn btn-secondary"
                         [disabled]="isSaving()"
                         aria-label="Cancelar">
                         Cancelar
                     </button>
                     <button type="submit"
-                        class="btn-save"
+                        class="admin-btn btn-primary"
                         [disabled]="isSaving()"
                         aria-label="Guardar plan">
                         @if (isSaving()) {
-                            <span class="btn-spinner"></span>
+                            <div class="admin-loading"></div>
                             Guardando...
                         } @else {
                             Guardar

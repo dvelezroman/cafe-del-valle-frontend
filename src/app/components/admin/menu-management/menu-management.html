@@ -1,81 +1,147 @@
 <div class="admin-section">
     <div class="section-header">
         <h1>Gestión del Menú</h1>
-        <button class="btn btn-primary" 
+        <button class="admin-btn btn-primary" 
+                (click)="openCreateModal()"
                 type="button"
                 aria-label="Agregar nuevo item al menú">
-            + Nuevo Item
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M5 12h14"/>
+            </svg>
+            Nuevo Item
         </button>
     </div>
 
-    <div class="admin-card glass-card">
-        <div class="items-table-wrapper" role="region" aria-label="Lista de items del menú">
-            <table class="items-table" role="table" aria-label="Items del menú">
+    @if (loading()) {
+    <div class="admin-card">
+        <div class="loading-state" role="status" aria-live="polite">
+            <div class="admin-loading loading-lg"></div>
+            <p>Cargando items del menú...</p>
+        </div>
+    </div>
+    } @else {
+    <div class="admin-card">
+        <div class="filters-section">
+            <div class="admin-search">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="m21 21-4.35-4.35"/>
+                </svg>
+                <input type="text" 
+                       [(ngModel)]="searchQuery"
+                       placeholder="Buscar items..."
+                       aria-label="Buscar items del menú" />
+            </div>
+            <div class="admin-filter">
+                <select [(ngModel)]="selectedCategory" aria-label="Filtrar por categoría">
+                    <option value="">Todas las categorías</option>
+                    @for (cat of categories; track cat) {
+                    <option [value]="cat">{{ cat }}</option>
+                    }
+                </select>
+            </div>
+            @if (filteredItems().length > 0) {
+            <div class="bulk-actions">
+                <button class="admin-btn btn-secondary btn-sm"
+                        (click)="bulkToggleAvailability(true)"
+                        type="button">
+                    Habilitar Todos
+                </button>
+                <button class="admin-btn btn-secondary btn-sm"
+                        (click)="bulkToggleAvailability(false)"
+                        type="button">
+                    Deshabilitar Todos
+                </button>
+            </div>
+            }
+        </div>
+
+        @if (filteredItems().length === 0) {
+        <div class="admin-empty-state">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+            <h3>No hay items</h3>
+            <p>{{ searchQuery() || selectedCategory() ? 'No se encontraron items con los filtros aplicados' : 'No hay items en el menú. Agrega el primer item para comenzar.' }}</p>
+            @if (!searchQuery() && !selectedCategory()) {
+            <button class="admin-btn btn-primary" (click)="openCreateModal()">
+                Agregar Primer Item
+            </button>
+            }
+        </div>
+        } @else {
+        <div class="table-responsive">
+            <table class="admin-table">
                 <thead>
-                    <tr role="row">
-                        <th scope="col">Imagen</th>
-                        <th scope="col">Nombre</th>
-                        <th scope="col">Categoría</th>
-                        <th scope="col">Precio</th>
-                        <th scope="col">Estado</th>
-                        <th scope="col">Acciones</th>
+                    <tr>
+                        <th>Imagen</th>
+                        <th>Nombre</th>
+                        <th>Categoría</th>
+                        <th>Precio</th>
+                        <th>Estado</th>
+                        <th>Destacado</th>
+                        <th class="mobile-hidden">Orden</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @if (menuItems().length === 0) {
+                    @for (item of filteredItems(); track item.id) {
                     <tr>
-                        <td colspan="6" class="text-center text-muted" role="cell">
-                            <div class="empty-state">
-                                <p>No hay items en el menú. Agrega el primer item para comenzar.</p>
-                            </div>
-                        </td>
-                    </tr>
-                    }
-                    @for (item of menuItems(); track item.id) {
-                    <tr role="row">
-                        <td role="cell">
+                        <td>
                             <div class="item-thumb">
                                 <img [src]="item.image || '/images/Logo2.jpeg'" 
                                      [alt]="'Imagen de ' + item.name" 
                                      loading="lazy" />
                             </div>
                         </td>
-                        <td role="cell">
+                        <td>
                             <strong>{{ item.name }}</strong>
+                            <div class="mobile-only" style="margin-top: 0.5rem; font-size: 0.875rem; color: var(--text-muted);">
+                                {{ item.description.es || item.description.en || item.description.fr }}
+                            </div>
                         </td>
-                        <td role="cell">
-                            <span class="badge" [attr.aria-label]="'Categoría: ' + item.category">
-                                {{ item.category }}
-                            </span>
+                        <td>
+                            <span class="admin-badge badge-primary">{{ item.category }}</span>
                         </td>
-                        <td role="cell">
-                            <span [attr.aria-label]="'Precio: ' + item.price.toFixed(2) + ' dólares'">
-                                ${{ item.price.toFixed(2) }}
-                            </span>
+                        <td>
+                            <strong>${{ item.price.toFixed(2) }}</strong>
                         </td>
-                        <td role="cell">
-                            <span class="status-pill" 
-                                  [class.available]="item.available"
-                                  [attr.aria-label]="item.available ? 'Disponible' : 'Agotado'"
-                                  role="status">
-                                {{ item.available ? 'Disponible' : 'Agotado' }}
-                            </span>
+                        <td>
+                            <button type="button"
+                                    class="admin-btn btn-ghost btn-sm"
+                                    (click)="toggleAvailability(item)"
+                                    [class]="item.available ? 'status-available' : 'status-unavailable'">
+                                {{ item.available ? '✓ Disponible' : '✗ Agotado' }}
+                            </button>
                         </td>
-                        <td role="cell">
-                            <div class="action-btns" role="group" aria-label="Acciones para {{ item.name }}">
-                                <button class="btn-icon" 
+                        <td>
+                            <button type="button"
+                                    class="admin-btn btn-ghost btn-sm"
+                                    (click)="toggleFeatured(item)"
+                                    [class]="item.featured ? 'featured-active' : ''">
+                                {{ item.featured ? '★' : '☆' }}
+                            </button>
+                        </td>
+                        <td class="mobile-hidden">{{ item.order }}</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="admin-btn btn-secondary btn-sm btn-icon" 
+                                        (click)="openEditModal(item)"
                                         type="button"
-                                        [attr.aria-label]="'Editar ' + item.name"
-                                        title="Editar item">
-                                    <span aria-hidden="true">✏️</span>
-                                    <span class="sr-only">Editar</span>
+                                        aria-label="Editar {{ item.name }}">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                    </svg>
                                 </button>
-                                <button class="btn-icon delete" 
+                                <button class="admin-btn btn-danger btn-sm btn-icon" 
+                                        (click)="deleteItem(item)"
                                         type="button"
-                                        [attr.aria-label]="'Eliminar ' + item.name"
-                                        title="Eliminar item">
-                                    <span aria-hidden="true">🗑️</span>
-                                    <span class="sr-only">Eliminar</span>
+                                        [disabled]="isDeleting()"
+                                        aria-label="Eliminar {{ item.name }}">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                    </svg>
                                 </button>
                             </div>
                         </td>
@@ -84,5 +150,147 @@
                 </tbody>
             </table>
         </div>
+        }
     </div>
+    }
+
+    <!-- Create/Edit Modal -->
+    @if (showModal()) {
+    <div class="admin-modal-overlay" (click)="closeModal()">
+        <div class="admin-modal" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h2>{{ isEditing() ? 'Editar Item' : 'Nuevo Item' }}</h2>
+                <button class="modal-close" (click)="closeModal()" aria-label="Cerrar modal">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="admin-form" (ngSubmit)="saveItem()">
+                    <div class="form-group">
+                        <label for="item-name">Nombre <span class="required">*</span></label>
+                        <input type="text" 
+                               id="item-name"
+                               [(ngModel)]="formData.name" 
+                               name="name"
+                               required
+                               placeholder="Ej: Cappuccino" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="item-category">Categoría <span class="required">*</span></label>
+                        <select id="item-category" [(ngModel)]="formData.category" name="category" required>
+                            @for (cat of categories; track cat) {
+                            <option [value]="cat">{{ cat }}</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="item-price">Precio <span class="required">*</span></label>
+                            <input type="number" 
+                                   id="item-price"
+                                   [(ngModel)]="formData.price" 
+                                   name="price"
+                                   step="0.01"
+                                   min="0"
+                                   required
+                                   placeholder="0.00" />
+                        </div>
+                        <div class="form-group">
+                            <label for="item-order">Orden</label>
+                            <input type="number" 
+                                   id="item-order"
+                                   [(ngModel)]="formData.order" 
+                                   name="order"
+                                   min="0"
+                                   placeholder="0" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="item-image">URL de Imagen</label>
+                        <input type="url" 
+                               id="item-image"
+                               [(ngModel)]="formData.image" 
+                               name="image"
+                               placeholder="https://ejemplo.com/imagen.jpg" />
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Descripción (Multi-idioma)</h3>
+                        <div class="tabs" role="tablist">
+                            <button type="button"
+                                    role="tab"
+                                    [attr.aria-selected]="activeLang === 'es'"
+                                    [class.active]="activeLang === 'es'" 
+                                    (click)="activeLang = 'es'">
+                                Español
+                            </button>
+                            <button type="button"
+                                    role="tab"
+                                    [attr.aria-selected]="activeLang === 'en'"
+                                    [class.active]="activeLang === 'en'" 
+                                    (click)="activeLang = 'en'">
+                                Inglés
+                            </button>
+                            <button type="button"
+                                    role="tab"
+                                    [attr.aria-selected]="activeLang === 'fr'"
+                                    [class.active]="activeLang === 'fr'" 
+                                    (click)="activeLang = 'fr'">
+                                Francés
+                            </button>
+                        </div>
+                        <div class="tab-content">
+                            <div class="form-group">
+                                <textarea rows="3" 
+                                          [(ngModel)]="formData.description![activeLang]" 
+                                          [name]="'description-' + activeLang"
+                                          placeholder="Descripción del item"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="checkbox" 
+                                       [(ngModel)]="formData.available" 
+                                       name="available" />
+                                <span>Disponible</span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="checkbox" 
+                                       [(ngModel)]="formData.featured" 
+                                       name="featured" />
+                                <span>Destacado</span>
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="admin-btn btn-secondary" (click)="closeModal()" type="button">
+                    Cancelar
+                </button>
+                <button class="admin-btn btn-primary" 
+                        (click)="saveItem()"
+                        [disabled]="isSaving()"
+                        type="button">
+                    @if (isSaving()) {
+                    <div class="admin-loading"></div>
+                    Guardando...
+                    } @else {
+                    {{ isEditing() ? 'Guardar Cambios' : 'Crear Item' }}
+                    }
+                </button>
+            </div>
+        </div>
+    </div>
+    }
 </div>

@@ -1,18 +1,30 @@
 import { Component, inject, signal, ElementRef, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { SubscriberManagementService, Subscriber } from '../../../services/subscriber-management.service';
+import { AdminService } from '../../../services/admin.service';
 import { ToastService } from '../../../services/toast.service';
+
+interface Subscriber {
+  id: string;
+  name: string;
+  email: string;
+  code?: { code: string };
+  plan?: any;
+  status: string;
+  quotaRemaining?: number;
+  notes?: string;
+  usageEvents?: any[];
+}
 
 @Component({
     selector: 'app-quick-redemption',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule, DatePipe],
     templateUrl: './quick-redemption.html',
     styleUrl: './quick-redemption.scss'
 })
 export class QuickRedemptionComponent {
-    private subscriberService = inject(SubscriberManagementService);
+    private adminService = inject(AdminService);
     private toastService = inject(ToastService);
 
     code = signal('');
@@ -30,17 +42,15 @@ export class QuickRedemptionComponent {
         this.error.set('');
         this.subscriber.set(null);
 
-        this.subscriberService.getSubscriberByCode(this.code().trim()).subscribe({
-            next: (sub) => {
+        this.adminService.getSubscriberByCode(this.code().trim()).subscribe({
+            next: (sub: any) => {
                 this.subscriber.set(sub);
                 this.loading.set(false);
             },
-            error: (err) => {
-                console.error(err);
+            error: () => {
                 this.error.set('Código no encontrado o no asignado.');
                 this.loading.set(false);
-                this.toastService.show('Código no válido', 'error');
-                // Refocus input for quick retry
+                this.toastService.error('Código no válido');
                 setTimeout(() => this.codeInput.nativeElement.select(), 100);
             }
         });
@@ -51,33 +61,30 @@ export class QuickRedemptionComponent {
         if (!sub) return;
 
         if (sub.status !== 'ACTIVE') {
-            this.toastService.show('Suscriptor no activo', 'error');
+            this.toastService.error('Suscriptor no activo');
             return;
         }
 
-        if (sub.quotaRemaining !== null && sub.quotaRemaining <= 0) {
-            this.toastService.show('Sin cupo disponible', 'error');
+        if (sub.quotaRemaining !== null && sub.quotaRemaining !== undefined && sub.quotaRemaining <= 0) {
+            this.toastService.error('Sin cupo disponible');
             return;
         }
 
         this.redeeming.set(true);
-        this.subscriberService.logUsage({
+        this.adminService.logUsage({
             subscriberId: sub.id,
             itemType: 'Coffee',
             quantity: 1,
-            notes: 'Quick Redemption Widget'
+            notes: 'Canje rápido'
         }).subscribe({
             next: () => {
                 this.redeeming.set(false);
-                this.toastService.show('¡Café canjeado correctamente!', 'success');
-
-                // Refresh data to show updated quota
+                this.toastService.success('¡Café canjeado correctamente!');
                 this.searchByCode();
             },
-            error: (err) => {
-                console.error(err);
+            error: () => {
                 this.redeeming.set(false);
-                this.toastService.show('No se pudo procesar el canje', 'error');
+                this.toastService.error('No se pudo procesar el canje');
             }
         });
     }

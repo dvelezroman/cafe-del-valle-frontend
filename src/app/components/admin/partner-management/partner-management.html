@@ -3,15 +3,15 @@
     <div class="section-header">
         <h2>Solicitudes de Socios</h2>
         <div class="stats">
-            <span class="badge">{{ pendingPartners.length }} Pendientes</span>
-            <span class="badge badge-success">{{ approvedPartners.length }} Aprobados</span>
+            <span class="admin-badge badge-warning">{{ pendingPartners().length }} Pendientes</span>
+            <span class="admin-badge badge-success">{{ approvedPartners().length }} Aprobados</span>
         </div>
     </div>
 
     <!-- Pending Partners -->
     <div class="admin-card glass-card">
         <h3 class="card-title">Solicitudes Pendientes</h3>
-        @if (loading) {
+        @if (loading()) {
         <div class="loading-state">
             <span class="spinner"></span>
         </div>
@@ -37,7 +37,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @for (partner of pendingPartners; track partner.id) {
+                    @for (partner of pendingPartners(); track partner.id) {
                     <tr>
                         <td><strong>{{ partner.user.name }}</strong></td>
                         <td>{{ partner.user.email }}</td>
@@ -52,10 +52,12 @@
                         </td>
                         <td>
                             <div class="action-btns">
-                                <button class="btn btn-sm btn-success"
-                                    (click)="openApprovalModal(partner)">Aprobar</button>
-                                <button class="btn btn-sm btn-danger"
-                                    (click)="validate(partner.id, 'REJECTED')">Rechazar</button>
+                                <button class="admin-btn btn-primary btn-sm"
+                                    (click)="openApprovalModal(partner)"
+                                    type="button">Aprobar</button>
+                                <button class="admin-btn btn-danger btn-sm"
+                                    (click)="validate(partner.id, 'REJECTED')"
+                                    type="button">Rechazar</button>
                             </div>
                         </td>
                     </tr>
@@ -69,7 +71,7 @@
     <!-- Approved Partners Section -->
     <div class="admin-card glass-card">
         <h3 class="card-title">Socios Aprobados</h3>
-        @if (loading) {
+        @if (loading()) {
         <div class="loading-state">
             <span class="spinner"></span>
         </div>
@@ -97,7 +99,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @for (partner of approvedPartners; track partner.id) {
+                    @for (partner of approvedPartners(); track partner.id) {
                     <tr>
                         <td><strong>{{ partner.user.name }}</strong></td>
                         <td>{{ partner.user.email }}</td>
@@ -127,35 +129,41 @@
                         </td>
                         <td>
                             <div class="action-btns">
-                                <button class="btn btn-sm btn-primary"
+                                <button class="admin-btn btn-primary btn-sm"
                                     (click)="openDetailsModal(partner)"
+                                    type="button"
                                     title="Ver detalles">
-                                    👁️ Detalles
+                                    Detalles
                                 </button>
-                                <button class="btn btn-sm btn-secondary"
+                                <button class="admin-btn btn-secondary btn-sm"
                                     (click)="openEditModal(partner)"
+                                    type="button"
                                     title="Editar información">
-                                    ✏️ Editar
+                                    Editar
                                 </button>
-                                <button class="btn btn-sm btn-info"
+                                <button class="admin-btn btn-secondary btn-sm"
                                     (click)="openPointsModal(partner)"
+                                    type="button"
                                     title="Modificar puntos">
-                                    ⭐ Puntos
+                                    Puntos
                                 </button>
-                                <button class="btn btn-sm btn-warning"
+                                <button class="admin-btn btn-secondary btn-sm"
                                     (click)="togglePartnerStatus(partner)"
+                                    type="button"
                                     [title]="partner.status === 'APPROVED' ? 'Suspender socio' : 'Activar socio'">
-                                    {{ partner.status === 'APPROVED' ? '⏸️ Suspender' : '▶️ Activar' }}
+                                    {{ partner.status === 'APPROVED' ? 'Suspender' : 'Activar' }}
                                 </button>
-                                <button class="btn btn-sm btn-primary"
+                                <button class="admin-btn btn-primary btn-sm"
                                     (click)="openSubscriptionModal(partner)"
+                                    type="button"
                                     title="Asignar suscripción">
-                                    ➕ Suscripción
+                                    Suscripción
                                 </button>
-                                <button class="btn btn-sm btn-danger"
+                                <button class="admin-btn btn-danger btn-sm"
                                     (click)="openDeleteModal(partner)"
+                                    type="button"
                                     title="Eliminar socio">
-                                    🗑️ Eliminar
+                                    Eliminar
                                 </button>
                             </div>
                         </td>
@@ -170,11 +178,15 @@
 
 <!-- Approval Modal -->
 @if (showApprovalModal && selectedPartner) {
-<div class="modal-overlay" (click)="closeApprovalModal()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
+<div class="admin-modal-overlay" (click)="closeApprovalModal()">
+    <div class="admin-modal" (click)="$event.stopPropagation()">
         <div class="modal-header">
             <h2>Aprobar Socio</h2>
-            <button class="close-btn" (click)="closeApprovalModal()">×</button>
+            <button class="modal-close" (click)="closeApprovalModal()" aria-label="Cerrar modal">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+            </button>
         </div>
         <div class="modal-body">
             <p><strong>{{ selectedPartner.user.name }}</strong></p>
@@ -201,10 +213,11 @@
             }
         </div>
         <div class="modal-footer">
-            <button class="btn btn-secondary" (click)="closeApprovalModal()">Cancelar</button>
-            <button class="btn btn-primary" 
+            <button class="admin-btn btn-secondary" (click)="closeApprovalModal()" type="button">Cancelar</button>
+            <button class="admin-btn btn-primary" 
                 [disabled]="!selectedPlan"
-                (click)="validate(selectedPartner.id, 'APPROVED', selectedPlan?.id)">
+                (click)="validate(selectedPartner.id, 'APPROVED', selectedPlan?.id)"
+                type="button">
                 Confirmar Aprobación
             </button>
         </div>
@@ -235,10 +248,10 @@
                     <input type="tel" id="editPhone" [(ngModel)]="editFormData.phone" name="editPhone" required class="form-control" />
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" (click)="closeEditModal()" [disabled]="isSaving">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" [disabled]="isSaving">
+                    <button type="button" class="admin-btn btn-secondary" (click)="closeEditModal()" [disabled]="isSaving">Cancelar</button>
+                    <button type="submit" class="admin-btn btn-primary" [disabled]="isSaving">
                         @if (isSaving) {
-                            <span class="btn-spinner"></span>
+                            <div class="admin-loading"></div>
                             Guardando...
                         } @else {
                             Guardar Cambios
@@ -272,10 +285,10 @@
                     <textarea id="reason" [(ngModel)]="pointsFormData.reason" name="reason" rows="3" class="form-control"></textarea>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" (click)="closePointsModal()" [disabled]="isSavingPoints">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" [disabled]="isSavingPoints">
+                    <button type="button" class="admin-btn btn-secondary" (click)="closePointsModal()" [disabled]="isSavingPoints">Cancelar</button>
+                    <button type="submit" class="admin-btn btn-primary" [disabled]="isSavingPoints">
                         @if (isSavingPoints) {
-                            <span class="btn-spinner"></span>
+                            <div class="admin-loading"></div>
                             Actualizando...
                         } @else {
                             Actualizar Puntos
@@ -386,7 +399,7 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" (click)="closeDetailsModal()">Cerrar</button>
+            <button type="button" class="admin-btn btn-secondary" (click)="closeDetailsModal()">Cerrar</button>
         </div>
     </div>
 </div>
@@ -411,10 +424,10 @@
             <p class="warning-text"><strong>Esta acción no se puede deshacer.</strong></p>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" (click)="closeDeleteModal()" [disabled]="isDeleting">Cancelar</button>
-            <button type="button" class="btn btn-danger" [disabled]="isDeleting" (click)="deletePartner()">
+            <button type="button" class="admin-btn btn-secondary" (click)="closeDeleteModal()" [disabled]="isDeleting">Cancelar</button>
+            <button type="button" class="admin-btn btn-danger" [disabled]="isDeleting" (click)="deletePartner()">
                 @if (isDeleting) {
-                    <span class="btn-spinner"></span>
+                    <div class="admin-loading"></div>
                     Eliminando...
                 } @else {
                     Eliminar Permanentemente
@@ -427,11 +440,15 @@
 
 <!-- Subscription Assignment Modal -->
 @if (showSubscriptionModal && selectedPartner) {
-<div class="modal-overlay" (click)="closeSubscriptionModal()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
+<div class="admin-modal-overlay" (click)="closeSubscriptionModal()">
+    <div class="admin-modal" (click)="$event.stopPropagation()">
         <div class="modal-header">
             <h2>Asignar Suscripción Adicional</h2>
-            <button class="close-btn" (click)="closeSubscriptionModal()">×</button>
+            <button class="modal-close" (click)="closeSubscriptionModal()" aria-label="Cerrar modal">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+            </button>
         </div>
         <div class="modal-body">
             <p><strong>{{ selectedPartner.user.name }}</strong></p>
@@ -458,12 +475,13 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-secondary" (click)="closeSubscriptionModal()" [disabled]="isAssigningSubscription">Cancelar</button>
-            <button class="btn btn-primary" 
+            <button class="admin-btn btn-secondary" (click)="closeSubscriptionModal()" [disabled]="isAssigningSubscription" type="button">Cancelar</button>
+            <button class="admin-btn btn-primary" 
                 [disabled]="isAssigningSubscription"
-                (click)="assignAdditionalSubscription(selectedPartner.id, codeSelect.value, planSelectSub.value)">
+                (click)="assignAdditionalSubscription(selectedPartner.id, codeSelect.value, planSelectSub.value)"
+                type="button">
                 @if (isAssigningSubscription) {
-                    <span class="btn-spinner"></span>
+                    <div class="admin-loading"></div>
                     Asignando...
                 } @else {
                     Asignar Suscripción
@@ -497,10 +515,10 @@
                     <input type="tel" id="editPhone" [(ngModel)]="editFormData.phone" name="editPhone" required class="form-control" />
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" (click)="closeEditModal()" [disabled]="isSaving">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" [disabled]="isSaving">
+                    <button type="button" class="admin-btn btn-secondary" (click)="closeEditModal()" [disabled]="isSaving">Cancelar</button>
+                    <button type="submit" class="admin-btn btn-primary" [disabled]="isSaving">
                         @if (isSaving) {
-                            <span class="btn-spinner"></span>
+                            <div class="admin-loading"></div>
                             Guardando...
                         } @else {
                             Guardar Cambios
@@ -534,10 +552,10 @@
                     <textarea id="reason" [(ngModel)]="pointsFormData.reason" name="reason" rows="3" class="form-control"></textarea>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" (click)="closePointsModal()" [disabled]="isSavingPoints">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" [disabled]="isSavingPoints">
+                    <button type="button" class="admin-btn btn-secondary" (click)="closePointsModal()" [disabled]="isSavingPoints">Cancelar</button>
+                    <button type="submit" class="admin-btn btn-primary" [disabled]="isSavingPoints">
                         @if (isSavingPoints) {
-                            <span class="btn-spinner"></span>
+                            <div class="admin-loading"></div>
                             Actualizando...
                         } @else {
                             Actualizar Puntos
@@ -648,7 +666,7 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" (click)="closeDetailsModal()">Cerrar</button>
+            <button type="button" class="admin-btn btn-secondary" (click)="closeDetailsModal()">Cerrar</button>
         </div>
     </div>
 </div>
@@ -673,10 +691,10 @@
             <p class="warning-text"><strong>Esta acción no se puede deshacer.</strong></p>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" (click)="closeDeleteModal()" [disabled]="isDeleting">Cancelar</button>
-            <button type="button" class="btn btn-danger" [disabled]="isDeleting" (click)="deletePartner()">
+            <button type="button" class="admin-btn btn-secondary" (click)="closeDeleteModal()" [disabled]="isDeleting">Cancelar</button>
+            <button type="button" class="admin-btn btn-danger" [disabled]="isDeleting" (click)="deletePartner()">
                 @if (isDeleting) {
-                    <span class="btn-spinner"></span>
+                    <div class="admin-loading"></div>
                     Eliminando...
                 } @else {
                     Eliminar Permanentemente

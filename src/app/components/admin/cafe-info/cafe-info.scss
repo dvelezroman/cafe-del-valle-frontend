@@ -282,3 +282,32 @@
     cursor: not-allowed;
     pointer-events: none;
 }
+
+.hours-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    .hour-row {
+        display: grid;
+        grid-template-columns: 1fr 2fr auto;
+        gap: 0.75rem;
+        align-items: center;
+
+        .day-input {
+            font-weight: 600;
+            background: rgba(45, 27, 14, 0.04);
+        }
+
+        .hours-input {
+            font-family: 'Courier New', monospace;
+        }
+    }
+}
+
+@media (max-width: 767px) {
+    .hours-editor .hour-row {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+}

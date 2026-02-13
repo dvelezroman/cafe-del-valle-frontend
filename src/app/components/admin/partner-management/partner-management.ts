@@ -1,13 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { AuthService } from '../../../services/auth.service';
+import { AdminService } from '../../../services/admin.service';
 import { ToastService } from '../../../services/toast.service';
 import { SubscriptionService, SubscriptionPlan } from '../../../services/subscription.service';
 import { SubscriberManagementService } from '../../../services/subscriber-management.service';
-import { ConfirmationService } from '../../../services/confirmation.service';
-import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-partner-management',
@@ -16,9 +13,9 @@ import { take } from 'rxjs/operators';
   styleUrl: './partner-management.scss'
 })
 export class PartnerManagement implements OnInit {
-  pendingPartners: any[] = [];
-  approvedPartners: any[] = [];
-  loading = true;
+  pendingPartners = signal<any[]>([]);
+  approvedPartners = signal<any[]>([]);
+  loading = signal(true);
   showApprovalModal = false;
   showSubscriptionModal = false;
   showEditModal = false;
@@ -46,15 +43,11 @@ export class PartnerManagement implements OnInit {
     reason: ''
   };
   
-  private apiUrl = 'http://localhost:3000/api';
-
   constructor(
-    private http: HttpClient,
-    private authService: AuthService,
+    private adminService: AdminService,
     private toastService: ToastService,
     private subscriptionService: SubscriptionService,
-    public subscriberService: SubscriberManagementService,
-    private confirmationService: ConfirmationService
+    public subscriberService: SubscriberManagementService
   ) { }
 
   ngOnInit() {
@@ -68,20 +61,19 @@ export class PartnerManagement implements OnInit {
   }
 
   fetchPending() {
-    this.http.get<any[]>(`${this.apiUrl}/admin/partners/pending`).subscribe({
+    this.adminService.getPendingPartners().subscribe({
       next: (res) => {
-        this.pendingPartners = res;
-        this.loading = false;
+        this.pendingPartners.set(res || []);
+        this.loading.set(false);
       },
-      error: () => this.loading = false
+      error: () => this.loading.set(false)
     });
   }
 
   fetchApproved() {
-    // Fetch approved partners with their subscriptions
-    this.http.get<any[]>(`${this.apiUrl}/admin/partners`).subscribe({
+    this.adminService.getAllPartners().subscribe({
       next: (res) => {
-        this.approvedPartners = res.filter((p: any) => p.status === 'APPROVED');
+        this.approvedPartners.set((res || []).filter((p: any) => p.status === 'APPROVED'));
       }
     });
   }
@@ -103,37 +95,24 @@ export class PartnerManagement implements OnInit {
       return;
     }
 
-    this.confirmationService.show({
-      title: status === 'APPROVED' ? 'Confirmar Aprobación' : 'Confirmar Rechazo',
-      message: `¿Estás seguro de que deseas <strong>${status === 'APPROVED' ? 'aprobar' : 'rechazar'}</strong> a este socio?`,
-      confirmText: 'Confirmar',
-      cancelText: 'Cancelar',
-      confirmButtonClass: status === 'APPROVED' ? 'primary' : 'danger'
-    }).pipe(take(1)).subscribe((result: any) => {
-      if (!result.confirmed) return;
-      this.executeValidation(id, status, planId);
-    });
-  }
-
-  private executeValidation(id: string, status: 'APPROVED' | 'REJECTED', planId?: string) {
-
-    const payload: any = { status, referralPoints: 50 };
-    if (planId) {
-      payload.planId = planId;
-    }
-
-    this.http.patch(`${this.apiUrl}/admin/partners/${id}/validate`, payload).subscribe({
-      next: () => {
-        this.pendingPartners = this.pendingPartners.filter(p => p.id !== id);
-        this.toastService.success(`Socio ${status === 'APPROVED' ? 'aprobado' : 'rechazar'} con éxito.`);
-        this.closeApprovalModal();
-        this.fetchApproved();
-      },
-      error: (err) => {
-        console.error(err);
-        this.toastService.error('Error al procesar la solicitud.');
+    if (confirm(`¿Estás seguro de que deseas ${status === 'APPROVED' ? 'aprobar' : 'rechazar'} a este socio?`)) {
+      const payload: any = { status, referralPoints: 50 };
+      if (planId) {
+        payload.planId = planId;
       }
-    });
+
+      this.adminService.validatePartner(id, status).subscribe({
+        next: () => {
+          this.pendingPartners.update(partners => partners.filter(p => p.id !== id));
+          this.toastService.success(`Socio ${status === 'APPROVED' ? 'aprobado' : 'rechazado'} con éxito.`);
+          this.closeApprovalModal();
+          this.fetchApproved();
+        },
+        error: () => {
+          this.toastService.error('Error al procesar la solicitud.');
+        }
+      });
+    }
   }
 
   openSubscriptionModal(partner: any) {
@@ -162,7 +141,8 @@ export class PartnerManagement implements OnInit {
     if (this.isAssigningSubscription) return;
 
     this.isAssigningSubscription = true;
-    this.http.post(`${this.apiUrl}/admin/partners/${partnerId}/subscriptions`, {
+    // Note: This endpoint might need to be added to AdminService
+    this.adminService.post(`/admin/partners/${partnerId}/subscriptions`, {
       codeId,
       planId
     }).subscribe({
@@ -173,16 +153,15 @@ export class PartnerManagement implements OnInit {
         this.fetchApproved();
         this.subscriberService.getAllSubscribers().subscribe();
       },
-      error: (err) => {
+      error: () => {
         this.isAssigningSubscription = false;
-        console.error(err);
-        this.toastService.error(err.error?.message || 'Error al asignar suscripción');
+        this.toastService.error('Error al asignar suscripción');
       }
     });
   }
 
   getPartnerSubscriptions(partnerId: string) {
-    return this.subscriberService.subscribers().filter(s => s.partnerProfileId === partnerId);
+    return (this.subscriberService.subscribers?.() || []).filter((s: any) => s.partnerProfileId === partnerId);
   }
 
   // Edit Partner
@@ -205,17 +184,16 @@ export class PartnerManagement implements OnInit {
     if (!this.selectedPartner || this.isSaving) return;
 
     this.isSaving = true;
-    this.http.patch(`${this.apiUrl}/admin/partners/${this.selectedPartner.id}`, this.editFormData).subscribe({
+    this.adminService.patch(`/admin/partners/${this.selectedPartner.id}`, this.editFormData).subscribe({
       next: () => {
         this.isSaving = false;
         this.toastService.success('Información del socio actualizada con éxito');
         this.closeEditModal();
         this.fetchApproved();
       },
-      error: (err) => {
+      error: () => {
         this.isSaving = false;
-        console.error(err);
-        this.toastService.error(err.error?.message || 'Error al actualizar el socio');
+        this.toastService.error('Error al actualizar el socio');
       }
     });
   }
@@ -239,17 +217,20 @@ export class PartnerManagement implements OnInit {
     if (!this.selectedPartner || this.isSavingPoints) return;
 
     this.isSavingPoints = true;
-    this.http.patch(`${this.apiUrl}/admin/partners/${this.selectedPartner.id}/points`, this.pointsFormData).subscribe({
+    this.adminService.updatePartnerPoints(
+      this.selectedPartner.id,
+      this.pointsFormData.points,
+      this.pointsFormData.reason || ''
+    ).subscribe({
       next: () => {
         this.isSavingPoints = false;
         this.toastService.success('Puntos actualizados con éxito');
         this.closePointsModal();
         this.fetchApproved();
       },
-      error: (err) => {
+      error: () => {
         this.isSavingPoints = false;
-        console.error(err);
-        this.toastService.error(err.error?.message || 'Error al actualizar los puntos');
+        this.toastService.error('Error al actualizar los puntos');
       }
     });
   }
@@ -259,31 +240,17 @@ export class PartnerManagement implements OnInit {
     const newStatus = partner.status === 'APPROVED' ? 'REJECTED' : 'APPROVED';
     const action = newStatus === 'REJECTED' ? 'suspender' : 'activar';
     
-    this.confirmationService.show({
-      title: 'Confirmar Cambio de Estado',
-      message: `¿Estás seguro de que deseas <strong>${action}</strong> a este socio?`,
-      confirmText: 'Confirmar',
-      cancelText: 'Cancelar',
-      confirmButtonClass: newStatus === 'REJECTED' ? 'warning' : 'primary'
-    }).pipe(take(1)).subscribe((result: any) => {
-      if (!result.confirmed) return;
-      this.executeToggleStatus(partner, newStatus);
-    });
-  }
-
-  private executeToggleStatus(partner: any, newStatus: string) {
-    const action = newStatus === 'REJECTED' ? 'suspender' : 'activar';
-    
-    this.http.patch(`${this.apiUrl}/admin/partners/${partner.id}/status`, { status: newStatus }).subscribe({
-      next: () => {
-        this.toastService.success(`Socio ${action} con éxito`);
-        this.fetchApproved();
-      },
-      error: (err) => {
-        console.error(err);
-        this.toastService.error(err.error?.message || 'Error al cambiar el estado del socio');
-      }
-    });
+    if (confirm(`¿Estás seguro de que deseas ${action} a este socio?`)) {
+      this.adminService.patch(`/admin/partners/${partner.id}/status`, { status: newStatus }).subscribe({
+        next: () => {
+          this.toastService.success(`Socio ${action} con éxito`);
+          this.fetchApproved();
+        },
+        error: () => {
+          this.toastService.error('Error al cambiar el estado del socio');
+        }
+      });
+    }
   }
 
   // View Details
@@ -300,12 +267,11 @@ export class PartnerManagement implements OnInit {
   }
 
   loadConsumptionHistory(partnerId: string) {
-    this.http.get<any[]>(`${this.apiUrl}/admin/partners/${partnerId}/consumption-history`).subscribe({
+    this.adminService.getPartnerConsumption(partnerId).subscribe({
       next: (history) => {
-        this.consumptionHistory = history;
+        this.consumptionHistory = history || [];
       },
-      error: (err) => {
-        console.error(err);
+      error: () => {
         this.consumptionHistory = [];
       }
     });
@@ -325,34 +291,20 @@ export class PartnerManagement implements OnInit {
   deletePartner() {
     if (!this.selectedPartner || this.isDeleting) return;
 
-    this.confirmationService.show({
-      title: 'Confirmar Eliminación',
-      message: `¿Estás seguro de que deseas eliminar permanentemente al socio <strong>"${this.selectedPartner.user.name}"</strong>?<br><br>Esta acción eliminará:<br>• El perfil del socio<br>• La cuenta de usuario asociada<br>• Todos los registros relacionados<br><br><strong>Esta acción no se puede deshacer.</strong>`,
-      confirmText: 'Eliminar Permanentemente',
-      cancelText: 'Cancelar',
-      confirmButtonClass: 'danger'
-    }).pipe(take(1)).subscribe((result: any) => {
-      if (!result.confirmed) return;
-      this.executeDeletePartner();
-    });
-  }
-
-  private executeDeletePartner() {
-    if (!this.selectedPartner) return;
-
-    this.isDeleting = true;
-    this.http.delete(`${this.apiUrl}/admin/partners/${this.selectedPartner.id}`).subscribe({
-      next: () => {
-        this.isDeleting = false;
-        this.toastService.success('Socio eliminado con éxito');
-        this.closeDeleteModal();
-        this.fetchApproved();
-      },
-      error: (err) => {
-        this.isDeleting = false;
-        console.error(err);
-        this.toastService.error(err.error?.message || 'Error al eliminar el socio');
-      }
-    });
+    if (confirm(`¿Estás seguro de que deseas eliminar permanentemente al socio "${this.selectedPartner.user.name}"?\n\nEsta acción eliminará:\n• El perfil del socio\n• La cuenta de usuario asociada\n• Todos los registros relacionados\n\nEsta acción no se puede deshacer.`)) {
+      this.isDeleting = true;
+      this.adminService.delete(`/admin/partners/${this.selectedPartner.id}`).subscribe({
+        next: () => {
+          this.isDeleting = false;
+          this.toastService.success('Socio eliminado con éxito');
+          this.closeDeleteModal();
+          this.fetchApproved();
+        },
+        error: () => {
+          this.isDeleting = false;
+          this.toastService.error('Error al eliminar el socio');
+        }
+      });
+    }
   }
 }

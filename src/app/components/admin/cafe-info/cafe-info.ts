@@ -1,9 +1,8 @@
-import { Component, OnInit, computed } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { DataService } from '../../../services/data';
+import { AdminService } from '../../../services/admin.service';
 import { ToastService } from '../../../services/toast.service';
-import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-cafe-info',
@@ -15,35 +14,49 @@ export class CafeInfo implements OnInit {
   loading = true;
   isSaving = false;
   activeLang: 'es' | 'en' | 'fr' = 'es';
+  showMapPicker = false;
   info: any = {
     name: '',
     phone: '',
+    email: '',
     address: '',
     latitude: 0,
     longitude: 0,
     tagline: { es: '', en: '', fr: '' },
-    description: { es: '', en: '', fr: '' }
+    description: { es: '', en: '', fr: '' },
+    hours: {}
+  };
+
+  // Default hours structure
+  defaultHours: any = {
+    'Lunes - Sábado': '9:00 AM - 11:00 PM',
+    'Domingo': '4:00 PM - 9:00 PM'
   };
 
   constructor(
-    private dataService: DataService,
-    private toastService: ToastService,
-    private http: HttpClient
+    private adminService: AdminService,
+    private toastService: ToastService
   ) { }
 
   ngOnInit() {
-    // Fetch fresh data from API
-    this.dataService.fetchCafeInfo().subscribe({
-      next: (data) => {
+    this.loadCafeInfo();
+  }
+
+  loadCafeInfo() {
+    this.loading = true;
+    this.adminService.getCafeInfo().subscribe({
+      next: (data: any) => {
         if (data) {
           this.info = {
             name: data.name || '',
             phone: data.phone || '',
+            email: data.email || '',
             address: data.address || '',
-            latitude: data.coordinates?.lat || 0,
-            longitude: data.coordinates?.lng || 0,
+            latitude: data.latitude || 0,
+            longitude: data.longitude || 0,
             tagline: data.tagline || { es: '', en: '', fr: '' },
-            description: data.description || { es: '', en: '', fr: '' }
+            description: data.description || { es: '', en: '', fr: '' },
+            hours: data.hours || this.defaultHours
           };
         }
         this.loading = false;
@@ -51,7 +64,6 @@ export class CafeInfo implements OnInit {
       error: (err) => {
         console.error('Error fetching cafe info:', err);
         this.loading = false;
-        this.toastService.error('Error al cargar la información del café');
       }
     });
   }
@@ -59,34 +71,62 @@ export class CafeInfo implements OnInit {
   save() {
     if (this.isSaving) return;
 
+    // Validation
+    if (!this.info.name?.trim()) {
+      this.toastService.error('El nombre del café es requerido');
+      return;
+    }
+
     const updateData = {
-      name: this.info.name,
-      phone: this.info.phone,
-      address: this.info.address,
-      latitude: this.info.latitude,
-      longitude: this.info.longitude,
+      name: this.info.name.trim(),
+      phone: this.info.phone?.trim() || '',
+      email: this.info.email?.trim() || '',
+      address: this.info.address?.trim() || '',
+      latitude: parseFloat(this.info.latitude) || 0,
+      longitude: parseFloat(this.info.longitude) || 0,
       tagline: this.info.tagline,
-      description: this.info.description
+      description: this.info.description,
+      hours: this.info.hours
     };
 
     this.isSaving = true;
-    this.http.put('http://localhost:3000/api/cafe/info', updateData).subscribe({
+    this.adminService.updateCafeInfo(updateData).subscribe({
       next: () => {
         this.isSaving = false;
         this.toastService.success('Información guardada correctamente');
-        // Refresh data
-        this.dataService.fetchCafeInfo().subscribe();
-        // Announce success to screen readers
+        this.loadCafeInfo();
         this.announceToScreenReader('Información guardada correctamente');
       },
-      error: (err) => {
+      error: () => {
         this.isSaving = false;
-        console.error('Error saving cafe info:', err);
-        this.toastService.error('Error al guardar la información');
         this.announceToScreenReader('Error al guardar la información');
       }
     });
   }
+
+  updateCoordinates(lat: number, lng: number) {
+    this.info.latitude = lat;
+    this.info.longitude = lng;
+    this.showMapPicker = false;
+  }
+
+  addHourDay() {
+    const day = prompt('Nombre del día o rango (ej: Lunes - Viernes):');
+    if (day && day.trim()) {
+      this.info.hours[day.trim()] = '9:00 AM - 6:00 PM';
+    }
+  }
+
+  removeHourDay(key: string) {
+    if (confirm(`¿Eliminar horario para "${key}"?`)) {
+      delete this.info.hours[key];
+      // Create new object to trigger change detection
+      this.info.hours = { ...this.info.hours };
+    }
+  }
+
+  // Helper to access Object.keys in template
+  Object = Object;
 
   private announceToScreenReader(message: string) {
     const announcement = document.createElement('div');

@@ -1,22 +1,23 @@
-<div class="redemption-history-container">
-    <div class="page-header">
+<div class="admin-section">
+    <div class="section-header">
         <div>
             <h1>Historial de Canjes - Suscriptores</h1>
             <p class="subtitle">Visualiza todos los canjes realizados por los suscriptores</p>
         </div>
+        <button class="admin-btn btn-secondary" (click)="exportHistory()" type="button">
+            Exportar CSV
+        </button>
     </div>
 
     <!-- Filters -->
-    <div class="filters-card">
-        <h2 class="filters-title">Filtros</h2>
-        <div class="filters-grid">
-            <div class="form-group">
+    <div class="admin-card">
+        <div class="filters-section">
+            <div class="admin-filter">
                 <label for="subscriberFilter">Filtrar por Suscriptor</label>
                 <select 
                     id="subscriberFilter" 
                     [(ngModel)]="selectedSubscriberId"
-                    (change)="onSubscriberFilterChange()"
-                    class="form-select">
+                    (change)="onSubscriberFilterChange()">
                     <option value="">Todos los suscriptores</option>
                     @for (subscriber of subscribers(); track subscriber.id) {
                         <option [value]="subscriber.id">
@@ -29,53 +30,58 @@
                 </select>
             </div>
 
-            <div class="form-group">
-                <label for="codeFilter">Filtrar por Código</label>
+            <div class="admin-search">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="m21 21-4.35-4.35"/>
+                </svg>
                 <input 
                     type="text" 
-                    id="codeFilter" 
                     [(ngModel)]="codeFilter"
                     (input)="onCodeFilterChange()"
-                    placeholder="Buscar por código..."
-                    class="form-input" />
+                    placeholder="Buscar por código..." />
             </div>
 
-            <div class="form-group">
-                <button class="btn btn-secondary" (click)="clearFilters()">
-                    Limpiar Filtros
-                </button>
-            </div>
+            <button class="admin-btn btn-secondary btn-sm" (click)="clearFilters()">
+                Limpiar Filtros
+            </button>
         </div>
     </div>
 
     <!-- Stats -->
     <div class="stats-grid">
-        <div class="stat-card">
+        <div class="admin-card">
             <div class="stat-value">{{ filteredEvents().length }}</div>
-            <div class="stat-label">Total de Canjes</div>
+            <div class="stat-label">Canjes Filtrados</div>
         </div>
-        <div class="stat-card">
+        <div class="admin-card">
             <div class="stat-value">{{ usageEvents().length }}</div>
             <div class="stat-label">Total General</div>
         </div>
     </div>
 
     <!-- History Table -->
-    <div class="table-card">
-        @if (isLoading()) {
-            <div class="loading-state">
-                <div class="spinner"></div>
-                <p>Cargando historial...</p>
-            </div>
-        } @else if (filteredEvents().length === 0) {
-            <div class="empty-state">
-                <div class="empty-icon">📋</div>
-                <h3>No hay canjes registrados</h3>
-                <p>No se encontraron canjes con los filtros seleccionados.</p>
-            </div>
-        } @else {
-            <div class="table-wrapper">
-                <table class="history-table">
+    @if (isLoading()) {
+    <div class="admin-card">
+        <div class="loading-state">
+            <div class="admin-loading loading-lg"></div>
+            <p>Cargando historial...</p>
+        </div>
+    </div>
+    } @else if (filteredEvents().length === 0) {
+    <div class="admin-card">
+        <div class="admin-empty-state">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M9 12h6M9 16h6M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2z"/>
+            </svg>
+            <h3>No hay canjes registrados</h3>
+            <p>No se encontraron canjes con los filtros seleccionados.</p>
+        </div>
+    </div>
+    } @else {
+    <div class="admin-card">
+        <div class="table-responsive">
+            <table class="admin-table">
                     <thead>
                         <tr>
                             <th>Fecha y Hora</th>
@@ -132,8 +138,8 @@
                             </tr>
                         }
                     </tbody>
-                </table>
-            </div>
-        }
+            </table>
+        </div>
     </div>
+    }
 </div>

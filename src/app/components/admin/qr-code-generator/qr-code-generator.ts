@@ -2,7 +2,7 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { SubscriberManagementService } from '../../../services/subscriber-management.service';
+import { AdminService } from '../../../services/admin.service';
 import { ToastService } from '../../../services/toast.service';
 
 @Component({
@@ -13,12 +13,12 @@ import { ToastService } from '../../../services/toast.service';
     styleUrl: './qr-code-generator.scss'
 })
 export class QrCodeGeneratorComponent implements OnInit {
-    private subscriberService = inject(SubscriberManagementService);
+    private adminService = inject(AdminService);
     private toastService = inject(ToastService);
     private router = inject(Router);
 
-    stats = this.subscriberService.codeStats;
-    codes = this.subscriberService.codes;
+    stats = signal<any>({ total: 0, available: 0, assigned: 0, revoked: 0 });
+    codes = signal<any[]>([]);
     isGenerating = signal(false);
     isDownloading = signal(false);
     showPreview = signal(false);
@@ -29,36 +29,53 @@ export class QrCodeGeneratorComponent implements OnInit {
     });
 
     ngOnInit() {
-        this.subscriberService.getCodeStats().subscribe();
-        this.subscriberService.getAllCodes('GENERATED').subscribe();
+        this.loadStats();
+        this.loadCodes();
+    }
+
+    loadStats() {
+        this.adminService.getCodeStats().subscribe({
+            next: (stats: any) => {
+                this.stats.set(stats || { total: 0, available: 0, assigned: 0, revoked: 0 });
+            }
+        });
+    }
+
+    loadCodes() {
+        this.adminService.getAllCodes('GENERATED').subscribe({
+            next: (codes: any[]) => {
+                this.codes.set(codes || []);
+            }
+        });
     }
 
     generateCodes() {
         const data = this.formData();
         if (data.quantity < 1 || data.quantity > 500) {
-            this.toastService.error('Quantity must be between 1 and 500');
+            this.toastService.error('La cantidad debe estar entre 1 y 500');
             return;
         }
 
         this.isGenerating.set(true);
-        this.subscriberService.generateCodes(data.quantity, data.prefix).subscribe({
+        this.adminService.generateCodes(data.quantity, data.prefix).subscribe({
             next: () => {
                 this.isGenerating.set(false);
+                this.toastService.success(`${data.quantity} código(s) generado(s) correctamente`);
                 this.showPreview.set(true);
-                this.subscriberService.getCodeStats().subscribe();
-                this.subscriberService.getAllCodes('GENERATED').subscribe();
+                this.loadStats();
+                this.loadCodes();
             },
             error: () => {
                 this.isGenerating.set(false);
-                this.toastService.error('Failed to generate codes');
+                this.toastService.error('Error al generar códigos');
             }
         });
     }
 
     downloadPDF() {
         this.isDownloading.set(true);
-        this.subscriberService.downloadCodesPDF('GENERATED').subscribe({
-            next: (blob) => {
+        this.adminService.downloadCodesPDF().subscribe({
+            next: (blob: Blob) => {
                 const url = window.URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.href = url;
@@ -66,34 +83,11 @@ export class QrCodeGeneratorComponent implements OnInit {
                 link.click();
                 window.URL.revokeObjectURL(url);
                 this.isDownloading.set(false);
+                this.toastService.success('PDF descargado correctamente');
             },
             error: () => {
                 this.isDownloading.set(false);
-                this.toastService.error('Failed to download PDF');
-            }
-        });
-    }
-
-    downloadSelectedPDF(selectedIds: string[]) {
-        if (selectedIds.length === 0) {
-            this.toastService.error('Please select at least one code');
-            return;
-        }
-
-        this.isDownloading.set(true);
-        this.subscriberService.downloadCodesPDF(undefined, selectedIds).subscribe({
-            next: (blob) => {
-                const url = window.URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = `qr-codes-selected-${Date.now()}.pdf`;
-                link.click();
-                window.URL.revokeObjectURL(url);
-                this.isDownloading.set(false);
-            },
-            error: () => {
-                this.isDownloading.set(false);
-                alert('Failed to download PDF');
+                this.toastService.error('Error al descargar el PDF');
             }
         });
     }

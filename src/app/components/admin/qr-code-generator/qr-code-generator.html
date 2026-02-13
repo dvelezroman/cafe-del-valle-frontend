@@ -1,8 +1,8 @@
-<div class="qr-generator-container">
+<div class="admin-section">
     <!-- Header -->
-    <div class="page-header">
-        <h1>QR Code Generator</h1>
-        <p class="subtitle">Generate unique codes for subscriber cups</p>
+    <div class="section-header">
+        <h1>Generador de Códigos QR</h1>
+        <p class="subtitle">Genera códigos únicos para tazas de suscriptores</p>
     </div>
 
     <!-- Stats Cards -->
@@ -26,28 +26,41 @@
     </div>
 
     <!-- Generation Form -->
-    <div class="form-card">
-        <h2>Generate New Codes</h2>
-        <form (ngSubmit)="generateCodes()" class="generation-form">
-            <div class="form-group">
-                <label for="quantity">Quantity</label>
-                <input type="number" id="quantity" [(ngModel)]="formData().quantity" name="quantity" min="1" max="500"
-                    required placeholder="Enter quantity (1-500)" />
-                <small>Number of codes to generate</small>
+    <div class="admin-card">
+        <h2>Generar Nuevos Códigos</h2>
+        <form (ngSubmit)="generateCodes()" class="admin-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="quantity">Cantidad <span class="required">*</span></label>
+                    <input type="number" 
+                           id="quantity" 
+                           [(ngModel)]="formData().quantity" 
+                           name="quantity" 
+                           min="1" 
+                           max="500"
+                           required 
+                           placeholder="1-500" />
+                    <small class="form-help">Número de códigos a generar</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="prefix">Prefijo (Opcional)</label>
+                    <input type="text" 
+                           id="prefix" 
+                           [(ngModel)]="formData().prefix" 
+                           name="prefix" 
+                           placeholder="CDV-2026-" />
+                    <small class="form-help">Prefijo personalizado para los códigos</small>
+                </div>
             </div>
 
             <div class="form-group">
-                <label for="prefix">Prefix (Optional)</label>
-                <input type="text" id="prefix" [(ngModel)]="formData().prefix" name="prefix" placeholder="CDV-2026-" />
-                <small>Custom prefix for codes (e.g., CDV-2026-)</small>
-            </div>
-
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary" [disabled]="isGenerating()">
-                    @if (!isGenerating()) {
-                    <span>Generate Codes</span>
+                <button type="submit" class="admin-btn btn-primary" [disabled]="isGenerating()">
+                    @if (isGenerating()) {
+                    <div class="admin-loading"></div>
+                    Generando...
                     } @else {
-                    <span>Generating...</span>
+                    Generar Códigos
                     }
                 </button>
             </div>
@@ -58,12 +71,13 @@
     @if (showPreview() && codes().length > 0) {
     <div class="codes-preview">
         <div class="preview-header">
-            <h2>Generated Codes ({{ codes().length}})</h2>
-            <button class="btn btn-success" (click)="downloadPDF()" [disabled]="isDownloading()">
-                @if (!isDownloading()) {
-                <span>📥 Download All as PDF</span>
+            <h2>Códigos Generados ({{ codes().length}})</h2>
+            <button class="admin-btn btn-primary" (click)="downloadPDF()" [disabled]="isDownloading()">
+                @if (isDownloading()) {
+                <div class="admin-loading"></div>
+                Descargando...
                 } @else {
-                <span>Downloading...</span>
+                📥 Descargar PDF
                 }
             </button>
         </div>

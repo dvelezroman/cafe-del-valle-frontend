@@ -5,50 +5,51 @@
     </div>
 
     <!-- Search Section -->
-    <div class="search-card">
-        <div class="search-wrapper">
-            <form (ngSubmit)="searchByCode()" class="search-form" novalidate>
-                <div class="form-group">
-                    <label for="subscriber-code">Código de Suscriptor</label>
-                    <div class="search-input-group">
-                        <input #codeInput 
-                            id="subscriber-code"
-                            type="text" 
-                            [ngModel]="code()" 
-                            (ngModelChange)="code.set($event)"
-                            (keyup.enter)="searchByCode()" 
-                            placeholder="Ej: CDV-2026-ABC123"
-                            class="code-input"
-                            [disabled]="loading() || redeeming()"
-                            autofocus
-                            aria-required="true"
-                            aria-describedby="code-desc"
-                            aria-invalid="!!error()">
-                        <button type="submit"
-                            (click)="searchByCode()" 
-                            [disabled]="loading() || redeeming() || !code()"
-                            class="btn-search"
-                            aria-label="Buscar suscriptor">
-                            @if (loading()) {
-                            <span class="spinner" aria-hidden="true"></span>
-                            }
-                            <span>Buscar</span>
-                        </button>
-                    </div>
-                    <small id="code-desc" class="sr-only">Ingresa el código único del suscriptor para buscar su información</small>
-                    @if (error()) {
-                    <div class="error-message" role="alert" aria-live="assertive">
-                        {{ error() }}
-                    </div>
-                    }
+    <div class="admin-card">
+        <form (ngSubmit)="searchByCode()" class="admin-form" novalidate>
+            <div class="form-group">
+                <label for="subscriber-code">Código de Suscriptor <span class="required">*</span></label>
+                <div style="display: flex; gap: 0.5rem;">
+                    <input #codeInput 
+                        id="subscriber-code"
+                        type="text" 
+                        [ngModel]="code()" 
+                        (ngModelChange)="code.set($event)"
+                        (keyup.enter)="searchByCode()" 
+                        placeholder="Ej: CDV-2026-ABC123"
+                        class="admin-form input"
+                        [disabled]="loading() || redeeming()"
+                        autofocus
+                        style="flex: 1;"
+                        aria-required="true"
+                        aria-describedby="code-desc"
+                        aria-invalid="!!error()" />
+                    <button type="submit"
+                        (click)="searchByCode()" 
+                        [disabled]="loading() || redeeming() || !code()"
+                        class="admin-btn btn-primary"
+                        aria-label="Buscar suscriptor">
+                        @if (loading()) {
+                        <div class="admin-loading"></div>
+                        Buscando...
+                        } @else {
+                        Buscar
+                        }
+                    </button>
                 </div>
-            </form>
-        </div>
+                <small id="code-desc" class="form-help">Ingresa el código único del suscriptor para buscar su información</small>
+                @if (error()) {
+                <div class="form-error" role="alert" aria-live="assertive">
+                    {{ error() }}
+                </div>
+                }
+            </div>
+        </form>
     </div>
 
     <!-- Subscriber Details & Action -->
     @if (subscriber(); as sub) {
-    <div class="subscriber-card">
+    <div class="admin-card">
         <!-- Status Banner -->
         <div class="status-banner" [class.active]="sub.status === 'ACTIVE'" [class.inactive]="sub.status !== 'ACTIVE'">
             <div class="user-info">
@@ -101,31 +102,25 @@
             </div>
 
             <!-- Action Button -->
-            <div class="action-section">
+            <div class="action-section" style="margin-top: 2rem; display: flex; flex-direction: column; gap: 1rem;">
                 <button (click)="redeemCoffee()"
-                    [disabled]="redeeming() || sub.status !== 'ACTIVE' || (sub.quotaRemaining !== null && sub.quotaRemaining <= 0)"
-                    class="btn-redeem"
-                    [class.enabled]="sub.status === 'ACTIVE' && (sub.quotaRemaining === null || sub.quotaRemaining > 0)"
-                    [class.disabled]="sub.status !== 'ACTIVE' || (sub.quotaRemaining !== null && sub.quotaRemaining <= 0)"
+                    [disabled]="redeeming() || sub.status !== 'ACTIVE' || (sub.quotaRemaining !== null && sub.quotaRemaining !== undefined && sub.quotaRemaining <= 0)"
+                    class="admin-btn btn-primary"
+                    [class]="sub.status === 'ACTIVE' && (sub.quotaRemaining === null || sub.quotaRemaining === undefined || sub.quotaRemaining > 0) ? 'admin-btn btn-primary' : 'admin-btn btn-secondary'"
+                    style="width: 100%; padding: 1.5rem; font-size: 1.125rem;"
                     type="button"
-                    [attr.aria-label]="sub.status === 'ACTIVE' && (sub.quotaRemaining === null || sub.quotaRemaining > 0) ? 'Canjear 1 café para ' + sub.name : 'No se puede canjear café'"
-                    [attr.aria-disabled]="sub.status !== 'ACTIVE' || (sub.quotaRemaining !== null && sub.quotaRemaining <= 0)">
-
+                    [attr.aria-label]="sub.status === 'ACTIVE' && (sub.quotaRemaining === null || sub.quotaRemaining === undefined || sub.quotaRemaining > 0) ? 'Canjear 1 café para ' + sub.name : 'No se puede canjear café'"
+                    [attr.aria-disabled]="sub.status !== 'ACTIVE' || (sub.quotaRemaining !== null && sub.quotaRemaining !== undefined && sub.quotaRemaining <= 0)">
                     @if (redeeming()) {
-                    <span class="spinner" aria-hidden="true"></span>
-                    <span class="subtitle">Procesando...</span>
+                    <div class="admin-loading"></div>
+                    Procesando...
                     } @else {
-                    <span>☕ CANJEAR 1 CAFÉ</span>
-                    @if (sub.status === 'ACTIVE') {
-                    <span class="subtitle">Click para registrar consumo</span>
-                    } @else {
-                    <span class="subtitle">Cuenta inactiva</span>
-                    }
+                    ☕ CANJEAR 1 CAFÉ
                     }
                 </button>
 
                 <button (click)="clear()" 
-                    class="btn-clear"
+                    class="admin-btn btn-secondary"
                     type="button"
                     aria-label="Limpiar búsqueda y buscar otro suscriptor">
                     Cancelar / Buscar otro
@@ -149,8 +144,14 @@
         }
     </div>
     } @else {
-    <div class="empty-state">
-        <p>Ingresa un código de suscriptor para comenzar.</p>
+    <div class="admin-card">
+        <div class="admin-empty-state">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+            <h3>Buscar Suscriptor</h3>
+            <p>Ingresa un código de suscriptor para comenzar el canje rápido.</p>
+        </div>
     </div>
     }
 </div>

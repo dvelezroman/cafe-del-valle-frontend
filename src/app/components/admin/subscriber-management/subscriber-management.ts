@@ -1,11 +1,25 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { SubscriberManagementService, Subscriber } from '../../../services/subscriber-management.service';
+import { AdminService } from '../../../services/admin.service';
 import { SubscriptionService } from '../../../services/subscription.service';
 import { ToastService } from '../../../services/toast.service';
-import { ConfirmationService } from '../../../services/confirmation.service';
-import { take } from 'rxjs/operators';
+
+interface Subscriber {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  code?: { code: string; status: string };
+  plan?: any;
+  status: string;
+  quotaRemaining?: number;
+  quotaUsed?: number;
+  originalPrice?: number;
+  discountedPrice?: number;
+  discounts?: any[];
+  partnerProfile?: any;
+}
 
 @Component({
     selector: 'app-subscriber-management',
@@ -15,13 +29,15 @@ import { take } from 'rxjs/operators';
     styleUrl: './subscriber-management.scss'
 })
 export class SubscriberManagementComponent implements OnInit {
-    private subscriberService = inject(SubscriberManagementService);
+    private adminService = inject(AdminService);
     private subscriptionService = inject(SubscriptionService);
     private toastService = inject(ToastService);
-    private confirmationService = inject(ConfirmationService);
 
-    subscribers = this.subscriberService.subscribers;
+    subscribers = signal<Subscriber[]>([]);
     plans = this.subscriptionService.plans;
+    loading = signal(true);
+    searchQuery = signal('');
+    selectedStatus = signal<string>('');
   availableCodes = signal<any[]>([]);
   codeSearchTerm = signal<string>('');
   codeSearchTermAssign = signal<string>('');
@@ -72,14 +88,27 @@ export class SubscriberManagementComponent implements OnInit {
   });
 
     ngOnInit() {
-        this.subscriberService.getAllSubscribers().subscribe();
+        this.loadSubscribers();
         this.subscriptionService.getAdminPlans().subscribe();
         this.loadAvailableCodes();
     }
 
+    loadSubscribers() {
+        this.loading.set(true);
+        this.adminService.getSubscribers().subscribe({
+            next: (subscribers: any[]) => {
+                this.subscribers.set(subscribers || []);
+                this.loading.set(false);
+            },
+            error: () => {
+                this.loading.set(false);
+            }
+        });
+    }
+
     loadAvailableCodes() {
-        this.subscriberService.getAllCodes('GENERATED').subscribe({
-            next: (codes) => this.availableCodes.set(codes)
+        this.adminService.getAllCodes('GENERATED').subscribe({
+            next: (codes: any[]) => this.availableCodes.set(codes || [])
         });
     }
 
@@ -197,43 +226,49 @@ export class SubscriberManagementComponent implements OnInit {
   }
 
   createSubscriber() {
-    if (this.isCreating()) return; // Prevent double submission
+    if (this.isCreating()) return;
 
     const data = this.formData();
     if (!data.codeId || !data.name || !data.email || !data.phone || !data.planId) {
-      this.toastService.error('Please fill in all required fields');
+      this.toastService.error('Por favor completa todos los campos requeridos');
       return;
     }
 
     this.isCreating.set(true);
-    this.subscriberService.createSubscriber(data).subscribe({
+    this.adminService.createSubscriber({
+      codeId: data.codeId,
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      planId: data.planId,
+      notes: data.notes
+    }).subscribe({
       next: () => {
         this.isCreating.set(false);
+        this.toastService.success('Suscriptor creado correctamente');
         this.closeModal();
         this.loadAvailableCodes();
+        this.loadSubscribers();
       },
-      error: (err: any) => {
+      error: () => {
         this.isCreating.set(false);
-        this.toastService.error(err.error?.message || 'Failed to create subscriber');
+        this.toastService.error('Error al crear el suscriptor');
       }
     });
   }
 
     updateStatus(id: string, status: 'ACTIVE' | 'SUSPENDED' | 'EXPIRED' | 'CANCELLED' | 'PENDING') {
-        this.confirmationService.show({
-            title: 'Confirmar Cambio de Estado',
-            message: `¿Estás seguro de que deseas cambiar el estado del suscriptor a <strong>${status}</strong>?`,
-            confirmText: 'Confirmar',
-            cancelText: 'Cancelar',
-            confirmButtonClass: 'primary'
-        }).pipe(take(1)).subscribe((result: any) => {
-            if (result.confirmed) {
-                this.subscriberService.updateSubscriberStatus(id, status).subscribe({
-                    next: () => this.toastService.success('Status updated successfully'),
-                    error: () => this.toastService.error('Failed to update status')
-                });
-            }
-        });
+        if (confirm(`¿Estás seguro de que deseas cambiar el estado del suscriptor a "${status}"?`)) {
+            this.adminService.updateSubscriberStatus(id, status).subscribe({
+                next: () => {
+                    this.toastService.success('Estado actualizado correctamente');
+                    this.loadSubscribers();
+                },
+                error: () => {
+                    this.toastService.error('Error al actualizar el estado');
+                }
+            });
+        }
     }
 
     assignCodeToPending(subscriber: Subscriber) {
@@ -265,22 +300,22 @@ export class SubscriberManagementComponent implements OnInit {
     assignSelectedCode(codeId: string) {
         const subscriber = this.selectedSubscriber();
         if (!subscriber || !codeId) {
-            this.toastService.error('Please select a code');
+            this.toastService.error('Por favor selecciona un código');
             return;
         }
 
         this.isAssigningCode.set(true);
-        this.subscriberService.assignCodeToPendingSubscriber(subscriber.id, codeId).subscribe({
+        this.adminService.assignCodeToSubscriber(subscriber.id, codeId).subscribe({
             next: () => {
                 this.isAssigningCode.set(false);
-                this.toastService.success('Code assigned successfully');
+                this.toastService.success('Código asignado correctamente');
                 this.closeCodeAssignmentModal();
                 this.loadAvailableCodes();
-                this.subscriberService.getAllSubscribers().subscribe();
+                this.loadSubscribers();
             },
-            error: (err: any) => {
+            error: () => {
                 this.isAssigningCode.set(false);
-                this.toastService.error(err.error?.message || 'Failed to assign code');
+                this.toastService.error('Error al asignar el código');
             }
         });
     }

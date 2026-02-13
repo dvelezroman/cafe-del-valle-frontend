@@ -1,9 +1,16 @@
 import { Component, inject, signal, OnInit, computed } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../../environments/environment';
-import { SubscriberManagementService, Subscriber } from '../../../services/subscriber-management.service';
+import { AdminService } from '../../../services/admin.service';
+import { ToastService } from '../../../services/toast.service';
+
+interface Subscriber {
+  id: string;
+  name: string;
+  email: string;
+  code?: { code: string };
+  plan?: { title: { es: string; en: string } };
+}
 
 export interface UsageEvent {
     id: string;
@@ -37,9 +44,8 @@ export interface UsageEvent {
     styleUrl: './subscriber-redemption-history.scss'
 })
 export class SubscriberRedemptionHistoryComponent implements OnInit {
-    private http = inject(HttpClient);
-    private subscriberService = inject(SubscriberManagementService);
-    private baseUrl = `${environment.apiUrl}/subscription/admin`;
+    private adminService = inject(AdminService);
+    private toastService = inject(ToastService);
 
     usageEvents = signal<UsageEvent[]>([]);
     subscribers = signal<Subscriber[]>([]);
@@ -76,14 +82,10 @@ export class SubscriberRedemptionHistoryComponent implements OnInit {
         this.isLoading.set(true);
         const subscriberId = this.selectedSubscriberId() || undefined;
         const code = this.codeFilter() || undefined;
-        
-        const params: any = {};
-        if (subscriberId) params.subscriberId = subscriberId;
-        if (code) params.code = code;
 
-        this.http.get<UsageEvent[]>(`${this.baseUrl}/redemptions`, { params }).subscribe({
-            next: (events) => {
-                this.usageEvents.set(events);
+        this.adminService.getAllUsageEvents(subscriberId, code).subscribe({
+            next: (events: any[]) => {
+                this.usageEvents.set(events || []);
                 this.isLoading.set(false);
             },
             error: () => {
@@ -93,9 +95,9 @@ export class SubscriberRedemptionHistoryComponent implements OnInit {
     }
 
     loadSubscribers() {
-        this.http.get<Subscriber[]>(`${this.baseUrl}/subscribers`).subscribe({
-            next: (subscribers) => {
-                this.subscribers.set(subscribers);
+        this.adminService.getSubscribers().subscribe({
+            next: (subscribers: any[]) => {
+                this.subscribers.set(subscribers || []);
             }
         });
     }
@@ -113,6 +115,29 @@ export class SubscriberRedemptionHistoryComponent implements OnInit {
         this.selectedSubscriberId.set('');
         this.codeFilter.set('');
         this.loadUsageEvents();
+    }
+
+    exportHistory() {
+        const csv = [
+            ['Fecha', 'Suscriptor', 'Email', 'Código', 'Tipo Item', 'Cantidad', 'Notas', 'Registrado por'].join(','),
+            ...this.filteredEvents().map(e => [
+                `"${new Date(e.timestamp).toLocaleString()}"`,
+                `"${e.subscriber.name}"`,
+                `"${e.subscriber.email}"`,
+                `"${e.subscriber.code?.code || ''}"`,
+                `"${e.itemType}"`,
+                `"${e.quantity}"`,
+                `"${(e.notes || '').replace(/"/g, '""')}"`,
+                `"${e.recordedBy.name}"`
+            ].join(','))
+        ].join('\n');
+
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `historial-canjes-${new Date().toISOString().split('T')[0]}.csv`;
+        link.click();
+        this.toastService.success('Historial exportado correctamente');
     }
 
     getSubscriberName(subscriberId: string): string {

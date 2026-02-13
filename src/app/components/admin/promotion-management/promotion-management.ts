@@ -1,8 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { AuthService } from '../../../services/auth.service';
+import { AdminService } from '../../../services/admin.service';
 import { ToastService } from '../../../services/toast.service';
 
 @Component({
@@ -12,16 +11,18 @@ import { ToastService } from '../../../services/toast.service';
   styleUrl: './promotion-management.scss'
 })
 export class PromotionManagement implements OnInit {
-  promotions: any[] = [];
-  referralPoints = 50;
-  loading = true;
-  showNewModal = false;
-  showEditModal = false;
-  showDeleteModal = false;
-  isSaving = false;
-  isDeleting = false;
-  selectedPromotion: any = null;
-  editFormData: any = {
+  promotions = signal<any[]>([]);
+  referralPoints = signal(50);
+  loading = signal(true);
+  showNewModal = signal(false);
+  showEditModal = signal(false);
+  showDeleteModal = signal(false);
+  isSaving = signal(false);
+  isDeleting = signal(false);
+  selectedPromotion = signal<any | null>(null);
+  activeLang: 'es' | 'en' | 'fr' = 'es';
+  
+  formData: any = {
     name: { es: '', en: '', fr: '' },
     description: { es: '', en: '', fr: '' },
     pointsCost: 0,
@@ -29,11 +30,8 @@ export class PromotionManagement implements OnInit {
     active: true
   };
 
-  private adminApi = 'http://localhost:3000/api/admin';
-
   constructor(
-    private http: HttpClient,
-    private authService: AuthService,
+    private adminService: AdminService,
     private toastService: ToastService
   ) { }
 
@@ -42,35 +40,41 @@ export class PromotionManagement implements OnInit {
   }
 
   fetchData() {
-    // Fetch system config
-    this.http.get<any>(`${this.adminApi}/config`).subscribe({
-      next: (config) => {
-        this.referralPoints = parseInt(config.POINTS_PER_REFERRAL, 10);
+    this.adminService.getGlobalConfig().subscribe({
+      next: (config: any) => {
+        this.referralPoints.set(parseInt(config.POINTS_PER_REFERRAL || '50', 10));
       }
     });
 
-    // Fetch promotions
-    this.http.get<any[]>(`${this.adminApi}/promotions`).subscribe({
+    this.adminService.getPromotions().subscribe({
       next: (res) => {
-        this.promotions = res;
-        this.loading = false;
+        this.promotions.set(res || []);
+        this.loading.set(false);
       },
-      error: () => this.loading = false
+      error: () => this.loading.set(false)
     });
   }
 
   saveReferralPoints() {
-    this.http.patch(`${this.adminApi}/config/referral-points`, { points: this.referralPoints }).subscribe({
+    this.adminService.updateReferralPoints(this.referralPoints()).subscribe({
       next: () => {
         this.toastService.success('Configuración actualizada con éxito.');
       },
-      error: () => this.toastService.error('Error al actualizar la configuración.')
+      error: () => {
+        this.toastService.error('Error al actualizar la configuración.');
+      }
     });
   }
 
+  openCreateModal() {
+    this.selectedPromotion.set(null);
+    this.resetForm();
+    this.showNewModal.set(true);
+  }
+
   openEditModal(promotion: any) {
-    this.selectedPromotion = promotion;
-    this.editFormData = {
+    this.selectedPromotion.set(promotion);
+    this.formData = {
       name: {
         es: promotion.name?.es || '',
         en: promotion.name?.en || '',
@@ -85,85 +89,115 @@ export class PromotionManagement implements OnInit {
       image: promotion.image || '',
       active: promotion.active !== undefined ? promotion.active : true
     };
-    this.showEditModal = true;
+    this.showEditModal.set(true);
   }
 
   closeEditModal() {
-    this.showEditModal = false;
-    this.selectedPromotion = null;
-    this.resetEditForm();
+    this.showEditModal.set(false);
+    this.selectedPromotion.set(null);
+    this.resetForm();
   }
 
-  resetEditForm() {
-    this.editFormData = {
+  closeNewModal() {
+    this.showNewModal.set(false);
+    this.resetForm();
+  }
+
+  resetForm() {
+    this.formData = {
       name: { es: '', en: '', fr: '' },
       description: { es: '', en: '', fr: '' },
       pointsCost: 0,
       image: '',
       active: true
     };
+    this.activeLang = 'es';
   }
 
   savePromotion() {
-    if (!this.selectedPromotion || this.isSaving) {
-      if (!this.selectedPromotion) {
-        this.toastService.error('No hay promoción seleccionada');
-      }
-      return;
-    }
+    if (this.isSaving()) return;
 
-    if (!this.editFormData.name.es || !this.editFormData.description.es || !this.editFormData.pointsCost) {
+    if (!this.formData.name.es || !this.formData.description.es || !this.formData.pointsCost) {
       this.toastService.error('Por favor completa todos los campos requeridos');
       return;
     }
 
-    this.isSaving = true;
-    this.http.put(`${this.adminApi}/promotions/${this.selectedPromotion.id}`, this.editFormData).subscribe({
-      next: () => {
-        this.isSaving = false;
-        this.toastService.success('Promoción actualizada con éxito');
-        this.closeEditModal();
-        this.fetchData();
-      },
-      error: (err) => {
-        this.isSaving = false;
-        console.error(err);
-        this.toastService.error('Error al actualizar la promoción');
-      }
-    });
+    this.isSaving.set(true);
+    const promotionData = {
+      ...this.formData,
+      pointsCost: parseFloat(this.formData.pointsCost.toString())
+    };
+
+    if (this.selectedPromotion()) {
+      this.adminService.updatePromotion(this.selectedPromotion()!.id, promotionData).subscribe({
+        next: () => {
+          this.isSaving.set(false);
+          this.toastService.success('Promoción actualizada con éxito');
+          this.closeEditModal();
+          this.fetchData();
+        },
+        error: () => {
+          this.isSaving.set(false);
+          this.toastService.error('Error al actualizar la promoción');
+        }
+      });
+    } else {
+      this.adminService.createPromotion(promotionData).subscribe({
+        next: () => {
+          this.isSaving.set(false);
+          this.toastService.success('Promoción creada con éxito');
+          this.closeNewModal();
+          this.fetchData();
+        },
+        error: () => {
+          this.isSaving.set(false);
+          this.toastService.error('Error al crear la promoción');
+        }
+      });
+    }
   }
 
   openDeleteModal(promotion: any) {
-    this.selectedPromotion = promotion;
-    this.showDeleteModal = true;
+    this.selectedPromotion.set(promotion);
+    this.showDeleteModal.set(true);
   }
 
   closeDeleteModal() {
-    this.showDeleteModal = false;
-    this.selectedPromotion = null;
+    this.showDeleteModal.set(false);
+    this.selectedPromotion.set(null);
   }
 
   deletePromotion() {
-    if (!this.selectedPromotion || this.isDeleting) {
-      if (!this.selectedPromotion) {
-        this.toastService.error('No hay promoción seleccionada');
-      }
-      return;
-    }
+    if (!this.selectedPromotion() || this.isDeleting()) return;
 
-    this.isDeleting = true;
-    this.http.delete(`${this.adminApi}/promotions/${this.selectedPromotion.id}`).subscribe({
+    if (confirm(`¿Estás seguro de que deseas eliminar la promoción "${this.selectedPromotion()!.name?.es || this.selectedPromotion()!.name?.en}"?`)) {
+      this.isDeleting.set(true);
+      this.adminService.deletePromotion(this.selectedPromotion()!.id).subscribe({
+        next: () => {
+          this.isDeleting.set(false);
+          this.toastService.success('Promoción eliminada con éxito');
+          this.closeDeleteModal();
+          this.fetchData();
+        },
+        error: () => {
+          this.isDeleting.set(false);
+          this.toastService.error('Error al eliminar la promoción');
+        }
+      });
+    }
+  }
+
+  toggleActive(promotion: any) {
+    this.adminService.updatePromotion(promotion.id, {
+      ...promotion,
+      active: !promotion.active
+    }).subscribe({
       next: () => {
-        this.isDeleting = false;
-        this.toastService.success('Promoción eliminada con éxito');
-        this.closeDeleteModal();
+        this.toastService.success(`Promoción ${!promotion.active ? 'activada' : 'desactivada'}`);
         this.fetchData();
-      },
-      error: (err) => {
-        this.isDeleting = false;
-        console.error(err);
-        this.toastService.error('Error al eliminar la promoción');
       }
     });
   }
+
+  Object = Object;
 }

@@ -1,7 +1,7 @@
 <div class="admin-section">
     <div class="section-header">
         <h2>Gestión del Club</h2>
-        <button class="btn btn-primary" (click)="showNewModal = true">+ Nueva Promoción</button>
+        <button class="admin-btn btn-primary" (click)="openCreateModal()">+ Nueva Promoción</button>
     </div>
 
     <!-- Global Config Section -->
@@ -25,7 +25,7 @@
     <div class="admin-card glass-card">
         <h3>Promociones Activas</h3>
         <div class="promotions-grid">
-            @for (promo of promotions; track promo.id) {
+            @for (promo of promotions(); track promo.id) {
             <div class="promo-item">
                 <div class="promo-img">
                     <img [src]="promo.image || '/images/Logo2.jpeg'" [alt]="promo.name.es" />
@@ -54,13 +54,13 @@
         </div>
     </div>
 
-    <!-- Edit Promotion Modal -->
-    @if (showEditModal && selectedPromotion) {
+    <!-- Create/Edit Promotion Modal -->
+    @if ((showNewModal() || showEditModal()) && (showNewModal() || selectedPromotion())) {
     <div class="modal-overlay" (click)="closeEditModal()">
         <div class="modal-content" (click)="$event.stopPropagation()">
             <div class="modal-header">
-                <h2>Editar Promoción</h2>
-                <button class="close-btn" (click)="closeEditModal()">×</button>
+                <h2>{{ selectedPromotion() ? 'Editar Promoción' : 'Nueva Promoción' }}</h2>
+                <button class="close-btn" (click)="selectedPromotion() ? closeEditModal() : closeNewModal()">×</button>
             </div>
             <div class="modal-body">
                 <form (ngSubmit)="savePromotion()" class="promotion-form">
@@ -69,7 +69,7 @@
                         <input 
                             type="text" 
                             id="nameEs" 
-                            [(ngModel)]="editFormData.name.es" 
+                            [(ngModel)]="formData.name.es" 
                             name="nameEs" 
                             required 
                             class="form-control" />
@@ -80,7 +80,7 @@
                         <input 
                             type="text" 
                             id="nameEn" 
-                            [(ngModel)]="editFormData.name.en" 
+                            [(ngModel)]="formData.name.en" 
                             name="nameEn" 
                             class="form-control" />
                     </div>
@@ -90,7 +90,7 @@
                         <input 
                             type="text" 
                             id="nameFr" 
-                            [(ngModel)]="editFormData.name.fr" 
+                            [(ngModel)]="formData.name.fr" 
                             name="nameFr" 
                             class="form-control" />
                     </div>
@@ -99,7 +99,7 @@
                         <label for="descriptionEs">Descripción (Español) *</label>
                         <textarea 
                             id="descriptionEs" 
-                            [(ngModel)]="editFormData.description.es" 
+                            [(ngModel)]="formData.description.es" 
                             name="descriptionEs" 
                             required 
                             rows="3"
@@ -110,7 +110,7 @@
                         <label for="descriptionEn">Descripción (English)</label>
                         <textarea 
                             id="descriptionEn" 
-                            [(ngModel)]="editFormData.description.en" 
+                            [(ngModel)]="formData.description.en" 
                             name="descriptionEn" 
                             rows="3"
                             class="form-control"></textarea>
@@ -120,7 +120,7 @@
                         <label for="descriptionFr">Descripción (Français)</label>
                         <textarea 
                             id="descriptionFr" 
-                            [(ngModel)]="editFormData.description.fr" 
+                            [(ngModel)]="formData.description.fr" 
                             name="descriptionFr" 
                             rows="3"
                             class="form-control"></textarea>
@@ -131,7 +131,7 @@
                         <input 
                             type="number" 
                             id="pointsCost" 
-                            [(ngModel)]="editFormData.pointsCost" 
+                            [(ngModel)]="formData.pointsCost" 
                             name="pointsCost" 
                             required 
                             min="0"
@@ -143,7 +143,7 @@
                         <input 
                             type="url" 
                             id="image" 
-                            [(ngModel)]="editFormData.image" 
+                            [(ngModel)]="formData.image" 
                             name="image" 
                             class="form-control" />
                     </div>
@@ -152,21 +152,21 @@
                         <input 
                             type="checkbox" 
                             id="active" 
-                            [(ngModel)]="editFormData.active" 
+                            [(ngModel)]="formData.active" 
                             name="active" />
                         <label for="active">Promoción Activa</label>
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" (click)="closeEditModal()" [disabled]="isSaving">
+                        <button type="button" class="admin-btn btn-secondary" (click)="selectedPromotion() ? closeEditModal() : closeNewModal()" [disabled]="isSaving()">
                             Cancelar
                         </button>
-                        <button type="submit" class="btn btn-primary" [disabled]="isSaving">
-                            @if (isSaving) {
-                                <span class="btn-spinner"></span>
+                        <button type="submit" class="admin-btn btn-primary" [disabled]="isSaving()">
+                            @if (isSaving()) {
+                                <div class="admin-loading"></div>
                                 Guardando...
                             } @else {
-                                Guardar Cambios
+                                {{ selectedPromotion() ? 'Guardar Cambios' : 'Crear Promoción' }}
                             }
                         </button>
                     </div>
@@ -177,7 +177,7 @@
     }
 
     <!-- Delete Confirmation Modal -->
-    @if (showDeleteModal && selectedPromotion) {
+    @if (showDeleteModal() && selectedPromotion()) {
     <div class="modal-overlay" (click)="closeDeleteModal()">
         <div class="modal-content delete-modal" (click)="$event.stopPropagation()">
             <div class="modal-header">
@@ -185,16 +185,16 @@
                 <button class="close-btn" (click)="closeDeleteModal()">×</button>
             </div>
             <div class="modal-body">
-                <p>¿Estás seguro de que deseas eliminar la promoción <strong>"{{ selectedPromotion.name?.es || selectedPromotion.name?.en }}"</strong>?</p>
+                <p>¿Estás seguro de que deseas eliminar la promoción <strong>"{{ selectedPromotion()!.name?.es || selectedPromotion()!.name?.en }}"</strong>?</p>
                 <p class="warning-text">Esta acción no se puede deshacer.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" (click)="closeDeleteModal()" [disabled]="isDeleting">
+                <button type="button" class="admin-btn btn-secondary" (click)="closeDeleteModal()" [disabled]="isDeleting()">
                     Cancelar
                 </button>
-                <button type="button" class="btn btn-danger" [disabled]="isDeleting" (click)="deletePromotion()">
-                    @if (isDeleting) {
-                        <span class="btn-spinner"></span>
+                <button type="button" class="admin-btn btn-danger" [disabled]="isDeleting()" (click)="deletePromotion()">
+                    @if (isDeleting()) {
+                        <div class="admin-loading"></div>
                         Eliminando...
                     } @else {
                         Eliminar

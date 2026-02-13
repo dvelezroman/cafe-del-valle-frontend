@@ -1,25 +1,363 @@
 <div class="admin-section">
     <div class="section-header">
-        <h2>Gestión del Blog</h2>
-        <button class="btn btn-primary">+ Nueva Entrada</button>
+        <h1>Gestión del Blog</h1>
+        <div style="display: flex; gap: 0.75rem;">
+            <button class="admin-btn btn-secondary" 
+                    (click)="openCreateCategoryModal()"
+                    type="button">
+                + Categoría
+            </button>
+            <button class="admin-btn btn-primary" 
+                    (click)="openCreatePostModal()"
+                    type="button">
+                + Nueva Entrada
+            </button>
+        </div>
     </div>
 
-    <div class="blog-list">
-        @for (post of posts(); track post.id) {
-        <div class="blog-item admin-card glass-card">
-            <div class="post-preview-img">
-                <img [src]="post.image || '/images/Logo2.jpeg'" [alt]="post.title" />
+    @if (loading()) {
+    <div class="admin-card">
+        <div class="loading-state">
+            <div class="admin-loading loading-lg"></div>
+            <p>Cargando posts...</p>
+        </div>
+    </div>
+    } @else {
+    <div class="admin-card">
+        <div class="filters-section">
+            <div class="admin-search">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="m21 21-4.35-4.35"/>
+                </svg>
+                <input type="text" 
+                       [(ngModel)]="searchQuery"
+                       placeholder="Buscar posts..."
+                       aria-label="Buscar posts del blog" />
             </div>
-            <div class="post-details">
-                <span class="post-date text-muted">{{ post.publishedAt }}</span>
-                <h3>{{ post.title }}</h3>
-                <p>{{ post.excerpt }}</p>
-                <div class="post-actions">
-                    <button class="btn btn-outline btn-sm">Editar</button>
-                    <button class="btn btn-outline btn-sm danger">Eliminar</button>
+            <div class="admin-filter">
+                <select [(ngModel)]="selectedCategory" aria-label="Filtrar por categoría">
+                    <option value="">Todas las categorías</option>
+                    @for (cat of categories(); track cat.id) {
+                    <option [value]="cat.id">{{ cat.name.es || cat.name.en }}</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        @if (filteredPosts().length === 0) {
+        <div class="admin-empty-state">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+            </svg>
+            <h3>No hay posts</h3>
+            <p>{{ searchQuery() || selectedCategory() ? 'No se encontraron posts con los filtros aplicados' : 'No hay posts en el blog. Crea el primer post para comenzar.' }}</p>
+            @if (!searchQuery() && !selectedCategory()) {
+            <button class="admin-btn btn-primary" (click)="openCreatePostModal()">
+                Crear Primer Post
+            </button>
+            }
+        </div>
+        } @else {
+        <div class="blog-grid">
+            @for (post of filteredPosts(); track post.id) {
+            <div class="blog-item admin-card">
+                <div class="post-preview-img">
+                    <img [src]="post.image || '/images/Logo2.jpeg'" 
+                         [alt]="post.title.es || post.title.en" 
+                         loading="lazy" />
+                    @if (post.featured) {
+                    <span class="featured-badge">★ Destacado</span>
+                    }
+                </div>
+                <div class="post-details">
+                    <div class="post-meta">
+                        <span class="admin-badge badge-info">{{ getCategoryName(post.categoryId) }}</span>
+                        @if (post.published) {
+                        <span class="admin-badge badge-success">Publicado</span>
+                        } @else {
+                        <span class="admin-badge badge-warning">Borrador</span>
+                        }
+                        @if (post.publishedAt) {
+                        <span class="post-date">{{ post.publishedAt | date:'short' }}</span>
+                        }
+                    </div>
+                    <h3>{{ post.title.es || post.title.en || post.title.fr }}</h3>
+                    <p class="post-excerpt">{{ post.excerpt.es || post.excerpt.en || post.excerpt.fr }}</p>
+                    @if (post.tags.length > 0) {
+                    <div class="post-tags">
+                        @for (tag of post.tags; track tag) {
+                        <span class="tag">{{ tag }}</span>
+                        }
+                    </div>
+                    }
+                    <div class="post-actions">
+                        <button class="admin-btn btn-secondary btn-sm" 
+                                (click)="togglePublished(post)"
+                                type="button">
+                            {{ post.published ? 'Despublicar' : 'Publicar' }}
+                        </button>
+                        <button class="admin-btn btn-secondary btn-sm" 
+                                (click)="openEditPostModal(post)"
+                                type="button">
+                            Editar
+                        </button>
+                        <button class="admin-btn btn-danger btn-sm" 
+                                (click)="deletePost(post)"
+                                [disabled]="isDeleting()"
+                                type="button">
+                            Eliminar
+                        </button>
+                    </div>
                 </div>
             </div>
+            }
         </div>
         }
     </div>
+    }
+
+    <!-- Post Modal -->
+    @if (showPostModal()) {
+    <div class="admin-modal-overlay" (click)="closePostModal()">
+        <div class="admin-modal modal-large" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h2>{{ isEditingPost() ? 'Editar Post' : 'Nuevo Post' }}</h2>
+                <button class="modal-close" (click)="closePostModal()" aria-label="Cerrar modal">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="admin-form" (ngSubmit)="savePost()">
+                    <div class="form-group">
+                        <label for="post-slug">Slug (URL) <span class="required">*</span></label>
+                        <input type="text" 
+                               id="post-slug"
+                               [(ngModel)]="postForm.slug" 
+                               name="slug"
+                               required
+                               placeholder="ejemplo-de-post" />
+                        <small class="form-help">Se genera automáticamente desde el título</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="post-author">Autor</label>
+                        <input type="text" 
+                               id="post-author"
+                               [(ngModel)]="postForm.author" 
+                               name="author"
+                               placeholder="Equipo Café del Valle" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="post-category">Categoría <span class="required">*</span></label>
+                        <select id="post-category" [(ngModel)]="postForm.categoryId" name="categoryId" required>
+                            <option value="">Seleccionar categoría</option>
+                            @for (cat of categories(); track cat.id) {
+                            <option [value]="cat.id">{{ cat.name.es || cat.name.en }}</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="post-image">URL de Imagen</label>
+                        <input type="url" 
+                               id="post-image"
+                               [(ngModel)]="postForm.image" 
+                               name="image"
+                               placeholder="https://ejemplo.com/imagen.jpg" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="post-tags">Tags (separados por comas)</label>
+                        <input type="text" 
+                               id="post-tags"
+                               [(ngModel)]="tagsInput" 
+                               name="tags"
+                               placeholder="café, ecuador, especialidad" />
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Contenido (Multi-idioma)</h3>
+                        <div class="tabs" role="tablist">
+                            <button type="button"
+                                    role="tab"
+                                    [attr.aria-selected]="activeLang === 'es'"
+                                    [class.active]="activeLang === 'es'" 
+                                    (click)="activeLang = 'es'">
+                                Español
+                            </button>
+                            <button type="button"
+                                    role="tab"
+                                    [attr.aria-selected]="activeLang === 'en'"
+                                    [class.active]="activeLang === 'en'" 
+                                    (click)="activeLang = 'en'">
+                                Inglés
+                            </button>
+                            <button type="button"
+                                    role="tab"
+                                    [attr.aria-selected]="activeLang === 'fr'"
+                                    [class.active]="activeLang === 'fr'" 
+                                    (click)="activeLang = 'fr'">
+                                Francés
+                            </button>
+                        </div>
+                        <div class="tab-content">
+                            <div class="form-group">
+                                <label [for]="'post-title-' + activeLang">Título <span class="required">*</span></label>
+                                <input type="text" 
+                                       [id]="'post-title-' + activeLang"
+                                       [(ngModel)]="postForm.title![activeLang]" 
+                                       [name]="'title-' + activeLang"
+                                       (blur)="updateSlug()"
+                                       required
+                                       placeholder="Título del post" />
+                            </div>
+                            <div class="form-group">
+                                <label [for]="'post-excerpt-' + activeLang">Resumen</label>
+                                <textarea rows="2" 
+                                          [id]="'post-excerpt-' + activeLang"
+                                          [(ngModel)]="postForm.excerpt![activeLang]" 
+                                          [name]="'excerpt-' + activeLang"
+                                          placeholder="Breve resumen del post"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label [for]="'post-content-' + activeLang">Contenido</label>
+                                <textarea rows="10" 
+                                          [id]="'post-content-' + activeLang"
+                                          [(ngModel)]="postForm.content![activeLang]" 
+                                          [name]="'content-' + activeLang"
+                                          placeholder="Contenido completo del post (HTML permitido)"></textarea>
+                                <small class="form-help">Puedes usar HTML básico para formatear el contenido</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="checkbox" 
+                                       [(ngModel)]="postForm.published" 
+                                       name="published" />
+                                <span>Publicado</span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="checkbox" 
+                                       [(ngModel)]="postForm.featured" 
+                                       name="featured" />
+                                <span>Destacado</span>
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="admin-btn btn-secondary" (click)="closePostModal()" type="button">
+                    Cancelar
+                </button>
+                <button class="admin-btn btn-primary" 
+                        (click)="savePost()"
+                        [disabled]="isSaving()"
+                        type="button">
+                    @if (isSaving()) {
+                    <div class="admin-loading"></div>
+                    Guardando...
+                    } @else {
+                    {{ isEditingPost() ? 'Guardar Cambios' : 'Crear Post' }}
+                    }
+                </button>
+            </div>
+        </div>
+    </div>
+    }
+
+    <!-- Category Modal -->
+    @if (showCategoryModal()) {
+    <div class="admin-modal-overlay" (click)="closeCategoryModal()">
+        <div class="admin-modal" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h2>{{ isEditingCategory() ? 'Editar Categoría' : 'Nueva Categoría' }}</h2>
+                <button class="modal-close" (click)="closeCategoryModal()" aria-label="Cerrar modal">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="admin-form" (ngSubmit)="saveCategory()">
+                    <div class="form-group">
+                        <label for="category-slug">Slug (URL) <span class="required">*</span></label>
+                        <input type="text" 
+                               id="category-slug"
+                               [(ngModel)]="categoryForm.slug" 
+                               name="slug"
+                               required
+                               placeholder="categoria-ejemplo" />
+                        <small class="form-help">Se genera automáticamente desde el nombre</small>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Nombre (Multi-idioma)</h3>
+                        <div class="tabs" role="tablist">
+                            <button type="button"
+                                    role="tab"
+                                    [attr.aria-selected]="activeLang === 'es'"
+                                    [class.active]="activeLang === 'es'" 
+                                    (click)="activeLang = 'es'">
+                                Español
+                            </button>
+                            <button type="button"
+                                    role="tab"
+                                    [attr.aria-selected]="activeLang === 'en'"
+                                    [class.active]="activeLang === 'en'" 
+                                    (click)="activeLang = 'en'">
+                                Inglés
+                            </button>
+                            <button type="button"
+                                    role="tab"
+                                    [attr.aria-selected]="activeLang === 'fr'"
+                                    [class.active]="activeLang === 'fr'" 
+                                    (click)="activeLang = 'fr'">
+                                Francés
+                            </button>
+                        </div>
+                        <div class="tab-content">
+                            <div class="form-group">
+                                <label [for]="'category-name-' + activeLang">Nombre <span class="required">*</span></label>
+                                <input type="text" 
+                                       [id]="'category-name-' + activeLang"
+                                       [(ngModel)]="categoryForm.name![activeLang]" 
+                                       [name]="'name-' + activeLang"
+                                       (blur)="updateCategorySlug()"
+                                       required
+                                       placeholder="Nombre de la categoría" />
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="admin-btn btn-secondary" (click)="closeCategoryModal()" type="button">
+                    Cancelar
+                </button>
+                <button class="admin-btn btn-primary" 
+                        (click)="saveCategory()"
+                        [disabled]="isSaving()"
+                        type="button">
+                    @if (isSaving()) {
+                    <div class="admin-loading"></div>
+                    Guardando...
+                    } @else {
+                    {{ isEditingCategory() ? 'Guardar Cambios' : 'Crear Categoría' }}
+                    }
+                </button>
+            </div>
+        </div>
+    </div>
+    }
 </div>

@@ -1,9 +1,9 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SubscriptionService, SubscriptionPlan } from '../../../services/subscription.service';
+import { AdminService } from '../../../services/admin.service';
+import { ToastService } from '../../../services/toast.service';
 import { FormsModule } from '@angular/forms';
-import { ConfirmationService } from '../../../services/confirmation.service';
-import { take } from 'rxjs/operators';
 
 @Component({
     selector: 'app-subscription-plans',
@@ -14,7 +14,8 @@ import { take } from 'rxjs/operators';
 })
 export class SubscriptionPlansComponent implements OnInit {
     private subscriptionService = inject(SubscriptionService);
-    private confirmationService = inject(ConfirmationService);
+    private adminService = inject(AdminService);
+    private toastService = inject(ToastService);
 
     plans = this.subscriptionService.plans;
     isModalOpen = signal(false);
@@ -114,25 +115,28 @@ export class SubscriptionPlansComponent implements OnInit {
         operation.subscribe({
             next: () => {
                 this.isSaving.set(false);
+                this.toastService.success(this.editingPlan() ? 'Plan actualizado correctamente' : 'Plan creado correctamente');
                 this.closeModal();
+                this.subscriptionService.getAdminPlans().subscribe();
             },
             error: () => {
                 this.isSaving.set(false);
+                this.toastService.error('Error al guardar el plan');
             }
         });
     }
 
     deletePlan(id: string) {
-        this.confirmationService.show({
-            title: 'Confirmar Eliminación',
-            message: '¿Estás seguro de que deseas eliminar este plan de suscripción?<br><br><strong>Esta acción no se puede deshacer.</strong>',
-            confirmText: 'Eliminar',
-            cancelText: 'Cancelar',
-            confirmButtonClass: 'danger'
-        }).pipe(take(1)).subscribe((result: any) => {
-            if (result.confirmed) {
-                this.subscriptionService.deletePlan(id).subscribe();
-            }
-        });
+        if (confirm('¿Estás seguro de que deseas eliminar este plan de suscripción?\n\nEsta acción no se puede deshacer.')) {
+            this.adminService.deleteSubscriptionPlan(id).subscribe({
+                next: () => {
+                    this.toastService.success('Plan eliminado correctamente');
+                    this.subscriptionService.getAdminPlans().subscribe();
+                },
+                error: () => {
+                    this.toastService.error('Error al eliminar el plan');
+                }
+            });
+        }
     }
 }

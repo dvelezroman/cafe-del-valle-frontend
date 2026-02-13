@@ -1,86 +1,169 @@
-<div class="code-management-container">
-    <div class="page-header">
-        <h1>Code Management</h1>
-        <p class="subtitle">Manage generated subscriber codes</p>
+<div class="admin-section">
+    <div class="section-header">
+        <h1>Gestión de Códigos</h1>
+        <p class="subtitle">Administra los códigos generados para suscriptores</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="admin-card">
+            <div class="stat-value">{{ stats().total }}</div>
+            <div class="stat-label">Total</div>
+        </div>
+        <div class="admin-card">
+            <div class="stat-value">{{ stats().available }}</div>
+            <div class="stat-label">Disponibles</div>
+        </div>
+        <div class="admin-card">
+            <div class="stat-value">{{ stats().assigned }}</div>
+            <div class="stat-label">Asignados</div>
+        </div>
+        <div class="admin-card">
+            <div class="stat-value">{{ stats().revoked }}</div>
+            <div class="stat-label">Revocados</div>
+        </div>
     </div>
 
     <!-- Filters and Actions -->
-    <div class="toolbar">
-        <div class="filters">
-            <button class="filter-btn" [class.active]="selectedFilter() === 'all'" (click)="filterCodes('all')">
-                All Codes
-            </button>
-            <button class="filter-btn" [class.active]="selectedFilter() === 'GENERATED'"
-                (click)="filterCodes('GENERATED')">
-                Available
-            </button>
-            <button class="filter-btn" [class.active]="selectedFilter() === 'ASSIGNED'"
-                (click)="filterCodes('ASSIGNED')">
-                Assigned
-            </button>
-            <button class="filter-btn" [class.active]="selectedFilter() === 'REVOKED'" (click)="filterCodes('REVOKED')">
-                Revoked
-            </button>
+    <div class="admin-card">
+        <div class="filters-section">
+            <div class="admin-search">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="m21 21-4.35-4.35"/>
+                </svg>
+                <input type="text" 
+                       [(ngModel)]="searchQuery"
+                       placeholder="Buscar por código, nombre o email..."
+                       aria-label="Buscar códigos" />
+            </div>
+            <div class="filter-tabs">
+                <button class="filter-btn" 
+                        [class.active]="selectedFilter() === 'all'" 
+                        (click)="filterCodes('all')">
+                    Todos
+                </button>
+                <button class="filter-btn" 
+                        [class.active]="selectedFilter() === 'GENERATED'"
+                        (click)="filterCodes('GENERATED')">
+                    Disponibles
+                </button>
+                <button class="filter-btn" 
+                        [class.active]="selectedFilter() === 'ASSIGNED'"
+                        (click)="filterCodes('ASSIGNED')">
+                    Asignados
+                </button>
+                <button class="filter-btn" 
+                        [class.active]="selectedFilter() === 'REVOKED'" 
+                        (click)="filterCodes('REVOKED')">
+                    Revocados
+                </button>
+            </div>
+            <div class="bulk-actions">
+                <button class="admin-btn btn-secondary btn-sm" 
+                        (click)="exportCodes()"
+                        type="button">
+                    Exportar CSV
+                </button>
+                <button class="admin-btn btn-danger btn-sm" 
+                        (click)="bulkRevoke()"
+                        [disabled]="selectedCodes().size === 0"
+                        type="button">
+                    Revocar Seleccionados ({{ selectedCodes().size }})
+                </button>
+            </div>
         </div>
-
-        <button class="btn btn-primary" (click)="downloadSelected()" [disabled]="selectedCodes().size === 0">
-            📥 Download Selected ({{ selectedCodes().size }})
-        </button>
     </div>
 
     <!-- Codes Table -->
-    <div class="table-card">
-        <table class="codes-table">
-            <thead>
-                <tr>
-                    <th><input type="checkbox" disabled /></th>
-                    <th>Code</th>
-                    <th>Status</th>
-                    <th>Assigned To</th>
-                    <th>Generated Date</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @for (code of codes(); track code.id) {
-                <tr>
-                    <td>
-                        <input type="checkbox" [checked]="selectedCodes().has(code.id)"
-                            (change)="toggleCodeSelection(code.id)" [disabled]="code.status === 'ASSIGNED'" />
-                    </td>
-                    <td class="code-value">{{ code.code }}</td>
-                    <td>
-                        <span class="status-badge" [class]="code.status.toLowerCase()">
-                            {{ code.status }}
-                        </span>
-                    </td>
-                    <td>
-                        @if (code.subscriber) {
-                        <span>
-                            {{ code.subscriber.name }}<br />
-                            <small>{{ code.subscriber.email }}</small>
-                        </span>
-                        } @else {
-                        <span class="text-muted">—</span>
-                        }
-                    </td>
-                    <td>{{ code.generatedAt | date: 'short' }}</td>
-                    <td>
-                        <button class="btn-icon" (click)="revokeCode(code.id, code.code)"
-                            [disabled]="code.status === 'REVOKED'" title="Revoke Code">
-                            🚫
-                        </button>
-                    </td>
-                </tr>
-                }
-                @if (codes().length === 0) {
-                <tr>
-                    <td colspan="6" class="text-center text-muted">
-                        No codes found
-                    </td>
-                </tr>
-                }
-            </tbody>
-        </table>
+    @if (loading()) {
+    <div class="admin-card">
+        <div class="loading-state">
+            <div class="admin-loading loading-lg"></div>
+            <p>Cargando códigos...</p>
+        </div>
     </div>
+    } @else if (filteredCodes().length === 0) {
+    <div class="admin-card">
+        <div class="admin-empty-state">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+            <h3>No hay códigos</h3>
+            <p>{{ searchQuery() || selectedFilter() !== 'all' ? 'No se encontraron códigos con los filtros aplicados' : 'No hay códigos disponibles. Genera algunos códigos primero.' }}</p>
+        </div>
+    </div>
+    } @else {
+    <div class="admin-card">
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>
+                            <input type="checkbox" 
+                                   [checked]="areAllSelected()"
+                                   (change)="toggleAllSelection()"
+                                   [disabled]="hasNoGeneratedCodes()" />
+                        </th>
+                        <th>Código</th>
+                        <th>Estado</th>
+                        <th>Asignado a</th>
+                        <th class="mobile-hidden">Fecha Generación</th>
+                        <th class="mobile-hidden">Fecha Asignación</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (code of filteredCodes(); track code.id) {
+                    <tr>
+                        <td>
+                            <input type="checkbox" 
+                                   [checked]="selectedCodes().has(code.id)"
+                                   (change)="toggleCodeSelection(code.id)" 
+                                   [disabled]="code.status !== 'GENERATED'" />
+                        </td>
+                        <td class="code-value">
+                            <strong>{{ code.code }}</strong>
+                            <div class="mobile-only" style="margin-top: 0.5rem; font-size: 0.875rem; color: var(--text-muted);">
+                                Generado: {{ code.generatedAt | date:'short' }}
+                            </div>
+                        </td>
+                        <td>
+                            <span class="admin-badge" 
+                                  [class.badge-success]="code.status === 'GENERATED'"
+                                  [class.badge-info]="code.status === 'ASSIGNED'"
+                                  [class.badge-danger]="code.status === 'REVOKED'">
+                                {{ code.status === 'GENERATED' ? 'Disponible' : code.status === 'ASSIGNED' ? 'Asignado' : 'Revocado' }}
+                            </span>
+                        </td>
+                        <td>
+                            @if (code.subscriber) {
+                            <div>
+                                <strong>{{ code.subscriber.name }}</strong>
+                                <div style="font-size: 0.875rem; color: var(--text-muted);">{{ code.subscriber.email }}</div>
+                            </div>
+                            } @else {
+                            <span class="text-muted">—</span>
+                            }
+                        </td>
+                        <td class="mobile-hidden">{{ code.generatedAt | date:'short' }}</td>
+                        <td class="mobile-hidden">{{ code.assignedAt ? (code.assignedAt | date:'short') : '—' }}</td>
+                        <td>
+                            <button class="admin-btn btn-danger btn-sm btn-icon" 
+                                    (click)="revokeCode(code.id, code.code)"
+                                    [disabled]="code.status === 'REVOKED'"
+                                    type="button"
+                                    [attr.aria-label]="'Revocar código ' + code.code">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M18 6L6 18M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    }
 </div>
