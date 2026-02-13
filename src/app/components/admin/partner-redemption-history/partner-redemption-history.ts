@@ -77,55 +77,16 @@ export class PartnerRedemptionHistoryComponent implements OnInit {
         this.isLoading.set(true);
         const partnerId = this.selectedPartnerId() || undefined;
 
-        if (partnerId) {
-            this.adminService.getPartnerConsumption(partnerId).subscribe({
-                next: (records: any[]) => {
-                    this.consumptionRecords.set(records || []);
-                    this.isLoading.set(false);
-                },
-                error: () => {
-                    this.isLoading.set(false);
-                }
-            });
-        } else {
-            // Load all consumption records - get from all partners
-            this.adminService.getAllPartners().subscribe({
-                next: (partners: any[]) => {
-                    const approvedPartners = (partners || []).filter((p: any) => p.status === 'APPROVED');
-                    const allRecords: any[] = [];
-                    let loaded = 0;
-                    
-                    if (approvedPartners.length === 0) {
-                        this.consumptionRecords.set([]);
-                        this.isLoading.set(false);
-                        return;
-                    }
-                    
-                    approvedPartners.forEach((partner: any) => {
-                        this.adminService.getPartnerConsumption(partner.id).subscribe({
-                            next: (records: any[]) => {
-                                allRecords.push(...(records || []));
-                                loaded++;
-                                if (loaded === approvedPartners.length) {
-                                    this.consumptionRecords.set(allRecords);
-                                    this.isLoading.set(false);
-                                }
-                            },
-                            error: () => {
-                                loaded++;
-                                if (loaded === approvedPartners.length) {
-                                    this.consumptionRecords.set(allRecords);
-                                    this.isLoading.set(false);
-                                }
-                            }
-                        });
-                    });
-                },
-                error: () => {
-                    this.isLoading.set(false);
-                }
-            });
-        }
+        // Use the bulk endpoint which is more efficient
+        this.adminService.getAllConsumptionRecords(partnerId).subscribe({
+            next: (records: any[]) => {
+                this.consumptionRecords.set(records || []);
+                this.isLoading.set(false);
+            },
+            error: () => {
+                this.isLoading.set(false);
+            }
+        });
     }
 
     loadPartners() {

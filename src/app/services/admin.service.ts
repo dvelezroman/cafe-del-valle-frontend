@@ -203,7 +203,11 @@ export class AdminService {
   }
 
   getPartnerConsumption(id: string) {
-    return this.get<any[]>(`/admin/partners/${id}/consumption`);
+    return this.get<any[]>(`/admin/partners/${id}/consumption-history`);
+  }
+
+  getAllConsumptionRecords(partnerId?: string) {
+    return this.get<any[]>('/admin/consumption-records', partnerId ? { partnerId } : undefined);
   }
 
   // Promotions

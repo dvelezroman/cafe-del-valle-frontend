@@ -1,5 +1,8 @@
 /* Global Styles for Café del Valle - Modern Refactor */
 
+/* Admin-specific utilities - must be imported first with @use */
+@use './app/components/admin/shared/admin-shared.scss';
+
 /* Inter font is loaded via index.html for better performance */
 
 :root {
@@ -473,8 +476,6 @@ select:focus-visible {
   margin-bottom: var(--space-xl);
 }
 
-/* Admin-specific utilities */
-@import './app/components/admin/shared/admin-shared.scss';
 
 .empty-state {
     display: flex;
