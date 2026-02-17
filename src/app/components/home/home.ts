@@ -41,6 +41,8 @@ export class Home implements OnInit {
     { code: 'fr', label: 'FR', flag: '🇫🇷' }
   ];
   isScrolled = false;
+  /** Set when header logo image fails to load (e.g. missing file); shows SVG fallback */
+  logoImgFailed = false;
 
   @HostListener('window:scroll', [])
   onWindowScroll() {

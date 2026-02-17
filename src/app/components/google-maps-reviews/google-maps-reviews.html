@@ -1,3 +1,4 @@
+@if (loading() || reviews().length > 0) {
 <section id="google-maps-reviews" class="section google-maps-reviews">
   <div class="container">
     <header class="section-header">
@@ -10,10 +11,6 @@
     <div class="loading-state">
       <div class="spinner"></div>
       <p>{{ translate('googleMapsReviews.loading') || 'Cargando reseñas...' }}</p>
-    </div>
-    } @else if (reviews().length === 0) {
-    <div class="empty-state">
-      <p>{{ translate('googleMapsReviews.empty') || 'No hay reseñas disponibles en este momento.' }}</p>
     </div>
     } @else {
     <div class="reviews-grid" role="list">
@@ -94,3 +91,4 @@
     }
   </div>
 </section>
+}
