@@ -1,0 +1,96 @@
+<section id="google-maps-reviews" class="section google-maps-reviews">
+  <div class="container">
+    <header class="section-header">
+      <span class="subtitle">{{ translate('googleMapsReviews.subtitle_small') || 'Google Maps' }}</span>
+      <h2 class="title">{{ translate('googleMapsReviews.title') || 'Lo Que Dicen en Google Maps' }}</h2>
+      <p class="description">{{ translate('googleMapsReviews.subtitle') || 'Reseñas reales de nuestros clientes en Google Maps' }}</p>
+    </header>
+
+    @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>{{ translate('googleMapsReviews.loading') || 'Cargando reseñas...' }}</p>
+    </div>
+    } @else if (reviews().length === 0) {
+    <div class="empty-state">
+      <p>{{ translate('googleMapsReviews.empty') || 'No hay reseñas disponibles en este momento.' }}</p>
+    </div>
+    } @else {
+    <div class="reviews-grid" role="list">
+      @for (review of reviews(); track review.id) {
+      <article class="review-card glass-card" role="listitem">
+        <div class="review-quote-icon">"</div>
+
+        <div class="review-body">
+          <p class="review-comment">{{ review.text }}</p>
+        </div>
+
+        <footer class="review-footer">
+          <div class="review-author">
+            <div class="author-avatar-wrapper">
+              @if (review.profilePhotoUrl) {
+              <img [src]="review.profilePhotoUrl" [alt]="review.authorName" />
+              } @else {
+              <div class="author-avatar-fallback">{{ review.authorName.charAt(0) }}</div>
+              }
+            </div>
+            <div class="author-meta">
+              <h4 class="author-name">{{ review.authorName }}</h4>
+              <div class="review-rating" [attr.aria-label]="review.rating + ' estrellas'">
+                @for (star of getStars(review.rating); track $index) {
+                <span class="star filled" aria-hidden="true">★</span>
+                }
+                @for (star of getStars(5 - review.rating); track $index) {
+                <span class="star" aria-hidden="true">★</span>
+                }
+              </div>
+            </div>
+          </div>
+          <div class="review-date-info">
+            @if (review.time) {
+            <time [attr.datetime]="review.time" class="review-date">{{ formatDate(review.time) }}</time>
+            }
+          </div>
+        </footer>
+
+        @if (review.photoUrls && review.photoUrls.length > 0 && review.photoUrls[0]) {
+        <div class="review-visual image-container">
+          <img [src]="review.photoUrls[0]" 
+               [alt]="'Foto compartida por ' + review.authorName" 
+               loading="lazy"
+               (error)="$event.target.style.display='none'" />
+        </div>
+        }
+
+        @if (review.authorUrl) {
+        <div class="review-link">
+          <a [href]="review.authorUrl" 
+             target="_blank" 
+             rel="noopener noreferrer"
+             class="google-maps-link">
+            Ver en Google Maps
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
+            </svg>
+          </a>
+        </div>
+        }
+      </article>
+      }
+    </div>
+
+    <div class="google-maps-footer">
+      <a [href]="getGoogleMapsUrl()" 
+         target="_blank" 
+         rel="noopener noreferrer"
+         class="google-maps-badge">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+        <span>Ver todas las reseñas en Google Maps</span>
+      </a>
+    </div>
+    }
+  </div>
+</section>

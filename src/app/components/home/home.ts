@@ -7,6 +7,7 @@ import { Coffee } from '../coffee/coffee';
 import { Menu } from '../menu/menu';
 import { Gallery } from '../gallery/gallery';
 import { Reviews } from '../reviews/reviews';
+import { GoogleMapsReviews } from '../google-maps-reviews/google-maps-reviews';
 import { Blog } from '../blog/blog';
 import { Contact } from '../contact/contact';
 import { TranslationService, Language } from '../../services/translation.service';
@@ -23,6 +24,7 @@ import { SubscriptionPlansPublicComponent } from '../subscription-plans-public/s
     Menu,
     Gallery,
     Reviews,
+    GoogleMapsReviews,
     Blog,
     Contact,
     SubscriptionPlansPublicComponent

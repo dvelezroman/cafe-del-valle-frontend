@@ -80,6 +80,7 @@ export class DataService {
   coffeeVarieties = signal<CoffeeVariety[]>([]);
   menuItems = signal<MenuItem[]>([]);
   reviews = signal<Review[]>([]);
+  googleMapsReviews = signal<any[]>([]);
   galleryImages = signal<GalleryImage[]>([]);
   blogPosts = signal<BlogPost[]>([]);
 
@@ -92,6 +93,7 @@ export class DataService {
     this.fetchCoffeeVarieties().subscribe();
     this.fetchMenuItems().subscribe();
     this.fetchReviews().subscribe();
+    this.fetchGoogleMapsReviews().subscribe();
     this.fetchGalleryImages().subscribe();
     this.fetchBlogPosts().subscribe();
   }
@@ -126,6 +128,13 @@ export class DataService {
   fetchReviews(): Observable<Review[]> {
     return this.http.get<Review[]>(`${this.apiUrl}/reviews`).pipe(
       tap(res => this.reviews.set(res))
+    );
+  }
+
+  fetchGoogleMapsReviews(limit?: number): Observable<any[]> {
+    const params = limit ? { limit: limit.toString() } : undefined;
+    return this.http.get<any[]>(`${this.apiUrl}/google-maps/reviews`, { params }).pipe(
+      tap(res => this.googleMapsReviews.set(res || []))
     );
   }
 

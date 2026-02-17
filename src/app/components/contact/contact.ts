@@ -15,9 +15,14 @@ export class Contact {
 
   mapEmbedUrl = computed(() => {
     const info = this.cafeInfo();
-    if (!info) return this.sanitizer.bypassSecurityTrustResourceUrl('');
+    if (!info || !info.coordinates || !info.coordinates.lat || !info.coordinates.lng) {
+      return this.sanitizer.bypassSecurityTrustResourceUrl('');
+    }
     const { lat, lng } = info.coordinates;
-    const unsafeUrl = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.5!2d${lng}!3d${lat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x902bed59bb5eff65%3A0xaa6b6e74c4c70ce7!2sAtanacio%20Santos%20%26%20Calle%20Augusto%20Moreira%2C%20Portoviejo!5e0!3m2!1ses!2sec!4v1234567890123!5m2!1ses!2sec`;
+    // Google Maps Embed URL using coordinates (works without API key)
+    // Format: https://www.google.com/maps?q=lat,lng&output=embed
+    // This uses the standard Google Maps iframe embed format
+    const unsafeUrl = `https://www.google.com/maps?q=${lat},${lng}&output=embed&hl=es`;
     return this.sanitizer.bypassSecurityTrustResourceUrl(unsafeUrl);
   });
 

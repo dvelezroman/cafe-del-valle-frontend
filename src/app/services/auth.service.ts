@@ -140,4 +140,8 @@ export class AuthService {
         const user = this.currentUser();
         return user ? user.role === role : false;
     }
+
+    getCurrentUser(): User | null {
+        return this.currentUser();
+    }
 }

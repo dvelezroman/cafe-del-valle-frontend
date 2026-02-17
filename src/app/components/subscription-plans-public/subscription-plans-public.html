@@ -1,11 +1,10 @@
 <section class="subscription-section" id="subscriptions">
     <div class="container">
         <div class="section-header">
-            <span class="subtitle">Membership</span>
-            <h2>Join the Club</h2>
+            <span class="subtitle">{{ translate('subscriptions.subtitle_small') }}</span>
+            <h2>{{ translate('subscriptions.title') }}</h2>
             <p class="description">
-                Experience the finest coffee delivered to your door or enjoyed in our cafe. Choose the plan that suits
-                your lifestyle.
+                {{ translate('subscriptions.subtitle') }}
             </p>
         </div>
 
@@ -14,8 +13,8 @@
             @for (plan of plans(); track plan.id) {
             <article class="plan-card">
                 <div class="plan-content">
-                    <h3 class="plan-title">{{ plan.title.es }}</h3>
-                    <p class="plan-description">{{ plan.description.es }}</p>
+                    <h3 class="plan-title">{{ getPlanTitle(plan) }}</h3>
+                    <p class="plan-description">{{ getPlanDescription(plan) }}</p>
 
                     <div class="price-container">
                         <span class="price">${{ plan.price }}</span>
@@ -39,8 +38,8 @@
                     <button (click)="openInterestModal(plan)"
                         class="btn-interest"
                         type="button"
-                        [attr.aria-label]="'Express interest in ' + plan.title.es">
-                        I'm Interested
+                        [attr.aria-label]="translate('subscriptions.modal.subtitle') + ' ' + getPlanTitle(plan)">
+                        {{ translate('subscriptions.button.interested') }}
                         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M13 7l5 5m0 0l-5 5m5-5H6" />
@@ -52,7 +51,7 @@
         </div>
         } @else {
         <div class="empty-state">
-            <p>No subscription plans currently available. Check back soon!</p>
+            <p>{{ translate('subscriptions.empty') }}</p>
         </div>
         }
     </div>
@@ -68,7 +67,7 @@
             <button (click)="closeModal()"
                 class="modal-close"
                 type="button"
-                aria-label="Close modal">
+                [attr.aria-label]="translate('subscriptions.modal.close')">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -81,13 +80,13 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                     </svg>
                 </div>
-                <h3 id="success-title">Interest Registered!</h3>
-                <p>Thank you for your interest in the <strong>{{ selectedPlan()?.title?.es }}</strong>. We will contact you shortly.</p>
+                <h3 id="success-title">{{ translate('subscriptions.modal.success.title') }}</h3>
+                <p>{{ translate('subscriptions.modal.success.message') }} <strong>{{ selectedPlan() ? getPlanTitle(selectedPlan()!) : '' }}</strong>. {{ translate('subscriptions.modal.success.contact') }}</p>
             </div>
             } @else {
             <div class="form-header">
-                <h3 id="form-title">Join the List</h3>
-                <p>Express interest for: <span class="plan-name">{{ selectedPlan()?.title?.es }}</span></p>
+                <h3 id="form-title">{{ translate('subscriptions.modal.title') }}</h3>
+                <p>{{ translate('subscriptions.modal.subtitle') }} <span class="plan-name">{{ selectedPlan() ? getPlanTitle(selectedPlan()!) : '' }}</span></p>
             </div>
 
             <form (ngSubmit)="submitInterest()" 
@@ -95,7 +94,7 @@
                 class="modal-form"
                 novalidate>
                 <div class="form-group">
-                    <label for="interest-name">Full Name <span class="required" aria-label="required">*</span></label>
+                    <label for="interest-name">{{ translate('subscriptions.modal.form.name') }} <span class="required" aria-label="required">*</span></label>
                     <input id="interest-name"
                         [(ngModel)]="formData().name" 
                         name="name" 
@@ -103,12 +102,12 @@
                         required
                         aria-required="true"
                         aria-describedby="name-desc"
-                        placeholder="John Doe">
-                    <small id="name-desc" class="sr-only">Enter your full name</small>
+                        [placeholder]="translate('subscriptions.modal.form.namePlaceholder')">
+                    <small id="name-desc" class="sr-only">{{ translate('subscriptions.modal.form.name') }}</small>
                 </div>
 
                 <div class="form-group">
-                    <label for="interest-email">Email Address <span class="required" aria-label="required">*</span></label>
+                    <label for="interest-email">{{ translate('subscriptions.modal.form.email') }} <span class="required" aria-label="required">*</span></label>
                     <input id="interest-email"
                         [(ngModel)]="formData().email" 
                         name="email" 
@@ -116,12 +115,12 @@
                         required
                         aria-required="true"
                         aria-describedby="email-desc"
-                        placeholder="john@example.com">
-                    <small id="email-desc" class="sr-only">Enter your email address</small>
+                        [placeholder]="translate('subscriptions.modal.form.emailPlaceholder')">
+                    <small id="email-desc" class="sr-only">{{ translate('subscriptions.modal.form.email') }}</small>
                 </div>
 
                 <div class="form-group">
-                    <label for="interest-phone">Phone Number <span class="required" aria-label="required">*</span></label>
+                    <label for="interest-phone">{{ translate('subscriptions.modal.form.phone') }} <span class="required" aria-label="required">*</span></label>
                     <input id="interest-phone"
                         [(ngModel)]="formData().phone" 
                         name="phone" 
@@ -129,26 +128,26 @@
                         required
                         aria-required="true"
                         aria-describedby="phone-desc"
-                        placeholder="+1 (555) 000-0000">
-                    <small id="phone-desc" class="sr-only">Enter your phone number</small>
+                        [placeholder]="translate('subscriptions.modal.form.phonePlaceholder')">
+                    <small id="phone-desc" class="sr-only">{{ translate('subscriptions.modal.form.phone') }}</small>
                 </div>
 
                 <div class="form-group">
-                    <label for="interest-notes">Notes / Beverage Preferences</label>
+                    <label for="interest-notes">{{ translate('subscriptions.modal.form.notes') }}</label>
                     <textarea id="interest-notes"
                         [(ngModel)]="formData().notes" 
                         name="notes" 
                         rows="3"
                         aria-describedby="notes-desc"
-                        placeholder="I love dark roast..."></textarea>
-                    <small id="notes-desc" class="sr-only">Optional notes about your beverage preferences</small>
+                        [placeholder]="translate('subscriptions.modal.form.notesPlaceholder')"></textarea>
+                    <small id="notes-desc" class="sr-only">{{ translate('subscriptions.modal.form.notes') }}</small>
                 </div>
 
                 <button type="submit" 
                     [disabled]="!interestForm.form.valid || isSubmitting()"
                     class="btn-submit"
                     [attr.aria-busy]="isSubmitting()">
-                    {{ isSubmitting() ? 'Sending...' : 'Complete Inquiry' }}
+                    {{ isSubmitting() ? translate('subscriptions.modal.form.sending') : translate('subscriptions.modal.form.submit') }}
                 </button>
             </form>
             }

@@ -1,0 +1,176 @@
+<div class="admin-section">
+    <div class="section-header">
+        <div>
+            <h1>Reseñas de Google Maps</h1>
+            <p class="subtitle">Sincroniza y gestiona las reseñas de Google Maps</p>
+        </div>
+    </div>
+
+    <!-- Configuration Card -->
+    <div class="admin-card">
+        <div class="card-header">
+            <h2>Configuración</h2>
+        </div>
+        <div class="admin-form">
+            <div class="form-group">
+                <label for="placeId">Google Maps Place ID</label>
+                <input type="text" 
+                       id="placeId"
+                       [(ngModel)]="placeId"
+                       name="placeId"
+                       placeholder="Ej: ChIJN1t_tDeuEmsRUsoyG83frY4"
+                       class="admin-form-input" />
+                <small class="form-help">
+                    @if (canAutoDetect()) {
+                        Puede dejarse vacío si las coordenadas están configuradas en Información General
+                    } @else {
+                        Requerido. Encuéntralo en la URL de Google Maps de tu negocio
+                    }
+                </small>
+            </div>
+            <div class="form-group">
+                <label>Estado de la API</label>
+                <div class="status-indicator">
+                    @if (apiKeyConfigured()) {
+                        <span class="admin-badge badge-success">API Key Configurada</span>
+                    } @else {
+                        <span class="admin-badge badge-warning">API Key No Configurada</span>
+                        <small class="form-help">Configura GOOGLE_MAPS_API_KEY en el archivo .env del backend</small>
+                    }
+                </div>
+            </div>
+            <div class="form-actions">
+                <button class="admin-btn btn-primary" 
+                        (click)="saveConfig()"
+                        [disabled]="savingConfig()"
+                        type="button">
+                    @if (savingConfig()) {
+                        <div class="admin-loading"></div>
+                        Guardando...
+                    } @else {
+                        Guardar Configuración
+                    }
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sync Card -->
+    <div class="admin-card">
+        <div class="card-header">
+            <h2>Sincronización</h2>
+        </div>
+        <div class="sync-section">
+            @if (stats()) {
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-label">Total de Reseñas</span>
+                    <span class="stat-value">{{ stats()!.totalReviews }}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Última Sincronización</span>
+                    <span class="stat-value">{{ formatDate(stats()!.lastSyncAt) }}</span>
+                </div>
+            </div>
+            }
+            <div class="sync-actions">
+                <button class="admin-btn btn-primary" 
+                        (click)="syncReviews()"
+                        [disabled]="syncing() || !apiKeyConfigured()"
+                        type="button">
+                    @if (syncing()) {
+                        <div class="admin-loading"></div>
+                        Sincronizando...
+                    } @else {
+                        Sincronizar Ahora
+                    }
+                </button>
+                @if (!apiKeyConfigured()) {
+                    <p class="warning-text">
+                        ⚠️ Configura la API Key de Google Maps en el backend para habilitar la sincronización
+                    </p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Reviews List -->
+    <div class="admin-card">
+        <div class="card-header">
+            <h2>Reseñas Sincronizadas</h2>
+            <span class="admin-badge badge-info">{{ reviews().length }} reseñas</span>
+        </div>
+        @if (loading()) {
+        <div class="loading-state">
+            <div class="admin-loading loading-lg"></div>
+            <p>Cargando reseñas...</p>
+        </div>
+        } @else if (reviews().length === 0) {
+        <div class="admin-empty-state">
+            <div class="empty-icon">📝</div>
+            <h3>No hay reseñas sincronizadas</h3>
+            <p>Haz clic en "Sincronizar Ahora" para obtener las reseñas de Google Maps</p>
+        </div>
+        } @else {
+        <div class="reviews-list">
+            @for (review of reviews(); track review.id) {
+            <div class="review-item">
+                <div class="review-header">
+                    <div class="review-author-info">
+                        @if (review.profilePhotoUrl) {
+                        <img [src]="review.profilePhotoUrl" 
+                             [alt]="review.authorName"
+                             class="author-avatar" />
+                        } @else {
+                        <div class="author-avatar-fallback">
+                            {{ review.authorName.charAt(0).toUpperCase() }}
+                        </div>
+                        }
+                        <div class="author-details">
+                            <h4>{{ review.authorName }}</h4>
+                            <div class="review-rating">
+                                @for (star of getStars(review.rating); track $index) {
+                                <span class="star filled">★</span>
+                                }
+                                @for (star of getStars(5 - review.rating); track $index) {
+                                <span class="star">★</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="review-date">
+                        {{ formatReviewDate(review.time) }}
+                    </div>
+                </div>
+                <div class="review-text">
+                    {{ review.text }}
+                </div>
+                @if (review.photoUrls && review.photoUrls.length > 0) {
+                <div class="review-photos">
+                    @for (photoUrl of review.photoUrls.slice(0, 3); track photoUrl) {
+                    <img [src]="photoUrl" 
+                         [alt]="'Foto de ' + review.authorName"
+                         class="review-photo"
+                         loading="lazy" />
+                    }
+                </div>
+                }
+                @if (review.authorUrl) {
+                <div class="review-link">
+                    <a [href]="review.authorUrl" 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       class="admin-btn btn-ghost btn-sm">
+                        Ver en Google Maps
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/>
+                        </svg>
+                    </a>
+                </div>
+                }
+            </div>
+            }
+        </div>
+        }
+    </div>
+</div>

@@ -37,13 +37,19 @@
             </div>
           </div>
           <div class="review-date-info">
+            @if (review.date) {
             <time [attr.datetime]="review.date" class="review-date">{{ formatDate(review.date) }}</time>
+            }
           </div>
         </footer>
 
-        @if (review.photoUrl) {
+        @if (review.photoUrl && review.photoUrl.trim() !== '') {
         <div class="review-visual image-container">
-          <img [src]="review.photoUrl" [alt]="'Foto compartida por ' + review.author" loading="lazy" />
+          <img [src]="review.photoUrl" 
+               [alt]="'Foto compartida por ' + review.author" 
+               loading="lazy"
+               (error)="handleImageError($event)"
+               crossorigin="anonymous" />
         </div>
         }
       </article>

@@ -15,7 +15,7 @@ import { TranslationService } from '../../services/translation.service';
 export class SubscriptionPlansPublicComponent implements OnInit {
     private subscriptionService = inject(SubscriptionService);
     private toastService = inject(ToastService);
-    private translationService = inject(TranslationService);
+    public translationService = inject(TranslationService);
 
     plans = signal<SubscriptionPlan[]>([]);
     isModalOpen = signal(false);
@@ -61,6 +61,22 @@ export class SubscriptionPlansPublicComponent implements OnInit {
         
         // Fallback
         return lang === 'es' ? '/ mes' : '/ month';
+    }
+
+    getPlanTitle(plan: SubscriptionPlan): string {
+        const lang = this.translationService.getCurrentLanguageValue();
+        if (plan.title && typeof plan.title === 'object') {
+            return (plan.title as any)[lang] || (plan.title as any)['es'] || '';
+        }
+        return plan.title as string || '';
+    }
+
+    getPlanDescription(plan: SubscriptionPlan): string {
+        const lang = this.translationService.getCurrentLanguageValue();
+        if (plan.description && typeof plan.description === 'object') {
+            return (plan.description as any)[lang] || (plan.description as any)['es'] || '';
+        }
+        return plan.description as string || '';
     }
 
     // Interest Form Data
@@ -112,8 +128,13 @@ export class SubscriptionPlansPublicComponent implements OnInit {
             error: (err) => {
                 console.error('Error submitting interest', err);
                 this.isSubmitting.set(false);
-                this.toastService.error('Could not submit your interest. Please try again.');
+                const errorMsg = this.translate('subscriptions.modal.error') || 'Could not submit your interest. Please try again.';
+                this.toastService.error(errorMsg);
             }
         });
+    }
+
+    translate(key: string, params?: { [key: string]: string }): string {
+        return this.translationService.translate(key, params);
     }
 }

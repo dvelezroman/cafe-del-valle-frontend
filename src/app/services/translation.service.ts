@@ -466,6 +466,145 @@ export class TranslationService {
       fr: 'L\'opinion de nos clients est la chose la plus importante pour nous'
     };
 
+    // Google Maps Reviews Section
+    this.translations['googleMapsReviews.subtitle_small'] = {
+      es: 'Google Maps',
+      en: 'Google Maps',
+      fr: 'Google Maps'
+    };
+    this.translations['googleMapsReviews.title'] = {
+      es: 'Lo Que Dicen en Google Maps',
+      en: 'What They Say on Google Maps',
+      fr: 'Ce Qu\'ils Disent sur Google Maps'
+    };
+    this.translations['googleMapsReviews.subtitle'] = {
+      es: 'Reseñas reales de nuestros clientes en Google Maps',
+      en: 'Real reviews from our customers on Google Maps',
+      fr: 'Avis réels de nos clients sur Google Maps'
+    };
+    this.translations['googleMapsReviews.loading'] = {
+      es: 'Cargando reseñas...',
+      en: 'Loading reviews...',
+      fr: 'Chargement des avis...'
+    };
+    this.translations['googleMapsReviews.empty'] = {
+      es: 'No hay reseñas disponibles en este momento.',
+      en: 'No reviews available at this time.',
+      fr: 'Aucun avis disponible pour le moment.'
+    };
+
+    // Subscription Plans Section
+    this.translations['subscriptions.subtitle_small'] = {
+      es: 'Membresía',
+      en: 'Membership',
+      fr: 'Adhésion'
+    };
+    this.translations['subscriptions.title'] = {
+      es: 'Únete al Club',
+      en: 'Join the Club',
+      fr: 'Rejoignez le Club'
+    };
+    this.translations['subscriptions.subtitle'] = {
+      es: 'Experimenta el mejor café entregado en tu puerta o disfrutado en nuestro café. Elige el plan que se adapte a tu estilo de vida.',
+      en: 'Experience the finest coffee delivered to your door or enjoyed in our cafe. Choose the plan that suits your lifestyle.',
+      fr: 'Découvrez le meilleur café livré à votre porte ou dégusté dans notre café. Choisissez le plan qui correspond à votre style de vie.'
+    };
+    this.translations['subscriptions.button.interested'] = {
+      es: 'Me Interesa',
+      en: 'I\'m Interested',
+      fr: 'Je suis intéressé'
+    };
+    this.translations['subscriptions.empty'] = {
+      es: 'No hay planes de suscripción disponibles en este momento. ¡Vuelve pronto!',
+      en: 'No subscription plans currently available. Check back soon!',
+      fr: 'Aucun plan d\'abonnement disponible pour le moment. Revenez bientôt!'
+    };
+    this.translations['subscriptions.modal.title'] = {
+      es: 'Únete a la Lista',
+      en: 'Join the List',
+      fr: 'Rejoignez la Liste'
+    };
+    this.translations['subscriptions.modal.subtitle'] = {
+      es: 'Expresa tu interés por:',
+      en: 'Express interest for:',
+      fr: 'Exprimez votre intérêt pour:'
+    };
+    this.translations['subscriptions.modal.success.title'] = {
+      es: '¡Interés Registrado!',
+      en: 'Interest Registered!',
+      fr: 'Intérêt Enregistré!'
+    };
+    this.translations['subscriptions.modal.success.message'] = {
+      es: 'Gracias por tu interés en el',
+      en: 'Thank you for your interest in the',
+      fr: 'Merci pour votre intérêt pour le'
+    };
+    this.translations['subscriptions.modal.success.contact'] = {
+      es: 'Nos pondremos en contacto contigo pronto.',
+      en: 'We will contact you shortly.',
+      fr: 'Nous vous contacterons sous peu.'
+    };
+    this.translations['subscriptions.modal.form.name'] = {
+      es: 'Nombre Completo',
+      en: 'Full Name',
+      fr: 'Nom Complet'
+    };
+    this.translations['subscriptions.modal.form.email'] = {
+      es: 'Correo Electrónico',
+      en: 'Email Address',
+      fr: 'Adresse E-mail'
+    };
+    this.translations['subscriptions.modal.form.phone'] = {
+      es: 'Número de Teléfono',
+      en: 'Phone Number',
+      fr: 'Numéro de Téléphone'
+    };
+    this.translations['subscriptions.modal.form.notes'] = {
+      es: 'Notas / Preferencias de Bebidas',
+      en: 'Notes / Beverage Preferences',
+      fr: 'Notes / Préférences de Boissons'
+    };
+    this.translations['subscriptions.modal.form.namePlaceholder'] = {
+      es: 'Juan Pérez',
+      en: 'John Doe',
+      fr: 'Jean Dupont'
+    };
+    this.translations['subscriptions.modal.form.emailPlaceholder'] = {
+      es: 'juan@ejemplo.com',
+      en: 'john@example.com',
+      fr: 'jean@exemple.com'
+    };
+    this.translations['subscriptions.modal.form.phonePlaceholder'] = {
+      es: '+593 99 123 4567',
+      en: '+1 (555) 000-0000',
+      fr: '+33 1 23 45 67 89'
+    };
+    this.translations['subscriptions.modal.form.notesPlaceholder'] = {
+      es: 'Me encanta el café tostado oscuro...',
+      en: 'I love dark roast...',
+      fr: 'J\'adore le café torréfié foncé...'
+    };
+    this.translations['subscriptions.modal.form.sending'] = {
+      es: 'Enviando...',
+      en: 'Sending...',
+      fr: 'Envoi...'
+    };
+    this.translations['subscriptions.modal.form.submit'] = {
+      es: 'Completar Consulta',
+      en: 'Complete Inquiry',
+      fr: 'Compléter la Demande'
+    };
+    this.translations['subscriptions.modal.close'] = {
+      es: 'Cerrar modal',
+      en: 'Close modal',
+      fr: 'Fermer la fenêtre'
+    };
+    this.translations['subscriptions.modal.error'] = {
+      es: 'No se pudo enviar tu interés. Por favor intenta de nuevo.',
+      en: 'Could not submit your interest. Please try again.',
+      fr: 'Impossible d\'envoyer votre intérêt. Veuillez réessayer.'
+    };
+
     // Blog Section
     this.translations['blog.subtitle_small'] = {
       es: 'Nuestras Crónicas',

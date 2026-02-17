@@ -43,7 +43,19 @@ export class Coffee implements OnInit {
       '4': 'coffee.especial.description'
     };
     const translationKey = keyMap[variety.id];
-    return translationKey ? this.translate(translationKey) : variety.description;
+    if (translationKey) {
+      return this.translate(translationKey);
+    }
+    
+    // If no translation key, extract from multilingual description object
+    if (variety.description && typeof variety.description === 'object') {
+      const lang = this.translationService.getCurrentLanguageValue();
+      const desc = variety.description as any;
+      return desc[lang] || desc['es'] || desc['en'] || desc['fr'] || '';
+    }
+    
+    // If it's already a string, return it
+    return typeof variety.description === 'string' ? variety.description : '';
   }
 
   getFlavorNotes(variety: CoffeeVariety): string[] {

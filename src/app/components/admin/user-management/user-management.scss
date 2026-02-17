@@ -1,0 +1,104 @@
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.empty-state-cell {
+    padding: 3rem 1.5rem;
+    text-align: center;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--coffee-deep);
+
+    input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        accent-color: var(--coffee-deep);
+    }
+}
+
+.optional {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: normal;
+}
+
+/* Modal Form Styles */
+.admin-modal {
+    .admin-form {
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+    }
+
+    .form-group {
+        flex-shrink: 0;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        margin-top: auto;
+        padding-top: 1.5rem;
+        border-top: 1px solid rgba(45, 27, 14, 0.08);
+        flex-shrink: 0;
+    }
+
+    // Ensure admin-form-input inherits proper styles
+    .admin-form-input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid rgba(45, 27, 14, 0.15);
+        border-radius: var(--radius-sm);
+        font-size: 0.9375rem;
+        font-family: var(--font-body);
+        color: var(--text-primary);
+        background: var(--white);
+        transition: all 0.2s;
+
+        &:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.1);
+        }
+
+        &:disabled {
+            background: rgba(45, 27, 14, 0.04);
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        &::placeholder {
+            color: var(--text-muted);
+        }
+    }
+
+    // Select dropdown styling
+    select.admin-form-input {
+        appearance: none;
+        cursor: pointer;
+        background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%232d1b0e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 12px;
+        padding-right: 2.5rem;
+    }
+}

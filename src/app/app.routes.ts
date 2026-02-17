@@ -19,6 +19,8 @@ import { SubscriberManagementComponent } from './components/admin/subscriber-man
 import { QuickRedemptionComponent } from './components/admin/quick-redemption/quick-redemption';
 import { SubscriberRedemptionHistoryComponent } from './components/admin/subscriber-redemption-history/subscriber-redemption-history';
 import { PartnerRedemptionHistoryComponent } from './components/admin/partner-redemption-history/partner-redemption-history';
+import { GoogleMapsReviewsComponent } from './components/admin/google-maps-reviews/google-maps-reviews';
+import { UserManagementComponent } from './components/admin/user-management/user-management';
 import { adminGuard } from './guards/admin.guard';
 import { inject } from '@angular/core';
 import { AuthService } from './services/auth.service';
@@ -53,7 +55,9 @@ export const routes: Routes = [
             { path: 'subscribers', component: SubscriberManagementComponent },
             { path: 'redemption', component: QuickRedemptionComponent },
             { path: 'subscriber-history', component: SubscriberRedemptionHistoryComponent },
-            { path: 'partner-history', component: PartnerRedemptionHistoryComponent }
+            { path: 'partner-history', component: PartnerRedemptionHistoryComponent },
+            { path: 'google-maps-reviews', component: GoogleMapsReviewsComponent },
+            { path: 'users', component: UserManagementComponent }
         ]
     },
     {

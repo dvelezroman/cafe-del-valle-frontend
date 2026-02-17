@@ -382,4 +382,50 @@ export class AdminService {
   deleteCoffeeVariety(id: string) {
     return this.delete<any>(`/cafe/varieties/${id}`);
   }
+
+  // Google Maps Reviews
+  syncGoogleMapsReviews(placeId?: string, force?: boolean) {
+    return this.post<any>('/google-maps/admin/reviews/sync', { placeId, force });
+  }
+
+  getGoogleMapsReviews(limit?: number) {
+    return this.get<any[]>('/google-maps/admin/reviews', limit ? { limit } : undefined);
+  }
+
+  getGoogleMapsStats() {
+    return this.get<any>('/google-maps/admin/stats');
+  }
+
+  getGoogleMapsConfig() {
+    return this.get<any>('/google-maps/admin/config');
+  }
+
+  updateGoogleMapsConfig(data: { placeId?: string }) {
+    return this.post<any>('/google-maps/admin/config', data);
+  }
+
+  // User Management
+  getUsers() {
+    return this.get<any[]>('/admin/users');
+  }
+
+  getUser(id: string) {
+    return this.get<any>(`/admin/users/${id}`);
+  }
+
+  createUser(data: { email: string; password: string; name: string; role?: string; active?: boolean }) {
+    return this.post<any>('/admin/users', data);
+  }
+
+  updateUser(id: string, data: { email?: string; password?: string; name?: string; role?: string; active?: boolean }) {
+    return this.put<any>(`/admin/users/${id}`, data);
+  }
+
+  toggleUserActive(id: string) {
+    return this.patch<any>(`/admin/users/${id}/toggle-active`, {});
+  }
+
+  deleteUser(id: string) {
+    return this.delete<any>(`/admin/users/${id}`);
+  }
 }
