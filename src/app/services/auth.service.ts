@@ -2,6 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap, catchError, of, map, BehaviorSubject, throwError } from 'rxjs';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 export interface User {
     id: string;
@@ -20,7 +21,7 @@ export interface AuthResponse {
     providedIn: 'root',
 })
 export class AuthService {
-    private apiUrl = 'http://localhost:3000/api';
+    private apiUrl = environment.apiUrl;
     private tokenKey = 'cafe_del_valle_token';
     private refreshTokenKey = 'cafe_del_valle_refresh_token';
     private userKey = 'cafe_del_valle_user';

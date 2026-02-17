@@ -2,6 +2,7 @@ import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap, map } from 'rxjs';
 import { TranslationService } from './translation.service';
+import { environment } from '../../environments/environment';
 
 export interface CoffeeVariety {
   id: string;
@@ -72,7 +73,7 @@ export interface MenuItem {
   providedIn: 'root'
 })
 export class DataService {
-  private apiUrl = 'http://localhost:3000/api';
+  private apiUrl = environment.apiUrl;
   private translationService = inject(TranslationService);
 
   // Signals for state management

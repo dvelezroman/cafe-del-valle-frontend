@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from '../../../services/auth.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-history',
@@ -23,7 +24,7 @@ export class History implements OnInit {
   }
 
   fetchHistory() {
-    this.http.get<any>('http://localhost:3000/api/partner/profile').subscribe({
+    this.http.get<any>(`${environment.apiUrl}/partner/profile`).subscribe({
       next: (res) => {
         this.records = res.consumptionRecords;
         this.loading = false;

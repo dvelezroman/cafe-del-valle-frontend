@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 import { 
   CafeInfo, 
   CoffeeVariety, 
@@ -43,8 +44,7 @@ import {
   providedIn: 'root'
 })
 export class ApiService {
-  // Esta URL debe configurarse en environment.ts
-  private apiUrl = 'https://api.cafedelvalle.com/api'; // Ejemplo
+  private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 

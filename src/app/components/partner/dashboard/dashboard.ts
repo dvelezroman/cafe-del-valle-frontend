@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { ToastService } from '../../../services/toast.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-partner-dashboard',
@@ -28,7 +29,7 @@ export class Dashboard implements OnInit {
   }
 
   fetchProfile() {
-    this.http.get<any>('http://localhost:3000/api/partner/profile').subscribe({
+    this.http.get<any>(`${environment.apiUrl}/partner/profile`).subscribe({
       next: (res) => {
         this.profile = res;
         this.loading = false;

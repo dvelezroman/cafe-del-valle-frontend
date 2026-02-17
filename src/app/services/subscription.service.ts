@@ -1,6 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export type BillingPeriod = 'MONTHLY' | 'YEARLY' | 'CUSTOM';
 
@@ -38,8 +39,7 @@ export interface SubscriptionInterest {
 })
 export class SubscriptionService {
     private http = inject(HttpClient);
-    // Hardcoded for now to match AuthService pattern and avoid missing environment file issues
-    private apiUrl = 'http://localhost:3000/api/subscription';
+    private apiUrl = `${environment.apiUrl}/subscription`;
 
     // Signals for state management (optional, but good for reactivity)
     plans = signal<SubscriptionPlan[]>([]);
