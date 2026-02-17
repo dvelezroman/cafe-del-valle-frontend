@@ -1,6 +1,7 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import * as XLSX from 'xlsx';
 import { AdminService } from '../../../services/admin.service';
 import { ToastService } from '../../../services/toast.service';
 
@@ -163,24 +164,22 @@ export class SubscriptionInterestsComponent implements OnInit {
     }
 
     exportLeads() {
-        const csv = [
-            ['Nombre', 'Email', 'Teléfono', 'Plan', 'Estado', 'Notas', 'Fecha'].join(','),
-            ...this.filteredInterests().map(i => [
-                `"${i.name}"`,
-                `"${i.email}"`,
-                `"${i.phone || ''}"`,
-                `"${i.plan?.title?.es || i.planId}"`,
-                `"${i.status}"`,
-                `"${(i.notes || '').replace(/"/g, '""')}"`,
-                `"${new Date(i.createdAt).toLocaleDateString()}"`
-            ].join(','))
-        ].join('\n');
+        const headers = ['Nombre', 'Email', 'Teléfono', 'Plan', 'Estado', 'Notas', 'Fecha'];
+        const rows = this.filteredInterests().map(i => [
+            i.name,
+            i.email,
+            i.phone ?? '',
+            i.plan?.title?.es ?? i.planId,
+            i.status,
+            i.notes ?? '',
+            new Date(i.createdAt).toLocaleDateString()
+        ]);
+        const data = [headers, ...rows];
 
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = `leads-${new Date().toISOString().split('T')[0]}.csv`;
-        link.click();
+        const ws = XLSX.utils.aoa_to_sheet(data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Leads');
+        XLSX.writeFile(wb, `leads-${new Date().toISOString().split('T')[0]}.xlsx`);
         this.toastService.success('Leads exportados correctamente');
     }
 }
