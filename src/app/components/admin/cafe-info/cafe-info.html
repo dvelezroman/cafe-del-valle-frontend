@@ -122,13 +122,17 @@
             </div>
             }
 
-            <div class="form-section">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <div class="form-section hours-section">
+                <div class="hours-section-header">
                     <h2>Horarios de Atención</h2>
                     <button type="button" 
-                            class="admin-btn btn-secondary btn-sm"
-                            (click)="addHourDay()">
-                        + Agregar Día
+                            class="admin-btn btn-primary btn-sm"
+                            (click)="addHourDay()"
+                            aria-label="Agregar día a horarios">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                        Agregar Día
                     </button>
                 </div>
                 <div class="hours-editor">
@@ -137,15 +141,15 @@
                         <input type="text" 
                                [value]="day" 
                                [name]="'day-' + day"
-                               class="day-input"
+                               class="admin-form-input day-input"
                                readonly />
                         <input type="text" 
                                [(ngModel)]="info.hours[day]" 
                                [name]="'hours-' + day"
-                               placeholder="9:00 AM - 6:00 PM"
-                               class="hours-input" />
+                               placeholder="9:00 AM – 6:00 PM"
+                               class="admin-form-input hours-input" />
                         <button type="button" 
-                                class="admin-btn btn-danger btn-sm btn-icon"
+                                class="admin-btn btn-danger btn-sm btn-icon hour-remove-btn"
                                 (click)="removeHourDay(day)"
                                 aria-label="Eliminar horario para {{ day }}">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
