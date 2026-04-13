@@ -4,6 +4,7 @@ import { LoginComponent } from './components/admin/login/login';
 import { Dashboard as AdminDashboard } from './components/admin/dashboard/dashboard';
 import { CafeInfo } from './components/admin/cafe-info/cafe-info';
 import { MenuManagement } from './components/admin/menu-management/menu-management';
+import { BranchManagement } from './components/admin/branch-management/branch-management';
 import { BlogManagement } from './components/admin/blog-management/blog-management';
 import { PartnerManagement } from './components/admin/partner-management/partner-management';
 import { PromotionManagement } from './components/admin/promotion-management/promotion-management';
@@ -45,6 +46,7 @@ export const routes: Routes = [
             { path: '', redirectTo: 'info', pathMatch: 'full' },
             { path: 'info', component: CafeInfo },
             { path: 'menu', component: MenuManagement },
+            { path: 'branches', component: BranchManagement },
             { path: 'blog', component: BlogManagement },
             { path: 'partners', component: PartnerManagement },
             { path: 'club', component: PromotionManagement },

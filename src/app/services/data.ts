@@ -1,5 +1,5 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, tap, map } from 'rxjs';
 import { TranslationService } from './translation.service';
 import { environment } from '../../environments/environment';
@@ -58,6 +58,13 @@ export interface BlogPost {
   featured?: boolean;
 }
 
+export interface Branch {
+  id: string;
+  name: string;
+  slug: string;
+  order?: number;
+}
+
 export interface MenuItem {
   id: string;
   name: string;
@@ -80,6 +87,10 @@ export class DataService {
   cafeInfo = signal<CafeInfo | null>(null);
   coffeeVarieties = signal<CoffeeVariety[]>([]);
   menuItems = signal<MenuItem[]>([]);
+  branches = signal<Branch[]>([]);
+  /** Active public branch for menu filtering; persisted in localStorage */
+  selectedBranchId = signal<string | null>(null);
+  private readonly branchStorageKey = 'cafe-del-valle-branch-id';
   reviews = signal<Review[]>([]);
   googleMapsReviews = signal<any[]>([]);
   galleryImages = signal<GalleryImage[]>([]);
@@ -92,7 +103,10 @@ export class DataService {
   private initData() {
     this.fetchCafeInfo().subscribe();
     this.fetchCoffeeVarieties().subscribe();
-    this.fetchMenuItems().subscribe();
+    this.fetchBranches().subscribe({
+      next: () => this.fetchMenuItems().subscribe(),
+      error: () => this.fetchMenuItems().subscribe()
+    });
     this.fetchReviews().subscribe();
     this.fetchGoogleMapsReviews().subscribe();
     this.fetchGalleryImages().subscribe();
@@ -117,8 +131,38 @@ export class DataService {
     );
   }
 
+  fetchBranches(): Observable<Branch[]> {
+    return this.http.get<Branch[]>(`${this.apiUrl}/branches`).pipe(
+      tap((list) => {
+        this.branches.set(list || []);
+        this.applyDefaultBranchSelection(list || []);
+      })
+    );
+  }
+
+  private applyDefaultBranchSelection(list: Branch[]) {
+    if (list.length === 0) {
+      this.selectedBranchId.set(null);
+      return;
+    }
+    const stored = localStorage.getItem(this.branchStorageKey);
+    const valid = stored && list.some((b) => b.id === stored);
+    this.selectedBranchId.set(valid ? stored! : list[0].id);
+  }
+
+  setSelectedBranchId(id: string) {
+    this.selectedBranchId.set(id);
+    localStorage.setItem(this.branchStorageKey, id);
+    this.fetchMenuItems().subscribe();
+  }
+
   fetchMenuItems(): Observable<MenuItem[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/menu/items`).pipe(
+    const bid = this.selectedBranchId();
+    let params = new HttpParams();
+    if (bid) {
+      params = params.set('branchId', bid);
+    }
+    return this.http.get<any[]>(`${this.apiUrl}/menu/items`, { params }).pipe(
       tap(res => {
         const items = res.map(i => ({ ...i, category: i.category.toLowerCase() })) as any;
         this.menuItems.set(items);

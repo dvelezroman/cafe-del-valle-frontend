@@ -1,10 +1,19 @@
 import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { forkJoin } from 'rxjs';
 import { AdminService } from '../../../services/admin.service';
 import { ToastService } from '../../../services/toast.service';
 
 type MenuCategory = 'BEBIDAS' | 'COMIDAS' | 'POSTRES' | 'ESPECIALES';
+
+interface BranchOption {
+  id: string;
+  name: string;
+  slug: string;
+  active: boolean;
+  order: number;
+}
 
 interface MenuItem {
   id: string;
@@ -16,6 +25,8 @@ interface MenuItem {
   available: boolean;
   featured: boolean;
   order: number;
+  branchIds?: string[];
+  branches?: { id: string; name: string; slug: string }[];
 }
 
 @Component({
@@ -25,6 +36,7 @@ interface MenuItem {
   styleUrl: './menu-management.scss'
 })
 export class MenuManagement implements OnInit {
+  branches = signal<BranchOption[]>([]);
   menuItems = signal<MenuItem[]>([]);
   loading = signal(true);
   searchQuery = signal('');
@@ -37,7 +49,7 @@ export class MenuManagement implements OnInit {
   
   activeLang: 'es' | 'en' | 'fr' = 'es';
   
-  formData: Partial<MenuItem> = {
+  formData: Partial<MenuItem> & { branchIds?: string[] } = {
     name: '',
     description: { es: '', en: '', fr: '' },
     price: 0,
@@ -45,7 +57,8 @@ export class MenuManagement implements OnInit {
     image: '',
     available: true,
     featured: false,
-    order: 0
+    order: 0,
+    branchIds: []
   };
 
   categories: MenuCategory[] = ['BEBIDAS', 'COMIDAS', 'POSTRES', 'ESPECIALES'];
@@ -83,21 +96,48 @@ export class MenuManagement implements OnInit {
 
   loadMenuItems() {
     this.loading.set(true);
-    this.adminService.getMenuItems().subscribe({
-      next: (items: any[]) => {
+    forkJoin({
+      items: this.adminService.getMenuItemsAdmin(),
+      branches: this.adminService.getBranchesAdmin()
+    }).subscribe({
+      next: ({ items, branches }) => {
+        this.branches.set((branches || []) as BranchOption[]);
         this.menuItems.set(items || []);
         this.loading.set(false);
       },
-      error: () => {
-        this.loading.set(false);
-      }
+      error: () => this.loading.set(false)
     });
+  }
+
+  defaultBranchIds(): string[] {
+    return this.branches().map((b) => b.id);
+  }
+
+  isBranchChecked(branchId: string): boolean {
+    return (this.formData.branchIds || []).includes(branchId);
+  }
+
+  toggleFormBranch(branchId: string, ev: Event) {
+    const checked = (ev.target as HTMLInputElement).checked;
+    const set = new Set(this.formData.branchIds || []);
+    if (checked) {
+      set.add(branchId);
+    } else {
+      set.delete(branchId);
+    }
+    this.formData.branchIds = [...set];
+  }
+
+  branchNamesFor(item: MenuItem): string {
+    const names = (item.branches || []).map((b) => b.name);
+    return names.length ? names.join(', ') : '—';
   }
 
   openCreateModal() {
     this.isEditing.set(false);
     this.selectedItem.set(null);
     this.resetForm();
+    this.formData.branchIds = this.defaultBranchIds().length ? [...this.defaultBranchIds()] : [];
     this.showModal.set(true);
   }
 
@@ -112,7 +152,8 @@ export class MenuManagement implements OnInit {
       image: item.image || '',
       available: item.available,
       featured: item.featured,
-      order: item.order
+      order: item.order,
+      branchIds: item.branchIds?.length ? [...item.branchIds] : this.defaultBranchIds()
     };
     this.showModal.set(true);
   }
@@ -131,7 +172,8 @@ export class MenuManagement implements OnInit {
       image: '',
       available: true,
       featured: false,
-      order: 0
+      order: 0,
+      branchIds: []
     };
     this.activeLang = 'es';
   }
@@ -150,6 +192,11 @@ export class MenuManagement implements OnInit {
       return;
     }
 
+    if (!this.formData.branchIds?.length) {
+      this.toastService.error('Selecciona al menos una sucursal');
+      return;
+    }
+
     const itemData: any = {
       name: this.formData.name.trim(),
       description: this.formData.description,
@@ -158,7 +205,8 @@ export class MenuManagement implements OnInit {
       image: this.formData.image?.trim() || undefined,
       available: this.formData.available ?? true,
       featured: this.formData.featured ?? false,
-      order: this.formData.order || 0
+      order: this.formData.order || 0,
+      branchIds: this.formData.branchIds
     };
 
     this.isSaving.set(true);
@@ -210,7 +258,6 @@ export class MenuManagement implements OnInit {
 
   toggleAvailability(item: MenuItem) {
     this.adminService.updateMenuItem(item.id, {
-      ...item,
       available: !item.available
     }).subscribe({
       next: () => {
@@ -222,7 +269,6 @@ export class MenuManagement implements OnInit {
 
   toggleFeatured(item: MenuItem) {
     this.adminService.updateMenuItem(item.id, {
-      ...item,
       featured: !item.featured
     }).subscribe({
       next: () => {
@@ -244,7 +290,7 @@ export class MenuManagement implements OnInit {
       const total = itemsToUpdate.length;
       
       itemsToUpdate.forEach(item => {
-        this.adminService.updateMenuItem(item.id, { ...item, available }).subscribe({
+        this.adminService.updateMenuItem(item.id, { available }).subscribe({
           next: () => {
             completed++;
             if (completed === total) {

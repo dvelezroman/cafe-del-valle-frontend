@@ -126,13 +126,17 @@ export class AdminService {
     return this.put<any>('/cafe/info', data);
   }
 
-  // Menu Items
-  getMenuItems(category?: string, available?: boolean, featured?: boolean) {
+  // Menu Items (admin catalog with branch assignments)
+  getMenuItemsAdmin(category?: string, available?: boolean, featured?: boolean) {
     const params: any = {};
     if (category) params.category = category;
     if (available !== undefined) params.available = available.toString();
     if (featured !== undefined) params.featured = featured.toString();
-    return this.get<any[]>('/menu/items', params);
+    return this.get<any[]>('/menu/items/admin', params);
+  }
+
+  getMenuItems(category?: string, available?: boolean, featured?: boolean) {
+    return this.getMenuItemsAdmin(category, available, featured);
   }
 
   createMenuItem(data: any) {
@@ -145,6 +149,27 @@ export class AdminService {
 
   deleteMenuItem(id: string) {
     return this.delete<any>(`/menu/items/${id}`);
+  }
+
+  // Branches (sucursales)
+  getBranchesPublic() {
+    return this.get<any[]>('/branches');
+  }
+
+  getBranchesAdmin() {
+    return this.get<any[]>('/branches/admin');
+  }
+
+  createBranch(data: { name: string; slug?: string; address?: string; phone?: string; active?: boolean; order?: number }) {
+    return this.post<any>('/branches', data);
+  }
+
+  updateBranch(id: string, data: Partial<{ name: string; slug?: string; address?: string; phone?: string; active: boolean; order: number }>) {
+    return this.patch<any>(`/branches/${id}`, data);
+  }
+
+  deleteBranch(id: string) {
+    return this.delete<any>(`/branches/${id}`);
   }
 
   // Blog Posts

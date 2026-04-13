@@ -76,6 +76,7 @@
                     <tr>
                         <th>Imagen</th>
                         <th>Nombre</th>
+                        <th class="mobile-hidden">Sucursales</th>
                         <th>Categoría</th>
                         <th>Precio</th>
                         <th>Estado</th>
@@ -99,7 +100,11 @@
                             <div class="mobile-only" style="margin-top: 0.5rem; font-size: 0.875rem; color: var(--text-muted);">
                                 {{ item.description.es || item.description.en || item.description.fr }}
                             </div>
+                            <div class="mobile-only" style="margin-top: 0.25rem; font-size: 0.8rem; color: var(--text-muted);">
+                                {{ branchNamesFor(item) }}
+                            </div>
                         </td>
+                        <td class="branch-cell mobile-hidden">{{ branchNamesFor(item) }}</td>
                         <td>
                             <span class="admin-badge badge-primary">{{ item.category }}</span>
                         </td>
@@ -186,6 +191,24 @@
                             }
                         </select>
                     </div>
+
+                    @if (branches().length > 0) {
+                    <div class="form-group">
+                        <span class="label-block">Sucursales <span class="required">*</span></span>
+                        <div class="branch-checkboxes" role="group" aria-label="Sucursales donde está disponible el producto">
+                            @for (b of branches(); track b.id) {
+                            <label class="checkbox-row">
+                                <input type="checkbox"
+                                       [checked]="isBranchChecked(b.id)"
+                                       (change)="toggleFormBranch(b.id, $event)" />
+                                <span>{{ b.name }}@if (!b.active) { <span class="muted">(inactiva)</span>}</span>
+                            </label>
+                            }
+                        </div>
+                    </div>
+                    } @else {
+                    <p class="form-hint">Crea sucursales en el panel «Sucursales» antes de publicar ítems en el menú.</p>
+                    }
 
                     <div class="form-row">
                         <div class="form-group">

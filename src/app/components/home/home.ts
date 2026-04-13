@@ -11,6 +11,7 @@ import { GoogleMapsReviews } from '../google-maps-reviews/google-maps-reviews';
 import { Blog } from '../blog/blog';
 import { Contact } from '../contact/contact';
 import { TranslationService, Language } from '../../services/translation.service';
+import { DataService } from '../../services/data';
 import { SubscriptionPlansPublicComponent } from '../subscription-plans-public/subscription-plans-public';
 
 @Component({
@@ -49,7 +50,17 @@ export class Home implements OnInit {
     this.isScrolled = window.scrollY > 50;
   }
 
-  constructor(public translationService: TranslationService) { }
+  constructor(
+    public translationService: TranslationService,
+    public dataService: DataService
+  ) { }
+
+  onBranchChange(ev: Event) {
+    const id = (ev.target as HTMLSelectElement).value;
+    if (id) {
+      this.dataService.setSelectedBranchId(id);
+    }
+  }
 
   ngOnInit() {
     this.translationService.getCurrentLanguage().subscribe(lang => {

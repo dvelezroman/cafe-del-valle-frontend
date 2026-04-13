@@ -177,6 +177,43 @@
     color: var(--accent-gold) !important;
 }
 
+.branch-cell {
+    font-size: 0.8125rem;
+    color: var(--text-muted, #5c4a3a);
+    max-width: 12rem;
+}
+
+.label-block {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.branch-checkboxes {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-size: 0.9375rem;
+
+    .muted {
+        color: var(--text-muted, #888);
+        font-size: 0.8125rem;
+    }
+}
+
+.form-hint {
+    font-size: 0.875rem;
+    color: var(--text-muted, #666);
+    margin: 0 0 1rem;
+}
+
 .table-responsive {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;

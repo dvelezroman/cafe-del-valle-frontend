@@ -1,0 +1,31 @@
+.admin-section {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem 2rem;
+}
+
+.section-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+
+  h1 {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+}
+
+.checkbox-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  cursor: pointer;
+}
+
+code {
+  font-size: 0.85rem;
+}

@@ -63,6 +63,11 @@ export class TranslationService {
       en: 'Menu',
       fr: 'Menu'
     };
+    this.translations['nav.branch'] = {
+      es: 'Sucursal',
+      en: 'Location',
+      fr: 'Succursale'
+    };
     this.translations['nav.gallery'] = {
       es: 'Galería',
       en: 'Gallery',

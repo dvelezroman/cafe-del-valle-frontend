@@ -68,6 +68,19 @@
     </ul>
 
     <div class="nav-actions">
+      @if (dataService.branches().length > 0) {
+      <div class="branch-picker" role="group" [attr.aria-label]="translate('nav.branch')">
+        <label class="branch-picker-label" for="public-branch-select">{{ translate('nav.branch') }}</label>
+        <select id="public-branch-select"
+                class="branch-select"
+                [value]="dataService.selectedBranchId() || ''"
+                (change)="onBranchChange($event)">
+          @for (b of dataService.branches(); track b.id) {
+          <option [value]="b.id">{{ b.name }}</option>
+          }
+        </select>
+      </div>
+      }
       <div class="language-dropdown" role="group" aria-label="Seleccionar idioma">
         @for (lang of languages; track lang.code) {
         <button class="lang-pill" 

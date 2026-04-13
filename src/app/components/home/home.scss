@@ -132,6 +132,33 @@
   gap: 1.5rem;
 }
 
+.branch-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.branch-picker-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.branch-select {
+  min-width: 9rem;
+  max-width: 12rem;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--coffee-deep);
+  background: var(--white);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
 .language-dropdown {
   display: flex;
   gap: 0.5rem;

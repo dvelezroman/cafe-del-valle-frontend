@@ -41,6 +41,19 @@
                 </a>
             </li>
             <li>
+                <a routerLink="branches" 
+                   routerLinkActive="active" 
+                   #branchesLink="routerLinkActive"
+                   (click)="close()"
+                   [attr.aria-current]="branchesLink.isActive ? 'page' : null">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                    <span>Sucursales</span>
+                </a>
+            </li>
+            <li>
                 <a routerLink="blog" 
                    routerLinkActive="active" 
                    #blogLink="routerLinkActive"
