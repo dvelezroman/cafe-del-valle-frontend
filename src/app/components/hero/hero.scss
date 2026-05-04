@@ -211,6 +211,11 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+  .hero {
+    padding-top: calc(max(0.5rem, env(safe-area-inset-top, 0px)) + clamp(4.75rem, 13vw, 6rem));
+    box-sizing: border-box;
+  }
+
   .hero-content {
     padding: var(--space-md);
     margin: 0 var(--space-sm);
