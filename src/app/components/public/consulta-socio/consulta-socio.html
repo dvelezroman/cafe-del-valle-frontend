@@ -1,6 +1,10 @@
 <div class="public-page">
     <header class="public-header">
-        <a routerLink="/" class="back-link">← Inicio</a>
+        <a routerLink="/"
+           class="public-back-link"
+           [attr.aria-label]="translate('public.backHomeAria')">
+            <span aria-hidden="true">← </span>{{ translate('public.backHome') }}
+        </a>
         <h1>Mi suscripción</h1>
         <p class="lead">Ingresa tu identificación para ver tu plan, cupos y código QR asociado.</p>
     </header>

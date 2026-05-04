@@ -1,6 +1,10 @@
 <div class="public-page">
     <header class="public-header">
-        <a routerLink="/" class="back-link">← Inicio</a>
+        <a routerLink="/"
+           class="public-back-link"
+           [attr.aria-label]="translate('public.backHomeAria')">
+            <span aria-hidden="true">← </span>{{ translate('public.backHome') }}
+        </a>
         <h1>Mis puntos</h1>
         <p class="lead">Si no tienes plan de suscripción, aquí ves los puntos acumulados por tus compras.</p>
     </header>

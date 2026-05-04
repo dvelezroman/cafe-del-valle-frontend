@@ -13,6 +13,7 @@ import { Contact } from '../contact/contact';
 import { TranslationService, Language } from '../../services/translation.service';
 import { DataService } from '../../services/data';
 import { SubscriptionPlansPublicComponent } from '../subscription-plans-public/subscription-plans-public';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-home',
@@ -44,6 +45,9 @@ export class Home implements OnInit {
   isScrolled = false;
   /** Set when header logo image fails to load (e.g. missing file); shows SVG fallback */
   logoImgFailed = false;
+
+  readonly bitflowLogoUrl = environment.bitflowLogoUrl;
+  readonly bitflowSiteUrl = environment.bitflowSiteUrl;
 
   @HostListener('window:scroll', [])
   onWindowScroll() {

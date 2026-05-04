@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { PartnerProfileService } from '../../../services/partner-profile.service';
+import { TranslationService } from '../../../services/translation.service';
 
 @Component({
   selector: 'app-partner-layout',
@@ -12,6 +13,7 @@ import { PartnerProfileService } from '../../../services/partner-profile.service
 })
 export class Layout implements OnInit {
   private authService = inject(AuthService);
+  private translationService = inject(TranslationService);
   readonly partnerProfile = inject(PartnerProfileService);
 
   user: any = null;
@@ -36,5 +38,9 @@ export class Layout implements OnInit {
 
   logout() {
     this.authService.logout();
+  }
+
+  t(key: string): string {
+    return this.translationService.translate(key);
   }
 }

@@ -431,6 +431,41 @@ select:focus-visible {
   border-width: 0;
 }
 
+/* Public flows — enlace «volver al inicio» (consultas, planes en ruta dedicada) */
+a.public-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.85;
+  transition: opacity var(--transition-fast);
+
+  &:hover {
+    opacity: 1;
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent-gold);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}
+
+.subscription-public-nav a.public-back-link {
+  margin-bottom: 0;
+  color: var(--coffee-deep);
+  opacity: 0.88;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
 /* Skip Link */
 .skip-link:focus {
   position: absolute;

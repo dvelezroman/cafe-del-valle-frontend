@@ -11,12 +11,14 @@
             </ul>
         </nav>
         <div class="footer">
+            <a routerLink="/" class="partner-public-link" [attr.aria-label]="t('public.backHomeAria')">{{ t('public.website') }}</a>
             <button type="button" class="btn-logout" (click)="logout()">Cerrar Sesión</button>
         </div>
     </aside>
 
     <main class="partner-content">
         <nav class="partner-mobile-nav" aria-label="Navegación móvil">
+            <a routerLink="/" class="partner-mobile-public" [attr.aria-label]="t('public.backHomeAria')">{{ t('public.website') }}</a>
             <a routerLink="dashboard" routerLinkActive="active">Inicio</a>
             <a routerLink="history" routerLinkActive="active">Actividad</a>
             <button type="button" class="btn-logout-mobile" (click)="logout()">Salir</button>

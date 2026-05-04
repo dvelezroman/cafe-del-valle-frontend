@@ -1,3 +1,13 @@
+@if (showBackToHome()) {
+<div class="container subscription-public-nav">
+    <a routerLink="/"
+       class="public-back-link"
+       [attr.aria-label]="translate('public.backHomeAria')">
+        <span aria-hidden="true">← </span>{{ translate('public.backHome') }}
+    </a>
+</div>
+}
+
 <section class="subscription-section" id="subscriptions">
     <div class="container">
         <div class="section-header">

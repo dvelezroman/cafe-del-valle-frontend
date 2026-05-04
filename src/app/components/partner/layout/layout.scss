@@ -63,6 +63,35 @@
         }
     }
 
+    .footer {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .partner-public-link {
+        display: block;
+        text-align: center;
+        padding: 0.6rem 0.75rem;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: var(--coffee-rich);
+        text-decoration: none;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--bg-secondary);
+        transition: var(--transition-fast);
+
+        &:hover {
+            background: var(--bg-secondary);
+            color: var(--coffee-deep);
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--accent-gold);
+            outline-offset: 2px;
+        }
+    }
+
     .btn-logout {
         width: 100%;
         min-height: 44px;
@@ -233,6 +262,14 @@
                 color: #ef4444;
                 border-color: #fee2e2;
             }
+        }
+
+        .partner-mobile-public {
+            flex: 1 1 100%;
+            justify-content: center;
+            border: 1px dashed var(--bg-secondary);
+            color: var(--coffee-rich);
+            font-size: 0.8125rem;
         }
     }
 

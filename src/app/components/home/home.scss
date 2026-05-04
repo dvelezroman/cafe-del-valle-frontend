@@ -475,14 +475,69 @@
   padding-top: 2rem;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
   color: rgba(255, 255, 255, 0.4);
   font-size: 0.8125rem;
 }
 
+.footer-copy {
+  margin: 0;
+}
+
+.footer-bitflow-wrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.footer-bitflow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.55);
+  transition: color var(--transition-fast);
+
+  &:hover {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent-gold);
+    outline-offset: 4px;
+    border-radius: var(--radius-sm);
+  }
+}
+
+.footer-bitflow-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.footer-bitflow-logo {
+  height: 28px;
+  width: auto;
+  max-width: 130px;
+  object-fit: contain;
+  opacity: 0.92;
+  filter: brightness(0) invert(1);
+
+  .footer-bitflow:hover & {
+    opacity: 1;
+  }
+}
+
 .footer-legal {
   display: flex;
-  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem 2rem;
 
   a {
     color: inherit;
@@ -580,13 +635,6 @@
 .footer-grid {
   grid-template-columns: 1fr;
   gap: var(--space-lg);
-}
-
-.footer-bottom {
-  flex-direction: column;
-  gap: 1rem;
-  align-items: center;
-  text-align: center;
 }
 
 .newsletter-form {
@@ -777,9 +825,25 @@
   }
 
   .footer-bottom {
-    flex-direction: row;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 1rem 1.5rem;
     text-align: left;
+
+    .footer-copy {
+      justify-self: start;
+    }
+
+    .footer-bitflow-wrap {
+      justify-self: center;
+      width: auto;
+    }
+
+    .footer-legal {
+      justify-self: end;
+      justify-content: flex-end;
+    }
   }
 
   .newsletter-form {

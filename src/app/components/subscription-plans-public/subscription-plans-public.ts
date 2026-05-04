@@ -1,20 +1,22 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
 import { SubscriptionService, SubscriptionPlan } from '../../services/subscription.service';
 import { ToastService } from '../../services/toast.service';
 import { FormsModule } from '@angular/forms';
 import { TranslationService } from '../../services/translation.service';
 
 @Component({
-    selector: 'app-subscription-plans-public',
-    standalone: true,
-    imports: [CommonModule, FormsModule],
+  selector: 'app-subscription-plans-public',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink],
     templateUrl: './subscription-plans-public.html',
     styleUrl: './subscription-plans-public.scss'
 })
 export class SubscriptionPlansPublicComponent implements OnInit {
     private subscriptionService = inject(SubscriptionService);
     private toastService = inject(ToastService);
+    private router = inject(Router);
     public translationService = inject(TranslationService);
 
     plans = signal<SubscriptionPlan[]>([]);
@@ -137,5 +139,11 @@ export class SubscriptionPlansPublicComponent implements OnInit {
 
     translate(key: string, params?: { [key: string]: string }): string {
         return this.translationService.translate(key, params);
+    }
+
+    /** Solo en ruta dedicada (p. ej. /solicitud-socio); oculto cuando el bloque está embebido en la home. */
+    showBackToHome(): boolean {
+        const path = this.router.url.split(/[?#]/)[0];
+        return path !== '/';
     }
 }

@@ -160,6 +160,21 @@ export class TranslationService {
       en: 'Go to the next section: discover more about us',
       fr: 'Aller à la section suivante : en savoir plus sur nous'
     };
+    this.translations['public.backHome'] = {
+      es: 'Inicio',
+      en: 'Home',
+      fr: 'Accueil'
+    };
+    this.translations['public.backHomeAria'] = {
+      es: 'Volver a la página principal de Café del Valle',
+      en: 'Return to Café del Valle home page',
+      fr: "Retour à la page d'accueil de Café del Valle"
+    };
+    this.translations['public.website'] = {
+      es: 'Sitio público',
+      en: 'Public site',
+      fr: 'Site public'
+    };
 
     // About Section
     this.translations['about.subtitle'] = {
@@ -831,6 +846,11 @@ export class TranslationService {
       es: 'Todos los derechos reservados.',
       en: 'All rights reserved.',
       fr: 'Tous droits réservés.'
+    };
+    this.translations['footer.bitflow.credit'] = {
+      es: 'Desarrollado por',
+      en: 'Developed by',
+      fr: 'Développé par'
     };
   }
 }
