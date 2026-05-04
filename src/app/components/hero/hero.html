@@ -28,12 +28,15 @@
         </div>
       </div>
     </div>
-  </div>
 
-  <button class="scroll-indicator" (click)="scrollToSection('about')" aria-label="Desplazarse hacia abajo">
-    <span class="scroll-text">{{ translate('hero.scroll') || 'Descubre más' }}</span>
-    <div class="scroll-icon">
-      <div class="dot"></div>
-    </div>
-  </button>
+    <button type="button"
+            class="scroll-indicator"
+            (click)="scrollToSection('about')"
+            [attr.aria-label]="translate('hero.scrollAria')">
+      <span class="scroll-text" aria-hidden="true">{{ translate('hero.scroll') || 'Descubre más' }}</span>
+      <div class="scroll-icon">
+        <div class="dot"></div>
+      </div>
+    </button>
+  </div>
 </section>

@@ -155,6 +155,11 @@ export class TranslationService {
       en: 'Discover more',
       fr: 'Découvrir plus'
     };
+    this.translations['hero.scrollAria'] = {
+      es: 'Ir a la siguiente sección: descubre más sobre nosotros',
+      en: 'Go to the next section: discover more about us',
+      fr: 'Aller à la section suivante : en savoir plus sur nous'
+    };
 
     // About Section
     this.translations['about.subtitle'] = {
