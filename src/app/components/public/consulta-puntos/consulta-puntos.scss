@@ -1,4 +1,4 @@
-@import '../consulta-socio/consulta-socio.scss';
+@use '../consulta-socio/consulta-socio.scss' as *;
 
 .points-big {
     font-size: 2.25rem;

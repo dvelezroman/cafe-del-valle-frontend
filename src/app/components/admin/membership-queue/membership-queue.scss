@@ -1,4 +1,4 @@
-@import '../shared/admin-shared.scss';
+@use '../shared/admin-shared.scss' as *;
 
 .membership-queue-page {
     padding: 1rem 1.5rem 2rem;

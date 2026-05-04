@@ -1,4 +1,4 @@
-@import '../shared/admin-shared.scss';
+@use '../shared/admin-shared.scss' as *;
 
 .points-purchase-page {
     max-width: 720px;
