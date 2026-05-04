@@ -98,15 +98,23 @@
       </div>
       @if (dataService.branches().length > 0) {
       <div class="branch-picker" role="group" [attr.aria-label]="translate('nav.branch')">
-        <label class="branch-picker-label" for="public-branch-select">{{ translate('nav.branch') }}</label>
-        <select id="public-branch-select"
-                class="branch-select"
-                [value]="dataService.selectedBranchId() || ''"
-                (change)="onBranchChange($event)">
-          @for (b of dataService.branches(); track b.id) {
-          <option [value]="b.id">{{ b.name }}</option>
-          }
-        </select>
+        <label class="branch-picker-label" for="public-branch-select">
+          <svg class="branch-picker-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M12 21s7-4.35 7-10a7 7 0 1 0-14 0c0 5.65 7 10 7 10z" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="12" cy="11" r="2.25" stroke="currentColor" stroke-width="1.75"/>
+          </svg>
+          <span>{{ translate('nav.branch') }}</span>
+        </label>
+        <div class="branch-select-wrap">
+          <select id="public-branch-select"
+                  class="branch-select"
+                  [value]="dataService.selectedBranchId() || ''"
+                  (change)="onBranchChange($event)">
+            @for (b of dataService.branches(); track b.id) {
+            <option [value]="b.id">{{ b.name }}</option>
+            }
+          </select>
+        </div>
       </div>
       }
       <div class="language-dropdown" role="group" aria-label="Seleccionar idioma">
