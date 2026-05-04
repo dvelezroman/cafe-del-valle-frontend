@@ -60,6 +60,18 @@
   --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-smooth: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Admin & shared UI — borders/surfaces aligned with --coffee-deep */
+  --border-coffee-06: rgba(45, 27, 14, 0.06);
+  --border-coffee-08: rgba(45, 27, 14, 0.08);
+  --border-coffee-12: rgba(45, 27, 14, 0.12);
+  --border-coffee-15: rgba(45, 27, 14, 0.15);
+  --border-coffee-25: rgba(45, 27, 14, 0.25);
+  --surface-coffee-02: rgba(45, 27, 14, 0.02);
+  --surface-coffee-04: rgba(45, 27, 14, 0.04);
+  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --focus-ring-gold: 0 0 0 3px rgba(197, 160, 89, 0.1);
 }
 
 /* Base Reset */

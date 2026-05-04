@@ -8,12 +8,16 @@ import { BranchManagement } from './components/admin/branch-management/branch-ma
 import { BlogManagement } from './components/admin/blog-management/blog-management';
 import { PartnerManagement } from './components/admin/partner-management/partner-management';
 import { PromotionManagement } from './components/admin/promotion-management/promotion-management';
-import { RegistrationComponent } from './components/club/registration/registration';
 import { Layout as PartnerLayout } from './components/partner/layout/layout';
 import { Dashboard as PartnerDashboard } from './components/partner/dashboard/dashboard';
 import { History as PartnerHistory } from './components/partner/history/history';
 import { SubscriptionPlansComponent } from './components/admin/subscription-plans/subscription-plans';
-import { SubscriptionInterestsComponent } from './components/admin/subscription-interests/subscription-interests';
+import { MembershipQueueComponent } from './components/admin/membership-queue/membership-queue';
+import { PointsPurchaseComponent } from './components/admin/points-purchase/points-purchase';
+import { ConsultaSocioComponent } from './components/public/consulta-socio/consulta-socio';
+import { ConsultaPuntosComponent } from './components/public/consulta-puntos/consulta-puntos';
+import { ConsultaCodigoSuscripcionComponent } from './components/public/consulta-codigo-suscripcion/consulta-codigo-suscripcion';
+import { SubscriptionPlansPublicComponent } from './components/subscription-plans-public/subscription-plans-public';
 import { QrCodeGeneratorComponent } from './components/admin/qr-code-generator/qr-code-generator';
 import { CodeManagementComponent } from './components/admin/code-management/code-management';
 import { SubscriberManagementComponent } from './components/admin/subscriber-management/subscriber-management';
@@ -36,7 +40,14 @@ const partnerGuard = () => {
 
 export const routes: Routes = [
     { path: '', component: Home },
-    { path: 'club/join', component: RegistrationComponent },
+    { path: 'club/join', redirectTo: 'solicitud-socio', pathMatch: 'full' },
+    {
+        path: 'solicitud-socio',
+        component: SubscriptionPlansPublicComponent,
+    },
+    { path: 'consulta-socio', component: ConsultaSocioComponent },
+    { path: 'consulta-puntos', component: ConsultaPuntosComponent },
+    { path: 'mi-suscripcion', component: ConsultaCodigoSuscripcionComponent },
     { path: 'admin/login', component: LoginComponent },
     {
         path: 'admin/dashboard',
@@ -51,7 +62,9 @@ export const routes: Routes = [
             { path: 'partners', component: PartnerManagement },
             { path: 'club', component: PromotionManagement },
             { path: 'subscriptions', component: SubscriptionPlansComponent },
-            { path: 'leads', component: SubscriptionInterestsComponent },
+            { path: 'leads', redirectTo: 'membership-queue', pathMatch: 'full' },
+            { path: 'membership-queue', component: MembershipQueueComponent },
+            { path: 'register-points', component: PointsPurchaseComponent },
             { path: 'qr-generator', component: QrCodeGeneratorComponent },
             { path: 'codes', component: CodeManagementComponent },
             { path: 'subscribers', component: SubscriberManagementComponent },

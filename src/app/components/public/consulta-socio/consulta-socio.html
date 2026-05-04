@@ -1,0 +1,59 @@
+<div class="public-page">
+    <header class="public-header">
+        <a routerLink="/" class="back-link">← Inicio</a>
+        <h1>Mi suscripción</h1>
+        <p class="lead">Ingresa tu identificación para ver tu plan, cupos y código QR asociado.</p>
+    </header>
+
+    <form class="lookup-form" (ngSubmit)="consultar()">
+        <label for="doc">Cédula o identificación</label>
+        <input
+            id="doc"
+            name="idNumber"
+            [(ngModel)]="idNumber"
+            type="text"
+            inputmode="text"
+            autocomplete="off"
+            placeholder="Ej. 1723456789"
+            [disabled]="loading()"
+        />
+        <button type="submit" class="btn-primary" [disabled]="loading()">
+            {{ loading() ? 'Consultando…' : 'Consultar' }}
+        </button>
+    </form>
+
+    @if (result(); as r) {
+    <section class="result-card" aria-live="polite">
+        @if (r.kind === 'NOT_FOUND') {
+        <p>{{ r.message }}</p>
+        } @else if (r.kind === 'NO_ACTIVE_SUBSCRIPTION') {
+        <p><strong>{{ r.name }}</strong></p>
+        <p>{{ r.message }}</p>
+        <p class="hint">¿Solo acumulas puntos sin plan? <a routerLink="/consulta-puntos">Consulta tus puntos</a></p>
+        } @else if (r.kind === 'MEMBER') {
+        <h2>Hola, {{ r.name }}</h2>
+        <dl class="detail-list">
+            <dt>Plan</dt>
+            <dd>{{ r.plan?.title?.es || r.plan?.title?.en || 'Plan' }}</dd>
+            <dt>Estado</dt>
+            <dd>{{ r.subscription?.status }}</dd>
+            @if (r.subscription?.quotaRemaining !== null && r.subscription?.quotaRemaining !== undefined) {
+            <dt>Cupo restante</dt>
+            <dd>{{ r.subscription.quotaRemaining }}</dd>
+            }
+            <dt>Vigencia desde</dt>
+            <dd>{{ r.subscription?.startDate | date: 'mediumDate' }}</dd>
+            @if (r.code?.code) {
+            <dt>Código</dt>
+            <dd class="mono">{{ r.code.code }}</dd>
+            }
+        </dl>
+        @if (r.code?.qrCodeUrl) {
+        <div class="qr-wrap">
+            <img [src]="r.code.qrCodeUrl" alt="Código QR de tu suscripción" class="qr-img" />
+        </div>
+        }
+        }
+    </section>
+    }
+</div>

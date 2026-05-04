@@ -1,0 +1,40 @@
+<div class="points-purchase-page">
+    <header class="page-head">
+        <h1>Registrar puntos por compra</h1>
+        <p class="sub">
+            Ingresa la identificación del cliente y los puntos a acreditar. Si ya existe perfil de socio, los puntos van al socio;
+            si no, se acumulan en el programa público de puntos.
+        </p>
+    </header>
+
+    <form class="form-grid" (ngSubmit)="submit()">
+        <div class="field">
+            <label for="idn">Cédula / identificación</label>
+            <input id="idn" name="idNumber" [(ngModel)]="idNumber" type="text" autocomplete="off" />
+        </div>
+        <div class="field">
+            <label for="pts">Puntos a acreditar</label>
+            <input id="pts" name="pointsEarned" [(ngModel)]="pointsEarned" type="number" min="0" step="1" />
+        </div>
+        <div class="field wide">
+            <label for="prod">Producto (opcional)</label>
+            <input id="prod" name="productName" [(ngModel)]="productName" type="text" />
+        </div>
+        <div class="field wide">
+            <label for="notes">Notas (opcional)</label>
+            <input id="notes" name="notes" [(ngModel)]="notes" type="text" />
+        </div>
+        <div class="field actions">
+            <button type="submit" class="admin-btn btn-primary" [disabled]="submitting()">
+                {{ submitting() ? 'Guardando…' : 'Acreditar puntos' }}
+            </button>
+        </div>
+    </form>
+
+    @if (lastResult(); as r) {
+    <aside class="result-banner" aria-live="polite">
+        Destino: <strong>{{ r.destination === 'PARTNER' ? 'Socio' : 'Cuenta pública' }}</strong> — Saldo resultante:
+        <strong>{{ r.pointsAfter }}</strong> puntos
+    </aside>
+    }
+</div>

@@ -101,7 +101,7 @@ export class PartnerManagement implements OnInit {
         payload.planId = planId;
       }
 
-      this.adminService.validatePartner(id, status).subscribe({
+      this.adminService.validatePartner(id, payload).subscribe({
         next: () => {
           this.pendingPartners.update(partners => partners.filter(p => p.id !== id));
           this.toastService.success(`Socio ${status === 'APPROVED' ? 'aprobado' : 'rechazado'} con éxito.`);

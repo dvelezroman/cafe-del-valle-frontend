@@ -1,0 +1,60 @@
+@import '../shared/admin-shared.scss';
+
+.points-purchase-page {
+    max-width: 720px;
+    padding: 1rem 1.5rem 2rem;
+}
+
+.page-head {
+    margin-bottom: 1.25rem;
+
+    h1 {
+        margin: 0 0 0.35rem;
+    }
+
+    .sub {
+        margin: 0;
+        line-height: 1.45;
+        opacity: 0.88;
+    }
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+
+    @media (max-width: 640px) {
+        grid-template-columns: 1fr;
+    }
+
+    .field.wide {
+        grid-column: 1 / -1;
+    }
+
+    .field.actions {
+        grid-column: 1 / -1;
+    }
+
+    label {
+        display: block;
+        font-weight: 600;
+        font-size: 0.85rem;
+        margin-bottom: 0.35rem;
+    }
+
+    input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 0.55rem 0.65rem;
+        font-size: 0.95rem;
+    }
+}
+
+.result-banner {
+    margin-top: 1.25rem;
+    padding: 0.85rem 1rem;
+    border-radius: 0.5rem;
+    background: rgba(61, 35, 20, 0.08);
+    font-size: 0.95rem;
+}

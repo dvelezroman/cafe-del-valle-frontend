@@ -88,6 +88,36 @@ export class TranslationService {
       en: 'Contact',
       fr: 'Contact'
     };
+    this.translations['nav.club.join'] = {
+      es: 'Únete al club',
+      en: 'Join the club',
+      fr: 'Rejoindre le club'
+    };
+    this.translations['nav.club.consultaSocio'] = {
+      es: 'Mi suscripción',
+      en: 'My subscription',
+      fr: 'Mon abonnement'
+    };
+    this.translations['nav.club.consultaPuntos'] = {
+      es: 'Mis puntos',
+      en: 'My points',
+      fr: 'Mes points'
+    };
+    this.translations['nav.club.label'] = {
+      es: 'Club',
+      en: 'Club',
+      fr: 'Club'
+    };
+    this.translations['footer.club.join'] = {
+      es: 'Únete al club',
+      en: 'Join the club',
+      fr: 'Rejoindre le club'
+    };
+    this.translations['nav.club.miPlanCodigo'] = {
+      es: 'Plan por código',
+      en: 'Plan by code',
+      fr: 'Plan par code'
+    };
 
     // Hero Section
     this.translations['hero.tagline'] = {
@@ -549,6 +579,11 @@ export class TranslationService {
       en: 'We will contact you shortly.',
       fr: 'Nous vous contacterons sous peu.'
     };
+    this.translations['subscriptions.modal.success.nextSteps'] = {
+      es: 'Revisaremos tu solicitud y te contactaremos por correo o teléfono. Mientras tanto, puedes consultar tu suscripción con tu cédula (“Mi suscripción”), tus puntos (“Mis puntos”), o tu cupo y usos con el código de tu QR en “Plan por código”.',
+      en: 'We will review your request and contact you by email or phone. Meanwhile, you can check your subscription with your ID (“My subscription”), your points (“My points”), or your quota and usage with your QR code on “Plan by code”.',
+      fr: 'Nous examinerons votre demande et vous contacterons par e-mail ou par téléphone. En attendant, consultez votre abonnement avec votre pièce d’identité, vos points, ou votre quota avec le code QR sur « Plan par code ».'
+    };
     this.translations['subscriptions.modal.form.name'] = {
       es: 'Nombre Completo',
       en: 'Full Name',
@@ -563,6 +598,16 @@ export class TranslationService {
       es: 'Número de Teléfono',
       en: 'Phone Number',
       fr: 'Numéro de Téléphone'
+    };
+    this.translations['subscriptions.modal.form.idNumber'] = {
+      es: 'Cédula o identificación',
+      en: 'National ID',
+      fr: 'Pièce d\'identité'
+    };
+    this.translations['subscriptions.modal.form.idNumberPlaceholder'] = {
+      es: 'Ej. 1723456789',
+      en: 'e.g. 1723456789',
+      fr: 'ex. 1723456789'
     };
     this.translations['subscriptions.modal.form.notes'] = {
       es: 'Notas / Preferencias de Bebidas',

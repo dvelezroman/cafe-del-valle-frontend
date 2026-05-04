@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
-import { AuthService } from '../../../services/auth.service';
 import { ToastService } from '../../../services/toast.service';
-import { environment } from '../../../../environments/environment';
+import {
+  PartnerProfileService,
+  loyaltyTierFromPoints,
+  partnerStatusLabel,
+} from '../../../services/partner-profile.service';
 
 @Component({
   selector: 'app-partner-dashboard',
@@ -13,40 +15,43 @@ import { environment } from '../../../../environments/environment';
   styleUrl: './dashboard.scss'
 })
 export class Dashboard implements OnInit {
-  profile: any = null;
+  readonly partnerProfile = inject(PartnerProfileService);
   referralPoints = 50;
-  loading = true;
 
-  constructor(
-    private http: HttpClient,
-    private authService: AuthService,
-    private toastService: ToastService
-  ) { }
+  constructor(private toastService: ToastService) {}
 
   ngOnInit() {
-    this.fetchProfile();
-    this.fetchConfig();
+    if (!this.partnerProfile.profile()) {
+      this.partnerProfile.refresh();
+    }
   }
 
-  fetchProfile() {
-    this.http.get<any>(`${environment.apiUrl}/partner/profile`).subscribe({
-      next: (res) => {
-        this.profile = res;
-        this.loading = false;
-      },
-      error: () => this.loading = false
-    });
+  statusLabel(status: string | undefined): string {
+    return partnerStatusLabel(status);
   }
 
-  fetchConfig() {
-    // Public config endpoint would be better, but for now we can infer or call admin if we had permission
-    // Assuming 50 for now or fetching from a public route if implemented.
-    // In a real app, I'd implement GET /partners/config
+  tierLabel(points: number | undefined, status: string | undefined): string {
+    if (status !== 'APPROVED') return '—';
+    return loyaltyTierFromPoints(points ?? 0).label;
+  }
+
+  statusPillClass(status: string | undefined): string {
+    switch (status) {
+      case 'PENDING':
+        return 'status-pill pending';
+      case 'REJECTED':
+        return 'status-pill rejected';
+      case 'APPROVED':
+        return 'status-pill approved';
+      default:
+        return 'status-pill neutral';
+    }
   }
 
   copyCode() {
-    if (this.profile?.referralCode) {
-      navigator.clipboard.writeText(this.profile.referralCode);
+    const code = this.partnerProfile.profile()?.referralCode;
+    if (code) {
+      navigator.clipboard.writeText(code);
       this.toastService.success('Código copiado al portapapeles!');
     }
   }

@@ -1,0 +1,46 @@
+<div class="public-page">
+    <header class="public-header">
+        <a routerLink="/" class="back-link">← Inicio</a>
+        <h1>Mis puntos</h1>
+        <p class="lead">Si no tienes plan de suscripción, aquí ves los puntos acumulados por tus compras.</p>
+    </header>
+
+    <form class="lookup-form" (ngSubmit)="consultar()">
+        <label for="doc">Cédula o identificación</label>
+        <input
+            id="doc"
+            name="idNumber"
+            [(ngModel)]="idNumber"
+            type="text"
+            inputmode="text"
+            autocomplete="off"
+            placeholder="Ej. 1723456789"
+            [disabled]="loading()"
+        />
+        <button type="submit" class="btn-primary" [disabled]="loading()">
+            {{ loading() ? 'Consultando…' : 'Consultar puntos' }}
+        </button>
+    </form>
+
+    @if (result(); as r) {
+    <section class="result-card" aria-live="polite">
+        @if (r.kind === 'USE_MEMBER_PORTAL') {
+        <p>{{ r.message }}</p>
+        <a routerLink="/consulta-socio" class="link-btn">Ir a consulta de suscripción</a>
+        } @else if (r.kind === 'LOYALTY') {
+        <p class="points-big">{{ r.points }} <span>puntos</span></p>
+        @if (r.recentMovements?.length) {
+        <h3 class="sub">Últimos movimientos</h3>
+        <ul class="movements">
+            @for (m of r.recentMovements; track $index) {
+            <li>
+                <span [class.pos]="m.delta > 0" [class.neg]="m.delta < 0">{{ m.delta > 0 ? '+' : '' }}{{ m.delta }}</span>
+                <span class="meta">{{ m.productName || m.reason || 'Movimiento' }} — {{ m.createdAt | date: 'short' }}</span>
+            </li>
+            }
+        </ul>
+        }
+        }
+    </section>
+    }
+</div>

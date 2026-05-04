@@ -5,9 +5,9 @@
     </div>
 
     <div class="history-card glass-card">
-        @if (loading) {
+        @if (partnerProfile.loading()) {
         <div class="loading-state"><span class="spinner"></span></div>
-        } @else if (records.length === 0) {
+        } @else if ((partnerProfile.profile()?.consumptionRecords?.length ?? 0) === 0) {
         <div class="empty-state">
             <p>No tienes actividad registrada aún.</p>
         </div>
@@ -23,7 +23,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @for (record of records; track record.id) {
+                    @for (record of partnerProfile.profile()?.consumptionRecords ?? []; track record.id) {
                     <tr>
                         <td>{{ record.createdAt | date:'longDate' }}</td>
                         <td>

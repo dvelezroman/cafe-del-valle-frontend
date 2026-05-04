@@ -65,9 +65,37 @@
           {{ translate('nav.contact') }}
         </a>
       </li>
+      <li role="listitem" class="nav-links-divider" aria-hidden="true"></li>
+      <li role="listitem" class="nav-club-mobile-label">
+        <span class="nav-club-heading">{{ translate('nav.club.label') }}</span>
+      </li>
+      <li role="listitem">
+        <a routerLink="/solicitud-socio" (click)="closeMenu()">{{ translate('nav.club.join') }}</a>
+      </li>
+      <li role="listitem">
+        <a routerLink="/consulta-socio" (click)="closeMenu()">{{ translate('nav.club.consultaSocio') }}</a>
+      </li>
+      <li role="listitem">
+        <a routerLink="/consulta-puntos" (click)="closeMenu()">{{ translate('nav.club.consultaPuntos') }}</a>
+      </li>
+      <li role="listitem">
+        <a routerLink="/mi-suscripcion" (click)="closeMenu()">{{ translate('nav.club.miPlanCodigo') }}</a>
+      </li>
     </ul>
 
     <div class="nav-actions">
+      <div class="nav-club"
+           role="group"
+           [attr.aria-label]="translate('nav.club.label')">
+        <a routerLink="/solicitud-socio"
+           class="nav-club-link nav-club-link--cta">{{ translate('nav.club.join') }}</a>
+        <a routerLink="/consulta-socio"
+           class="nav-club-link">{{ translate('nav.club.consultaSocio') }}</a>
+        <a routerLink="/consulta-puntos"
+           class="nav-club-link">{{ translate('nav.club.consultaPuntos') }}</a>
+        <a routerLink="/mi-suscripcion"
+           class="nav-club-link">{{ translate('nav.club.miPlanCodigo') }}</a>
+      </div>
       @if (dataService.branches().length > 0) {
       <div class="branch-picker" role="group" [attr.aria-label]="translate('nav.branch')">
         <label class="branch-picker-label" for="public-branch-select">{{ translate('nav.branch') }}</label>
@@ -179,6 +207,18 @@
              href="#blog">
             {{ translate('footer.blog') || 'Blog' }}
           </a>
+        </li>
+        <li role="listitem">
+          <a routerLink="/solicitud-socio">{{ translate('footer.club.join') }}</a>
+        </li>
+        <li role="listitem">
+          <a routerLink="/consulta-socio">{{ translate('nav.club.consultaSocio') }}</a>
+        </li>
+        <li role="listitem">
+          <a routerLink="/consulta-puntos">{{ translate('nav.club.consultaPuntos') }}</a>
+        </li>
+        <li role="listitem">
+          <a routerLink="/mi-suscripcion">{{ translate('nav.club.miPlanCodigo') }}</a>
         </li>
       </ul>
     </nav>

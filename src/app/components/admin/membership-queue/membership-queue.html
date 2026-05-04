@@ -1,0 +1,140 @@
+<div class="membership-queue-page">
+    <header class="page-head">
+        <h1>Solicitudes y socios pendientes</h1>
+        <p class="sub">Cola unificada: solicitudes con plan desde la web y registros pendientes de aprobación.</p>
+        <button type="button" class="admin-btn btn-secondary btn-sm" (click)="reload()">Actualizar</button>
+    </header>
+
+    @if (loading()) {
+    <p>Cargando…</p>
+    } @else if (queue(); as q) {
+
+    <section class="panel">
+        <h2>Solicitudes de membresía</h2>
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Nombre</th>
+                        <th>Cédula</th>
+                        <th>Email</th>
+                        <th>Teléfono</th>
+                        <th>Plan</th>
+                        <th>Estado</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (a of q.applications; track a.id) {
+                    <tr>
+                        <td>{{ a.createdAt | date:'short' }}</td>
+                        <td>{{ a.name }}</td>
+                        <td>{{ a.idNumber }}</td>
+                        <td>{{ a.email }}</td>
+                        <td>{{ a.phone }}</td>
+                        <td>{{ planTitle(a.plan) }}</td>
+                        <td>
+                            <select
+                                class="status-select"
+                                [ngModel]="a.status"
+                                (ngModelChange)="updateApplicationStatus(a, $event)"
+                                [name]="'st-' + a.id">
+                                @for (s of appStatuses; track s) {
+                                <option [value]="s">{{ s }}</option>
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            @if (a.status !== 'CONVERTED') {
+                            <button type="button" class="admin-btn btn-primary btn-sm" (click)="openConvert(a)">Crear socio</button>
+                            }
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="panel">
+        <h2>Socios pendientes (registro previo)</h2>
+        @if (q.pendingPartners.length === 0) {
+        <p class="empty">No hay socios en espera de aprobación.</p>
+        } @else {
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Cédula</th>
+                        <th>Teléfono</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (p of q.pendingPartners; track p.id) {
+                    <tr>
+                        <td>{{ p.user?.name }}</td>
+                        <td>{{ p.user?.email }}</td>
+                        <td>{{ p.idNumber }}</td>
+                        <td>{{ p.phone }}</td>
+                        <td class="actions">
+                            <button type="button" class="admin-btn btn-primary btn-sm" (click)="openApprove(p)">Aprobar</button>
+                            <button type="button" class="admin-btn btn-danger btn-sm" (click)="rejectPartner(p)">Rechazar</button>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        }
+    </section>
+    }
+
+    @if (convertApp) {
+    <div class="modal-overlay" (click)="closeConvert()">
+        <div class="modal-box" (click)="$event.stopPropagation()">
+            <h3>Crear socio desde solicitud</h3>
+            <p>{{ convertApp.name }} — {{ convertApp.email }}</p>
+            <label>Contraseña inicial para el portal socio</label>
+            <input type="password" [(ngModel)]="convertPassword" minlength="8" autocomplete="new-password" />
+            <label>Plan de suscripción</label>
+            <select [(ngModel)]="convertPlanId">
+                @for (pl of plans(); track pl.id) {
+                <option [value]="pl.id">{{ pl.title?.es || pl.id }}</option>
+                }
+            </select>
+            <div class="modal-actions">
+                <button type="button" class="admin-btn btn-secondary" (click)="closeConvert()">Cancelar</button>
+                <button type="button" class="admin-btn btn-primary" [disabled]="converting" (click)="submitConvert()">
+                    {{ converting ? 'Creando…' : 'Confirmar' }}
+                </button>
+            </div>
+        </div>
+    </div>
+    }
+
+    @if (approvePartner) {
+    <div class="modal-overlay" (click)="closeApprove()">
+        <div class="modal-box" (click)="$event.stopPropagation()">
+            <h3>Aprobar socio</h3>
+            <p>{{ approvePartner.user?.name }} — {{ approvePartner.user?.email }}</p>
+            <label>Plan de suscripción</label>
+            <select [(ngModel)]="approvePlanId">
+                <option value="">— Seleccionar —</option>
+                @for (pl of plans(); track pl.id) {
+                <option [value]="pl.id">{{ pl.title?.es || pl.id }}</option>
+                }
+            </select>
+            <div class="modal-actions">
+                <button type="button" class="admin-btn btn-secondary" (click)="closeApprove()">Cancelar</button>
+                <button type="button" class="admin-btn btn-primary" [disabled]="approving" (click)="submitApprove()">
+                    {{ approving ? 'Guardando…' : 'Aprobar' }}
+                </button>
+            </div>
+        </div>
+    </div>
+    }
+</div>

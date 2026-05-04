@@ -219,8 +219,32 @@ export class AdminService {
     return this.get<any[]>('/admin/partners');
   }
 
-  validatePartner(id: string, status: 'APPROVED' | 'REJECTED') {
-    return this.patch<any>(`/admin/partners/${id}/validate`, { status });
+  validatePartner(
+    id: string,
+    payload: { status: 'APPROVED' | 'REJECTED'; planId?: string; referralPoints?: number }
+  ) {
+    return this.patch<any>(`/admin/partners/${id}/validate`, payload);
+  }
+
+  getMembershipQueue() {
+    return this.get<{ applications: any[]; pendingPartners: any[] }>('/admin/partners/membership-queue');
+  }
+
+  convertMembershipApplication(applicationId: string, body: { password: string; planId: string }) {
+    return this.post<any>(`/admin/partners/convert-application/${applicationId}`, body);
+  }
+
+  creditPointsByDocument(body: {
+    idNumber: string;
+    pointsEarned: number;
+    productName?: string;
+    notes?: string;
+  }) {
+    return this.post<any>('/admin/loyalty/points', body);
+  }
+
+  updateSubscriberPlan(subscriberId: string, planId: string) {
+    return this.patch<any>(`/subscription/admin/subscribers/${subscriberId}/plan`, { planId });
   }
 
   updatePartnerPoints(id: string, points: number, reason: string) {
@@ -277,13 +301,13 @@ export class AdminService {
     return this.delete<any>(`/subscription/admin/plans/${id}`);
   }
 
-  // Subscription Interests
+  // Membership applications (admin)
   getSubscriptionInterests() {
-    return this.get<any[]>('/subscription/admin/interests');
+    return this.get<any[]>('/subscription/admin/applications');
   }
 
   updateSubscriptionInterest(id: string, data: any) {
-    return this.patch<any>(`/subscription/admin/interests/${id}`, data);
+    return this.patch<any>(`/subscription/admin/applications/${id}`, data);
   }
 
   // Subscriber Codes

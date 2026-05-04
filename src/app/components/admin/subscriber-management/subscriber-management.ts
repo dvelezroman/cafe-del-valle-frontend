@@ -77,6 +77,10 @@ export class SubscriberManagementComponent implements OnInit {
   selectedSubscriber = signal<Subscriber | null>(null);
   isCreating = signal(false);
   isAssigningCode = signal(false);
+  showPlanModal = signal(false);
+  planChangeSubscriber = signal<Subscriber | null>(null);
+  newPlanId = signal('');
+  isUpdatingPlan = signal(false);
 
   formData = signal({
     codeId: '',
@@ -295,6 +299,39 @@ export class SubscriberManagementComponent implements OnInit {
         // Open modal to select code
         this.selectedSubscriber.set(subscriber);
         this.showCodeAssignmentModal.set(true);
+    }
+
+    openPlanModal(sub: Subscriber) {
+        this.planChangeSubscriber.set(sub);
+        this.newPlanId.set(sub.plan?.id || '');
+        this.showPlanModal.set(true);
+    }
+
+    closePlanModal() {
+        this.showPlanModal.set(false);
+        this.planChangeSubscriber.set(null);
+        this.newPlanId.set('');
+    }
+
+    savePlanChange() {
+        const sub = this.planChangeSubscriber();
+        const pid = this.newPlanId();
+        if (!sub || !pid) {
+            this.toastService.error('Selecciona un plan');
+            return;
+        }
+        this.isUpdatingPlan.set(true);
+        this.adminService.updateSubscriberPlan(sub.id, pid).subscribe({
+            next: () => {
+                this.isUpdatingPlan.set(false);
+                this.toastService.success('Plan actualizado');
+                this.closePlanModal();
+                this.loadSubscribers();
+            },
+            error: () => {
+                this.isUpdatingPlan.set(false);
+            },
+        });
     }
 
     assignSelectedCode(codeId: string) {

@@ -329,6 +329,14 @@
             font-weight: 700;
         }
     }
+
+    .success-next-steps {
+        margin-top: 1.25rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid var(--bg-secondary);
+        text-align: left;
+        font-size: 0.875rem;
+    }
 }
 
 .form-header {

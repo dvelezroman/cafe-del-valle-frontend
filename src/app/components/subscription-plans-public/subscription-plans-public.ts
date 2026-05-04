@@ -84,6 +84,7 @@ export class SubscriptionPlansPublicComponent implements OnInit {
         name: '',
         email: '',
         phone: '',
+        idNumber: '',
         notes: ''
     });
 
@@ -100,7 +101,7 @@ export class SubscriptionPlansPublicComponent implements OnInit {
         this.selectedPlan.set(plan);
         this.isModalOpen.set(true);
         this.submitSuccess.set(false);
-        this.formData.set({ name: '', email: '', phone: '', notes: '' });
+        this.formData.set({ name: '', email: '', phone: '', idNumber: '', notes: '' });
     }
 
     closeModal() {
@@ -123,7 +124,7 @@ export class SubscriptionPlansPublicComponent implements OnInit {
             next: () => {
                 this.isSubmitting.set(false);
                 this.submitSuccess.set(true);
-                setTimeout(() => this.closeModal(), 3000); // Close after 3s
+                setTimeout(() => this.closeModal(), 8000);
             },
             error: (err) => {
                 console.error('Error submitting interest', err);

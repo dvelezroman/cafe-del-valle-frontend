@@ -1,19 +1,19 @@
-/* Admin Shared Styles - Component Library */
+/* Admin Shared Styles — tokens from global styles.scss (:root) */
 
 /* Card Component */
 .admin-card {
     background: var(--white);
     border-radius: var(--radius-md);
-    border: 1px solid rgba(45, 27, 14, 0.08);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    border: 1px solid var(--border-coffee-08);
+    box-shadow: var(--shadow-soft);
     padding: 1.5rem;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
 
     &:hover {
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-        border-color: rgba(45, 27, 14, 0.12);
+        box-shadow: var(--shadow-medium);
+        border-color: var(--border-coffee-12);
     }
 
     &.elevated {
@@ -22,7 +22,7 @@
 
     &.bordered {
         border-width: 2px;
-        border-color: rgba(45, 27, 14, 0.15);
+        border-color: var(--border-coffee-15);
     }
 
     .card-header {
@@ -31,7 +31,7 @@
         align-items: center;
         margin-bottom: 1.25rem;
         padding-bottom: 1rem;
-        border-bottom: 1px solid rgba(45, 27, 14, 0.08);
+        border-bottom: 1px solid var(--border-coffee-08);
 
         h2, h3 {
             margin: 0;
@@ -53,7 +53,7 @@
     .card-footer {
         margin-top: 1.25rem;
         padding-top: 1rem;
-        border-top: 1px solid rgba(45, 27, 14, 0.08);
+        border-top: 1px solid var(--border-coffee-08);
         display: flex;
         justify-content: flex-end;
         gap: 0.75rem;
@@ -67,11 +67,11 @@
     background: var(--white);
     border-radius: var(--radius-md);
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    box-shadow: var(--shadow-soft);
 
     thead {
-        background: rgba(45, 27, 14, 0.04);
-        border-bottom: 2px solid rgba(45, 27, 14, 0.08);
+        background: var(--surface-coffee-04);
+        border-bottom: 2px solid var(--border-coffee-08);
 
         th {
             padding: 1rem;
@@ -95,11 +95,11 @@
 
     tbody {
         tr {
-            border-bottom: 1px solid rgba(45, 27, 14, 0.06);
+            border-bottom: 1px solid var(--border-coffee-06);
             transition: background 0.15s;
 
             &:hover {
-                background: rgba(45, 27, 14, 0.02);
+                background: var(--surface-coffee-02);
             }
 
             &:last-child {
@@ -132,18 +132,18 @@
             tr {
                 display: block;
                 margin-bottom: 1rem;
-                border: 1px solid rgba(45, 27, 14, 0.08);
+                border: 1px solid var(--border-coffee-08);
                 border-radius: var(--radius-md);
                 padding: 1rem;
                 background: var(--white);
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+                box-shadow: var(--shadow-soft);
             }
 
             td {
                 display: flex;
                 justify-content: space-between;
                 padding: 0.75rem 0;
-                border-bottom: 1px solid rgba(45, 27, 14, 0.06);
+                border-bottom: 1px solid var(--border-coffee-06);
 
                 &:last-child {
                     border-bottom: none;
@@ -189,7 +189,7 @@
         select {
             width: 100%;
             padding: 0.75rem 1rem;
-            border: 1px solid rgba(45, 27, 14, 0.15);
+            border: 1px solid var(--border-coffee-15);
             border-radius: var(--radius-sm);
             font-size: 0.9375rem;
             font-family: var(--font-body);
@@ -200,11 +200,11 @@
             &:focus {
                 outline: none;
                 border-color: var(--accent-gold);
-                box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.1);
+                box-shadow: var(--focus-ring-gold);
             }
 
             &:disabled {
-                background: rgba(45, 27, 14, 0.04);
+                background: var(--surface-coffee-04);
                 color: var(--text-muted);
                 cursor: not-allowed;
             }
@@ -297,11 +297,11 @@
     &.btn-secondary {
         background: var(--white);
         color: var(--coffee-deep);
-        border-color: rgba(45, 27, 14, 0.15);
+        border-color: var(--border-coffee-15);
 
         &:hover:not(:disabled) {
-            background: rgba(45, 27, 14, 0.04);
-            border-color: rgba(45, 27, 14, 0.25);
+            background: var(--surface-coffee-04);
+            border-color: var(--border-coffee-25);
         }
     }
 
@@ -322,7 +322,7 @@
         border-color: transparent;
 
         &:hover:not(:disabled) {
-            background: rgba(45, 27, 14, 0.04);
+            background: var(--surface-coffee-04);
         }
     }
 
@@ -381,7 +381,7 @@
 
         .modal-header {
             padding: 1.5rem;
-            border-bottom: 1px solid rgba(45, 27, 14, 0.08);
+            border-bottom: 1px solid var(--border-coffee-08);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -408,7 +408,7 @@
                 justify-content: center;
 
                 &:hover {
-                    background: rgba(45, 27, 14, 0.04);
+                    background: var(--surface-coffee-04);
                     color: var(--coffee-deep);
                 }
             }
@@ -422,7 +422,7 @@
 
         .modal-footer {
             padding: 1.5rem;
-            border-top: 1px solid rgba(45, 27, 14, 0.08);
+            border-top: 1px solid var(--border-coffee-08);
             display: flex;
             justify-content: flex-end;
             gap: 0.75rem;
@@ -535,7 +535,7 @@
         min-width: 36px;
         min-height: 36px;
         padding: 0.5rem;
-        border: 1px solid rgba(45, 27, 14, 0.15);
+        border: 1px solid var(--border-coffee-15);
         background: var(--white);
         border-radius: var(--radius-sm);
         cursor: pointer;
@@ -544,8 +544,8 @@
         font-size: 0.875rem;
 
         &:hover:not(:disabled) {
-            background: rgba(45, 27, 14, 0.04);
-            border-color: rgba(45, 27, 14, 0.25);
+            background: var(--surface-coffee-04);
+            border-color: var(--border-coffee-25);
         }
 
         &:disabled {
@@ -574,7 +574,7 @@
     input {
         width: 100%;
         padding: 0.75rem 1rem 0.75rem 2.75rem;
-        border: 1px solid rgba(45, 27, 14, 0.15);
+        border: 1px solid var(--border-coffee-15);
         border-radius: var(--radius-sm);
         font-size: 0.9375rem;
         background: var(--white);
@@ -582,7 +582,7 @@
         &:focus {
             outline: none;
             border-color: var(--accent-gold);
-            box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.1);
+            box-shadow: var(--focus-ring-gold);
         }
     }
 
@@ -605,7 +605,7 @@
 
     select {
         padding: 0.75rem 2.5rem 0.75rem 1rem;
-        border: 1px solid rgba(45, 27, 14, 0.15);
+        border: 1px solid var(--border-coffee-15);
         border-radius: var(--radius-sm);
         background: var(--white);
         font-size: 0.9375rem;
@@ -620,7 +620,7 @@
         &:focus {
             outline: none;
             border-color: var(--accent-gold);
-            box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.1);
+            box-shadow: var(--focus-ring-gold);
         }
     }
 }

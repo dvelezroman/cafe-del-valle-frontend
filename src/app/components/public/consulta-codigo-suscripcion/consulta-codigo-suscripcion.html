@@ -1,0 +1,81 @@
+<div class="public-page">
+    <header class="public-header">
+        <a routerLink="/" class="back-link">← Inicio</a>
+        <h1>Mi plan con código</h1>
+        <p class="lead">
+            Ingresa el código que aparece en tu correo o en tu código QR para ver tu cupo y tu historial de usos.
+        </p>
+    </header>
+
+    <form class="lookup-form" (ngSubmit)="consultar()">
+        <label for="member-code">Código de socio</label>
+        <input
+            id="member-code"
+            name="code"
+            [(ngModel)]="code"
+            type="text"
+            inputmode="text"
+            autocomplete="off"
+            spellcheck="false"
+            placeholder="Ej. el código de tu QR"
+            [disabled]="loading()"
+        />
+        <button type="submit" class="btn-primary" [disabled]="loading()">
+            {{ loading() ? 'Consultando…' : 'Consultar' }}
+        </button>
+    </form>
+
+    @if (result(); as r) {
+    <section class="result-card" aria-live="polite">
+        @if (!r.found) {
+        <p>{{ r.message }}</p>
+        <p class="hint">
+            ¿Buscas por cédula?
+            <a routerLink="/consulta-socio">Consultar mi suscripción</a>
+        </p>
+        } @else if (r.kind === 'SUBSCRIBER') {
+        <h2>Hola, {{ r.name }}</h2>
+        <dl class="detail-list">
+            <dt>Plan</dt>
+            <dd>{{ r.planTitle || '—' }}</dd>
+            <dt>Estado</dt>
+            <dd>{{ statusLabel(r.status) }}</dd>
+            @if (r.quotaRemaining !== null && r.quotaRemaining !== undefined) {
+            <dt>Cupo restante</dt>
+            <dd>{{ r.quotaRemaining }}</dd>
+            }
+            @if (r.quotaUsed !== null && r.quotaUsed !== undefined) {
+            <dt>Usos registrados</dt>
+            <dd>{{ r.quotaUsed }}</dd>
+            }
+        </dl>
+
+        @if (r.usageEvents?.length) {
+        <h3 class="history-title">Últimos usos</h3>
+        <div class="table-wrap">
+            <table class="usage-table">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Detalle</th>
+                        <th>Cant.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (ev of r.usageEvents; track ev.id) {
+                    <tr>
+                        <td>{{ ev.timestamp | date: 'short' }}</td>
+                        <td>{{ ev.itemType }}</td>
+                        <td>{{ ev.quantity }}</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        } @else {
+        <p class="empty-usage">Aún no hay consumos registrados en tu plan.</p>
+        }
+        }
+    </section>
+    }
+</div>

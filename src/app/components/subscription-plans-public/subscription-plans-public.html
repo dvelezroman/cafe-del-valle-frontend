@@ -82,6 +82,7 @@
                 </div>
                 <h3 id="success-title">{{ translate('subscriptions.modal.success.title') }}</h3>
                 <p>{{ translate('subscriptions.modal.success.message') }} <strong>{{ selectedPlan() ? getPlanTitle(selectedPlan()!) : '' }}</strong>. {{ translate('subscriptions.modal.success.contact') }}</p>
+                <p class="success-next-steps">{{ translate('subscriptions.modal.success.nextSteps') }}</p>
             </div>
             } @else {
             <div class="form-header">
@@ -130,6 +131,19 @@
                         aria-describedby="phone-desc"
                         [placeholder]="translate('subscriptions.modal.form.phonePlaceholder')">
                     <small id="phone-desc" class="sr-only">{{ translate('subscriptions.modal.form.phone') }}</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="interest-id">{{ translate('subscriptions.modal.form.idNumber') }} <span class="required" aria-label="required">*</span></label>
+                    <input id="interest-id"
+                        [(ngModel)]="formData().idNumber"
+                        name="idNumber"
+                        type="text"
+                        inputmode="text"
+                        autocomplete="off"
+                        required
+                        aria-required="true"
+                        [placeholder]="translate('subscriptions.modal.form.idNumberPlaceholder')">
                 </div>
 
                 <div class="form-group">

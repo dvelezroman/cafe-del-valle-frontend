@@ -142,6 +142,11 @@
                                 }
                             </button>
                             }
+                            <button class="admin-btn btn-secondary btn-sm"
+                                    type="button"
+                                    (click)="openPlanModal(subscriber)">
+                                Cambiar plan
+                            </button>
                             <button class="admin-btn btn-secondary btn-sm" 
                                     (click)="updateStatus(subscriber.id, subscriber.status === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE')"
                                     type="button">
@@ -424,6 +429,32 @@
                     } @else {
                         Asignar Código
                     }
+                </button>
+            </div>
+        </div>
+    </div>
+    }
+
+    @if (showPlanModal()) {
+    <div class="admin-modal-overlay" (click)="closePlanModal()">
+        <div class="admin-modal" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h2>Cambiar plan de suscripción</h2>
+                <button type="button" class="modal-close" (click)="closePlanModal()" aria-label="Cerrar">×</button>
+            </div>
+            <div class="modal-body">
+                <label for="newPlan">Nuevo plan</label>
+                <select id="newPlan" [ngModel]="newPlanId()" (ngModelChange)="newPlanId.set($event)" class="admin-select">
+                    @for (p of plans(); track p.id) {
+                    <option [value]="p.id">{{ p.title?.es || p.title?.en || p.id }}</option>
+                    }
+                </select>
+                <p class="hint">Se restablecerá el cupo según el nuevo plan. Los precios mostrados se actualizan al valor base del plan.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="admin-btn btn-secondary" (click)="closePlanModal()" [disabled]="isUpdatingPlan()">Cancelar</button>
+                <button type="button" class="admin-btn btn-primary" (click)="savePlanChange()" [disabled]="isUpdatingPlan()">
+                    {{ isUpdatingPlan() ? 'Guardando…' : 'Guardar' }}
                 </button>
             </div>
         </div>

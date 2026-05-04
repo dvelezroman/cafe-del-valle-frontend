@@ -130,6 +130,67 @@
   display: flex;
   align-items: center;
   gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.nav-club {
+  display: none;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  max-width: min(100%, 22rem);
+}
+
+.nav-club-link {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.92);
+  padding: 0.35rem 0.6rem;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  white-space: nowrap;
+  transition: var(--transition-fast);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.45);
+  }
+}
+
+.nav-club-link--cta {
+  background: var(--accent-gold);
+  color: var(--coffee-deep);
+  border-color: rgba(197, 160, 89, 0.95);
+
+  &:hover {
+    background: var(--accent-gold-light);
+    color: var(--coffee-deep);
+  }
+}
+
+.nav-links-divider {
+  list-style: none;
+  height: 1px;
+  margin: 0.75rem 0 !important;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 0 !important;
+}
+
+.nav-club-mobile-label {
+  list-style: none;
+  margin-top: 0.5rem !important;
+
+  .nav-club-heading {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(255, 255, 255, 0.45);
+    padding: 0.5rem 1rem 0.25rem;
+  }
 }
 
 .branch-picker {
@@ -488,6 +549,19 @@
 
 /* Tablet and up */
 @media (min-width: 768px) {
+  .nav-club {
+    display: flex;
+  }
+
+  .nav-links-divider,
+  .nav-club-mobile-label,
+  .nav-links li:has(a[routerLink='/solicitud-socio']),
+  .nav-links li:has(a[routerLink='/consulta-socio']),
+  .nav-links li:has(a[routerLink='/consulta-puntos']),
+  .nav-links li:has(a[routerLink='/mi-suscripcion']) {
+    display: none;
+  }
+
   .nav-links {
     position: static;
     width: auto;

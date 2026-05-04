@@ -4,22 +4,33 @@
             <img src="/images/Logo2.jpeg" alt="Café del Valle" />
             <span>Club Café</span>
         </div>
-        <nav>
+        <nav aria-label="Navegación del club">
             <ul>
                 <li><a routerLink="dashboard" routerLinkActive="active">Inicio</a></li>
                 <li><a routerLink="history" routerLinkActive="active">Mi Actividad</a></li>
             </ul>
         </nav>
         <div class="footer">
-            <button class="btn-logout" (click)="logout()">Cerrar Sesión</button>
+            <button type="button" class="btn-logout" (click)="logout()">Cerrar Sesión</button>
         </div>
     </aside>
 
     <main class="partner-content">
+        <nav class="partner-mobile-nav" aria-label="Navegación móvil">
+            <a routerLink="dashboard" routerLinkActive="active">Inicio</a>
+            <a routerLink="history" routerLinkActive="active">Actividad</a>
+            <button type="button" class="btn-logout-mobile" (click)="logout()">Salir</button>
+        </nav>
         <header class="content-header">
             <div class="user-info">
                 <span class="name">{{ user?.name }}</span>
-                <span class="role-badge">Socio Gold</span>
+                @if (partnerProfile.loading()) {
+                    <span class="role-badge role-badge--loading" aria-busy="true">Cargando…</span>
+                } @else if (partnerProfile.loadError()) {
+                    <span class="role-badge role-badge--neutral">Club Café</span>
+                } @else {
+                    <span class="role-badge" [ngClass]="badgeClasses()">{{ partnerProfile.headerBadge().text }}</span>
+                }
             </div>
         </header>
         <div class="view-container">

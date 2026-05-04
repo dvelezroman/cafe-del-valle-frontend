@@ -20,19 +20,23 @@ export interface SubscriptionPlan {
     updatedAt: string;
 }
 
-export interface SubscriptionInterest {
+export interface MembershipApplication {
     id: string;
     planId: string;
     plan?: SubscriptionPlan;
     name: string;
     email: string;
     phone: string;
+    idNumber: string;
     preferences?: any;
     status: string;
     notes?: string;
     createdAt: string;
     updatedAt: string;
 }
+
+/** @deprecated use MembershipApplication */
+export type SubscriptionInterest = MembershipApplication;
 
 @Injectable({
     providedIn: 'root'
@@ -50,8 +54,8 @@ export class SubscriptionService {
         return this.http.get<SubscriptionPlan[]>(`${this.apiUrl}/plans`);
     }
 
-    submitInterest(data: any): Observable<SubscriptionInterest> {
-        return this.http.post<SubscriptionInterest>(`${this.apiUrl}/interest`, data);
+    submitInterest(data: any): Observable<MembershipApplication> {
+        return this.http.post<MembershipApplication>(`${this.apiUrl}/application`, data);
     }
 
     // Admin
@@ -79,15 +83,15 @@ export class SubscriptionService {
         );
     }
 
-    getAdminInterests(): Observable<SubscriptionInterest[]> {
-        return this.http.get<SubscriptionInterest[]>(`${this.apiUrl}/admin/interests`).pipe(
-            tap(interests => this.interests.set(interests))
+    getAdminInterests(): Observable<MembershipApplication[]> {
+        return this.http.get<MembershipApplication[]>(`${this.apiUrl}/admin/applications`).pipe(
+            tap((rows) => this.interests.set(rows))
         );
     }
 
-    updateInterestStatus(id: string, status: string): Observable<SubscriptionInterest> {
-        return this.http.patch<SubscriptionInterest>(`${this.apiUrl}/admin/interests/${id}`, { status }).pipe(
-            tap(() => this.getAdminInterests().subscribe())
-        );
+    updateInterestStatus(id: string, status: string, notes?: string): Observable<MembershipApplication> {
+        return this.http
+            .patch<MembershipApplication>(`${this.apiUrl}/admin/applications/${id}`, { status, notes })
+            .pipe(tap(() => this.getAdminInterests().subscribe()));
     }
 }
