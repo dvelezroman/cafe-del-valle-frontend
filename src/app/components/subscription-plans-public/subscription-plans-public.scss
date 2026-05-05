@@ -1,7 +1,13 @@
 .subscription-public-nav {
-  padding: 1rem 1.25rem 0;
-  position: relative;
-  z-index: 2;
+  padding: 0.75rem 1.25rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(253, 251, 247, 0.94);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(45, 27, 14, 0.08);
+  box-shadow: 0 2px 12px rgba(45, 27, 14, 0.04);
 }
 
 .subscription-public-nav + .subscription-section {

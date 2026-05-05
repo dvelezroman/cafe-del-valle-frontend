@@ -1,6 +1,6 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { SubscriptionService, SubscriptionPlan } from '../../services/subscription.service';
 import { ToastService } from '../../services/toast.service';
 import { FormsModule } from '@angular/forms';
@@ -16,8 +16,10 @@ import { TranslationService } from '../../services/translation.service';
 export class SubscriptionPlansPublicComponent implements OnInit {
     private subscriptionService = inject(SubscriptionService);
     private toastService = inject(ToastService);
-    private router = inject(Router);
     public translationService = inject(TranslationService);
+
+    /** Cuando es `true`, el bloque está dentro de la home — ocultar «volver al inicio». */
+    embeddedInHome = input(false);
 
     plans = signal<SubscriptionPlan[]>([]);
     isModalOpen = signal(false);
@@ -141,9 +143,8 @@ export class SubscriptionPlansPublicComponent implements OnInit {
         return this.translationService.translate(key, params);
     }
 
-    /** Solo en ruta dedicada (p. ej. /solicitud-socio); oculto cuando el bloque está embebido en la home. */
+    /** Enlace al home solo en página dedicada (`/solicitud-socio`), no cuando está embebido en la landing. */
     showBackToHome(): boolean {
-        const path = this.router.url.split(/[?#]/)[0];
-        return path !== '/';
+        return !this.embeddedInHome();
     }
 }
