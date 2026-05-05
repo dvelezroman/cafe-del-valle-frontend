@@ -65,6 +65,9 @@
           {{ translate('nav.contact') }}
         </a>
       </li>
+      <li role="listitem">
+        <a routerLink="/centro-ayuda" (click)="closeMenu()">{{ translate('nav.help') }}</a>
+      </li>
       <li role="listitem" class="nav-links-divider" aria-hidden="true"></li>
       <li role="listitem" class="nav-club-mobile-label">
         <span class="nav-club-heading">{{ translate('nav.club.label') }}</span>
@@ -95,6 +98,8 @@
            class="nav-club-link">{{ translate('nav.club.consultaPuntos') }}</a>
         <a routerLink="/mi-suscripcion"
            class="nav-club-link">{{ translate('nav.club.miPlanCodigo') }}</a>
+        <a routerLink="/centro-ayuda"
+           class="nav-club-link">{{ translate('nav.help') }}</a>
       </div>
       @if (dataService.branches().length > 0) {
       <div class="branch-picker" role="group" [attr.aria-label]="translate('nav.branch')">
@@ -157,6 +162,7 @@
   <app-google-maps-reviews></app-google-maps-reviews>
   <app-blog></app-blog>
   <app-subscription-plans-public [embeddedInHome]="true"></app-subscription-plans-public>
+  <app-help-teaser></app-help-teaser>
   <app-contact></app-contact>
 </main>
 
@@ -227,6 +233,9 @@
         </li>
         <li role="listitem">
           <a routerLink="/mi-suscripcion">{{ translate('nav.club.miPlanCodigo') }}</a>
+        </li>
+        <li role="listitem">
+          <a routerLink="/centro-ayuda">{{ translate('nav.help') }}</a>
         </li>
       </ul>
     </nav>

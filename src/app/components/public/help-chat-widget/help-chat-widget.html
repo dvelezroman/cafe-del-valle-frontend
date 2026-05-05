@@ -1,0 +1,85 @@
+<div class="help-widget" [class.open]="open()">
+  @if (open()) {
+    <div id="help-chat-panel" class="help-panel" role="dialog" [attr.aria-label]="t('help.chat.panelAria')">
+      <header class="help-panel-header">
+        <div class="help-panel-title-wrap">
+          <span class="help-panel-icon" aria-hidden="true">☕</span>
+          <div>
+            <h2 class="help-panel-title">{{ t('help.chat.title') }}</h2>
+            <p class="help-panel-sub">{{ t('help.chat.subtitle') }}</p>
+          </div>
+        </div>
+        <button type="button" class="help-panel-close" (click)="close()" [attr.aria-label]="t('help.chat.close')">
+          ×
+        </button>
+      </header>
+
+      <div class="help-panel-body">
+        <p class="help-intro">{{ t('help.chat.intro') }}</p>
+
+        @if (conversation().length === 0) {
+          <div class="help-topics" role="group" [attr.aria-label]="t('help.chat.topicsLabel')">
+            @for (article of topics(); track article.id) {
+              <button type="button" class="help-chip" (click)="selectTopic(article)">
+                {{ text(article, 'topicLabel') }}
+              </button>
+            }
+          </div>
+        }
+
+        @for (turn of conversation(); track $index) {
+          <div class="help-msg" [class.user]="turn.role === 'user'" [class.assistant]="turn.role === 'assistant'">
+            @if (turn.role === 'user') {
+              <span class="help-msg-label">{{ t('help.chat.you') }}</span>
+              <p class="help-msg-text">{{ turn.text }}</p>
+            } @else {
+              <span class="help-msg-label">{{ t('help.chat.assistant') }}</span>
+              <p class="help-msg-text help-msg-prose">{{ turn.text }}</p>
+              @if (linksForArticle(turn.articleId).length) {
+                <div class="help-msg-links">
+                  @for (link of linksForArticle(turn.articleId); track link.route) {
+                    <a [routerLink]="link.route" class="help-msg-link">{{ linkLabel(link) }}</a>
+                  }
+                </div>
+              }
+            }
+          </div>
+        }
+
+        <span #scrollAnchor class="help-scroll-anchor"></span>
+
+        @if (conversation().length > 0) {
+          <div class="help-after-chat">
+            <p class="help-more-topics">{{ t('help.chat.pickAnother') }}</p>
+            <div class="help-topics help-topics--inline">
+              @for (article of topics(); track article.id) {
+                <button type="button" class="help-chip help-chip--sm" (click)="selectTopic(article)">
+                  {{ text(article, 'topicLabel') }}
+                </button>
+              }
+            </div>
+            <div class="help-actions-row">
+              <button type="button" class="help-text-btn" (click)="clearChat()">{{ t('help.chat.clear') }}</button>
+              <a routerLink="/centro-ayuda" class="help-full-guide" (click)="close()">{{ t('help.chat.fullGuide') }}</a>
+            </div>
+          </div>
+        } @else {
+          <a routerLink="/centro-ayuda" class="help-full-guide help-full-guide--solo" (click)="close()">
+            {{ t('help.chat.fullGuide') }}
+          </a>
+        }
+      </div>
+    </div>
+  }
+
+  <button
+    type="button"
+    class="help-fab"
+    (click)="toggle()"
+    [attr.aria-expanded]="open()"
+    [attr.aria-controls]="'help-chat-panel'"
+    [attr.aria-label]="open() ? t('help.chat.closeFab') : t('help.chat.openFab')">
+    <span class="help-fab-icon" aria-hidden="true">?</span>
+    <span class="help-fab-text">{{ t('help.chat.fab') }}</span>
+  </button>
+</div>

@@ -26,6 +26,7 @@ import { SubscriberRedemptionHistoryComponent } from './components/admin/subscri
 import { PartnerRedemptionHistoryComponent } from './components/admin/partner-redemption-history/partner-redemption-history';
 import { GoogleMapsReviewsComponent } from './components/admin/google-maps-reviews/google-maps-reviews';
 import { UserManagementComponent } from './components/admin/user-management/user-management';
+import { HelpCenterComponent } from './components/public/help-center/help-center';
 import { adminGuard } from './guards/admin.guard';
 import { inject } from '@angular/core';
 import { AuthService } from './services/auth.service';
@@ -48,6 +49,7 @@ export const routes: Routes = [
     { path: 'consulta-socio', component: ConsultaSocioComponent },
     { path: 'consulta-puntos', component: ConsultaPuntosComponent },
     { path: 'mi-suscripcion', component: ConsultaCodigoSuscripcionComponent },
+    { path: 'centro-ayuda', component: HelpCenterComponent },
     { path: 'admin/login', component: LoginComponent },
     {
         path: 'admin/dashboard',

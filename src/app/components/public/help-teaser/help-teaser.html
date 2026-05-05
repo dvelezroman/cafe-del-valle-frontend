@@ -1,0 +1,35 @@
+<section id="ayuda" class="help-teaser section" aria-labelledby="help-teaser-title">
+  <div class="container">
+    <div class="help-teaser-head">
+      <p class="help-teaser-eyebrow">{{ t('help.teaser.eyebrow') }}</p>
+      <h2 id="help-teaser-title" class="help-teaser-title">{{ t('help.teaser.title') }}</h2>
+      <p class="help-teaser-desc">{{ t('help.teaser.desc') }}</p>
+    </div>
+
+    <ul class="help-teaser-cards" role="list">
+      <li class="help-teaser-card">
+        <span class="help-teaser-card-icon" aria-hidden="true">🌐</span>
+        <h3 class="help-teaser-card-title">{{ t('help.teaser.card1.title') }}</h3>
+        <p class="help-teaser-card-text">{{ t('help.teaser.card1.text') }}</p>
+        <a routerLink="/centro-ayuda" [queryParams]="{ topic: 'website' }" class="help-teaser-link">{{ t('help.teaser.more') }}</a>
+      </li>
+      <li class="help-teaser-card">
+        <span class="help-teaser-card-icon" aria-hidden="true">☕</span>
+        <h3 class="help-teaser-card-title">{{ t('help.teaser.card2.title') }}</h3>
+        <p class="help-teaser-card-text">{{ t('help.teaser.card2.text') }}</p>
+        <a routerLink="/centro-ayuda" [queryParams]="{ topic: 'club-plans' }" class="help-teaser-link">{{ t('help.teaser.more') }}</a>
+      </li>
+      <li class="help-teaser-card">
+        <span class="help-teaser-card-icon" aria-hidden="true">🔎</span>
+        <h3 class="help-teaser-card-title">{{ t('help.teaser.card3.title') }}</h3>
+        <p class="help-teaser-card-text">{{ t('help.teaser.card3.text') }}</p>
+        <a routerLink="/centro-ayuda" [queryParams]="{ topic: 'consulta-puntos' }" class="help-teaser-link">{{ t('help.teaser.more') }}</a>
+      </li>
+    </ul>
+
+    <div class="help-teaser-cta-wrap">
+      <a routerLink="/centro-ayuda" class="btn btn-primary help-teaser-cta">{{ t('help.teaser.cta') }}</a>
+      <p class="help-teaser-widget-hint">{{ t('help.teaser.widgetHint') }}</p>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,112 @@
+.help-teaser {
+  padding: var(--space-xl) 0;
+  background: linear-gradient(180deg, var(--bg-accent) 0%, var(--bg-primary) 100%);
+}
+
+.help-teaser-head {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto var(--space-lg);
+}
+
+.help-teaser-eyebrow {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent-gold);
+  margin: 0 0 0.5rem;
+}
+
+.help-teaser-title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.5rem, 3.5vw, 2rem);
+  font-weight: 700;
+  color: var(--coffee-deep);
+  margin: 0 0 var(--space-sm);
+  letter-spacing: -0.02em;
+}
+
+.help-teaser-desc {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  font-size: 1.02rem;
+}
+
+.help-teaser-cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-md);
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+}
+
+.help-teaser-card {
+  background: var(--white);
+  border: 1px solid var(--border-coffee-08);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.help-teaser-card-icon {
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.help-teaser-card-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--coffee-deep);
+}
+
+.help-teaser-card-text {
+  margin: 0;
+  flex: 1;
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+.help-teaser-link {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--coffee-warm);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.help-teaser-cta-wrap {
+  margin-top: var(--space-lg);
+  text-align: center;
+}
+
+.help-teaser-cta {
+  display: inline-flex;
+}
+
+.help-teaser-widget-hint {
+  margin: var(--space-sm) 0 0;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.5;
+}

@@ -13,6 +13,7 @@ import { Contact } from '../contact/contact';
 import { TranslationService, Language } from '../../services/translation.service';
 import { DataService } from '../../services/data';
 import { SubscriptionPlansPublicComponent } from '../subscription-plans-public/subscription-plans-public';
+import { HelpTeaserComponent } from '../public/help-teaser/help-teaser';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -29,7 +30,8 @@ import { environment } from '../../../environments/environment';
     GoogleMapsReviews,
     Blog,
     Contact,
-    SubscriptionPlansPublicComponent
+    SubscriptionPlansPublicComponent,
+    HelpTeaserComponent
   ],
   templateUrl: './home.html',
   styleUrl: './home.scss'

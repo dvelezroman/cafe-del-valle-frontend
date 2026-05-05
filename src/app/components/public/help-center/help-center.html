@@ -1,0 +1,46 @@
+<div class="help-page">
+  <div class="help-hero">
+    <div class="container help-hero-inner">
+      <a routerLink="/" class="help-back">{{ t('help.center.back') }}</a>
+      <h1 class="help-title">{{ t('help.center.title') }}</h1>
+      <p class="help-lead">{{ t('help.center.lead') }}</p>
+    </div>
+  </div>
+
+  <div class="container help-body">
+    <p class="help-hint">{{ t('help.center.hint') }}</p>
+
+    <ul class="help-accordion" role="list">
+      @for (article of articles(); track article.id) {
+        <li
+          class="help-item"
+          [id]="'help-article-' + article.id"
+          [class.open]="isOpen(article.id)">
+          <button
+            type="button"
+            class="help-item-header"
+            [attr.aria-expanded]="isOpen(article.id)"
+            (click)="toggle(article.id)">
+            <span class="help-item-topic">{{ text(article, 'topicLabel') }}</span>
+            <span class="help-item-title">{{ text(article, 'title') }}</span>
+            <span class="help-chevron" aria-hidden="true">{{ isOpen(article.id) ? '−' : '+' }}</span>
+          </button>
+          @if (isOpen(article.id)) {
+            <div class="help-item-body">
+              <div class="help-prose">{{ text(article, 'body') }}</div>
+              @if (article.links?.length) {
+                <div class="help-links">
+                  @for (link of article.links; track link.route) {
+                    <a [routerLink]="link.route" class="help-link">{{ linkLabel(link) }}</a>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </li>
+      }
+    </ul>
+
+    <p class="help-footer-note">{{ t('help.center.footerNote') }}</p>
+  </div>
+</div>

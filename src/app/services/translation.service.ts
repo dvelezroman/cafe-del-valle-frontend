@@ -118,6 +118,11 @@ export class TranslationService {
       en: 'Plan by code',
       fr: 'Plan par code'
     };
+    this.translations['nav.help'] = {
+      es: 'Ayuda',
+      en: 'Help',
+      fr: 'Aide'
+    };
 
     // Hero Section
     this.translations['hero.tagline'] = {
@@ -851,6 +856,163 @@ export class TranslationService {
       es: 'Desarrollado por',
       en: 'Developed by',
       fr: 'Développé par'
+    };
+
+    // Help center & assistant
+    this.translations['help.center.title'] = {
+      es: 'Centro de ayuda',
+      en: 'Help center',
+      fr: "Centre d'aide"
+    };
+    this.translations['help.center.back'] = {
+      es: '← Volver al inicio',
+      en: '← Back to home',
+      fr: "← Retour à l'accueil"
+    };
+    this.translations['help.center.lead'] = {
+      es: 'Aprende a usar el sitio web, el club, las consultas públicas y, si aplica, el portal de socio o el panel de administración.',
+      en: 'Learn how to use the website, the club, public lookups, and—if it applies—the member portal or admin panel.',
+      fr: 'Apprenez à utiliser le site, le club, les consultations publiques et, si besoin, l’espace membre ou l’administration.'
+    };
+    this.translations['help.center.hint'] = {
+      es: 'El contenido se adapta a tu sesión: los socios y administradores ven temas adicionales. También puedes abrir el asistente flotante (botón «Ayuda») en cualquier página.',
+      en: 'Content adapts to your session: members and administrators see extra topics. You can also open the floating assistant (Help button) on any page.',
+      fr: 'Le contenu s’adapte à votre session : sujets supplémentaires pour les membres et les administrateurs. Vous pouvez aussi ouvrir l’assistant flottant (bouton Aide) sur toute page.'
+    };
+    this.translations['help.center.footerNote'] = {
+      es: 'Esta guía resume las funciones del sitio. Para el personal interno, la documentación extendida vive en el repositorio del proyecto (carpeta docs).',
+      en: 'This guide summarizes site features. Extended documentation for staff lives in the project repository (docs folder).',
+      fr: 'Ce guide résume les fonctions du site. La documentation étendue pour l’équipe se trouve dans le dépôt (dossier docs).'
+    };
+    this.translations['help.teaser.eyebrow'] = {
+      es: 'Guía rápida',
+      en: 'Quick guide',
+      fr: 'Guide rapide'
+    };
+    this.translations['help.teaser.title'] = {
+      es: '¿Cómo funciona el sitio y el club?',
+      en: 'How do the site and the club work?',
+      fr: 'Comment fonctionnent le site et le club ?'
+    };
+    this.translations['help.teaser.desc'] = {
+      es: 'Te explicamos lo esencial: navegación, planes, consultas y dónde encontrar más respuestas.',
+      en: 'We cover the essentials: navigation, plans, lookups, and where to find more answers.',
+      fr: 'L’essentiel : navigation, offres, consultations et où aller pour en savoir plus.'
+    };
+    this.translations['help.teaser.card1.title'] = {
+      es: 'Sitio y menú',
+      en: 'Site & menu',
+      fr: 'Site & menu'
+    };
+    this.translations['help.teaser.card1.text'] = {
+      es: 'Usa el menú superior, el idioma y el selector de sucursal para recorrer la carta y las secciones.',
+      en: 'Use the top bar, language, and branch selector to browse the menu and every section.',
+      fr: 'Utilisez le menu du haut, la langue et la succursale pour parcourir la carte et les sections.'
+    };
+    this.translations['help.teaser.card2.title'] = {
+      es: 'Únete al club',
+      en: 'Join the club',
+      fr: 'Rejoindre le club'
+    };
+    this.translations['help.teaser.card2.text'] = {
+      es: 'Revisa los planes, envía tu interés y el equipo te contactará para completar el alta.',
+      en: 'Review plans, submit your interest, and the team will follow up to complete enrollment.',
+      fr: 'Consultez les offres, manifestez votre intérêt, l’équipe vous contactera pour finaliser.'
+    };
+    this.translations['help.teaser.card3.title'] = {
+      es: 'Consultas sin clave',
+      en: 'Lookups without a password',
+      fr: 'Consultations sans mot de passe'
+    };
+    this.translations['help.teaser.card3.text'] = {
+      es: 'Con tu cédula o tu código de socio puedes ver estado, puntos o plan según la página de consulta.',
+      en: 'With your ID or member code you can see status, points, or your plan on the right screen.',
+      fr: 'Avec votre pièce d’identité ou code membre, consultez le statut, points ou forfait.'
+    };
+    this.translations['help.teaser.more'] = {
+      es: 'Ver en la guía →',
+      en: 'See in guide →',
+      fr: 'Voir dans le guide →'
+    };
+    this.translations['help.teaser.cta'] = {
+      es: 'Abrir guía completa',
+      en: 'Open full guide',
+      fr: 'Ouvrir le guide complet'
+    };
+    this.translations['help.teaser.widgetHint'] = {
+      es: '¿Prefieres elegir un tema? Usa el botón flotante «Ayuda» en la esquina inferior derecha.',
+      en: 'Prefer to pick a topic? Use the floating “Help” button in the lower-right corner.',
+      fr: 'Vous préférez choisir un thème ? Utilisez le bouton flottant « Aide » en bas à droite.'
+    };
+    this.translations['help.chat.fab'] = {
+      es: 'Ayuda',
+      en: 'Help',
+      fr: 'Aide'
+    };
+    this.translations['help.chat.openFab'] = {
+      es: 'Abrir asistente de ayuda',
+      en: 'Open help assistant',
+      fr: "Ouvrir l'assistant d'aide"
+    };
+    this.translations['help.chat.closeFab'] = {
+      es: 'Cerrar asistente de ayuda',
+      en: 'Close help assistant',
+      fr: "Fermer l'assistant d'aide"
+    };
+    this.translations['help.chat.title'] = {
+      es: 'Asistente Café del Valle',
+      en: 'Café del Valle assistant',
+      fr: 'Assistant Café del Valle'
+    };
+    this.translations['help.chat.subtitle'] = {
+      es: 'Elige un tema o abre la guía completa.',
+      en: 'Choose a topic or open the full guide.',
+      fr: 'Choisissez un thème ou ouvrez le guide complet.'
+    };
+    this.translations['help.chat.panelAria'] = {
+      es: 'Asistente de ayuda con temas sugeridos',
+      en: 'Help assistant with suggested topics',
+      fr: 'Assistant d’aide avec sujets suggérés'
+    };
+    this.translations['help.chat.close'] = {
+      es: 'Cerrar',
+      en: 'Close',
+      fr: 'Fermer'
+    };
+    this.translations['help.chat.intro'] = {
+      es: 'Toca un tema para ver instrucciones. Si iniciaste sesión como socio o administrador, verás temas extra.',
+      en: 'Tap a topic for step-by-step hints. If you are signed in as a member or admin, you will see extra topics.',
+      fr: 'Touchez un thème pour les instructions. Connecté en tant que membre ou admin, des sujets supplémentaires s’affichent.'
+    };
+    this.translations['help.chat.topicsLabel'] = {
+      es: 'Temas de ayuda',
+      en: 'Help topics',
+      fr: "Sujets d'aide"
+    };
+    this.translations['help.chat.you'] = {
+      es: 'Tú',
+      en: 'You',
+      fr: 'Vous'
+    };
+    this.translations['help.chat.assistant'] = {
+      es: 'Guía',
+      en: 'Guide',
+      fr: 'Guide'
+    };
+    this.translations['help.chat.pickAnother'] = {
+      es: 'Otro tema:',
+      en: 'Another topic:',
+      fr: 'Autre sujet :'
+    };
+    this.translations['help.chat.clear'] = {
+      es: 'Borrar conversación',
+      en: 'Clear conversation',
+      fr: 'Effacer la conversation'
+    };
+    this.translations['help.chat.fullGuide'] = {
+      es: 'Guía completa en una página',
+      en: 'Full guide on one page',
+      fr: 'Guide complet sur une page'
     };
   }
 }

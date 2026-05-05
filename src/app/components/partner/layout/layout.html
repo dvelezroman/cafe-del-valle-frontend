@@ -8,6 +8,7 @@
             <ul>
                 <li><a routerLink="dashboard" routerLinkActive="active">Inicio</a></li>
                 <li><a routerLink="history" routerLinkActive="active">Mi Actividad</a></li>
+                <li><a routerLink="/centro-ayuda">{{ t('nav.help') }}</a></li>
             </ul>
         </nav>
         <div class="footer">
@@ -21,6 +22,7 @@
             <a routerLink="/" class="partner-mobile-public" [attr.aria-label]="t('public.backHomeAria')">{{ t('public.website') }}</a>
             <a routerLink="dashboard" routerLinkActive="active">Inicio</a>
             <a routerLink="history" routerLinkActive="active">Actividad</a>
+            <a routerLink="/centro-ayuda">{{ t('nav.help') }}</a>
             <button type="button" class="btn-logout-mobile" (click)="logout()">Salir</button>
         </nav>
         <header class="content-header">
